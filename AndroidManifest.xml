@@ -8,13 +8,23 @@
         android:minSdkVersion="7"
         android:targetSdkVersion="7" />
 
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+    
+        <uses-library android:name="com.google.android.maps" />
+        
         <activity
-            android:name="com.creek.whereareyou.MainActivity"
+            android:name="com.creek.whereareyou.android.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +32,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.creek.whereareyou.android.services.locationservice.LocationService">
+            <intent-filter>
+                <action android:name="com.creek.whereareyou.android.services.locationservice.LocationService" />
+            </intent-filter>
+        </service>
+        
+        <receiver android:name="com.creek.whereareyou.android.services.locationservice.BroadcastReceiver">
+            <intent-filter>
+                <action android:name ="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+        
     </application>
 
 </manifest>

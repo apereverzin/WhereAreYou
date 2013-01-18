@@ -1,4 +1,6 @@
-package com.creek.whereareyou;
+package com.creek.whereareyou.android;
+
+import com.creek.whereareyou.R;
 
 import android.os.Bundle;
 import android.app.Activity;
