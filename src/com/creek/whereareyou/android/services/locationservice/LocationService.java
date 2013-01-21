@@ -41,7 +41,7 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        timer = new Timer("StaccatoTimer");
+        timer = new Timer("WhereAreYouTimer");
         timer.schedule(updateTask, 1000L, 1 * 1000L);
         
         Criteria criteria = new Criteria();

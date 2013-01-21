@@ -40,7 +40,7 @@
             </intent-filter>
         </service>
         
-        <receiver android:name="com.creek.whereareyou.android.services.locationservice.BroadcastReceiver">
+        <receiver android:name="com.creek.whereareyou.android.services.BroadcastReceiver">
             <intent-filter>
                 <action android:name ="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
