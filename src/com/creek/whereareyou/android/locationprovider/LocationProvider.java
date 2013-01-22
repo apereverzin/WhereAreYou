@@ -3,6 +3,7 @@ package com.creek.whereareyou.android.locationprovider;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.util.Log;
 
@@ -17,7 +18,7 @@ public class  LocationProvider {
     private boolean bestProviderDefined = false;
     private LocationManager locationManager;
     
-    public Location getLocation(Context context) {
+    public Location getLocation(Context context, LocationListener locationListener) {
         if(!bestProviderDefined) {
             defineBestProvider(context);
         }
@@ -26,6 +27,8 @@ public class  LocationProvider {
         Log.d(TAG, "----- " + bestProvider);
         Location l = locationManager.getLastKnownLocation(bestProvider);
         
+        locationManager.requestLocationUpdates(bestProvider, 2000, 10, locationListener);
+
         return l;
     }
     
@@ -45,7 +48,7 @@ public class  LocationProvider {
         criteria.setAltitudeRequired(false);
         criteria.setBearingRequired(false);
         criteria.setSpeedRequired(false);
-        criteria.setCostAllowed(true);
+        criteria.setCostAllowed(false);
         return criteria;
     }
 }

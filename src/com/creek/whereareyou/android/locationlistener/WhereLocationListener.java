@@ -1,6 +1,6 @@
 package com.creek.whereareyou.android.locationlistener;
 
-import com.creek.whereareyou.android.activity.map.WhereMapActivity;
+import com.creek.whereareyou.android.activity.map.MainMapActivity;
 import com.google.android.maps.GeoPoint;
 
 import android.location.GpsStatus;
