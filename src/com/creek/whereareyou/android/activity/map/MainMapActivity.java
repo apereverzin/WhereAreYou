@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.activity.map;
 
 import java.util.List;
 
+import android.accounts.Account;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ public class MainMapActivity extends MapActivity {
         mapView.postInvalidate();
 
         Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, locationListener);
+        Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
 
         updateWithNewLocation(l);
     }

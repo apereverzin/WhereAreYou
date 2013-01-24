@@ -1,7 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- buttons -->
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="test">Test</string>
+    
+    <!-- Mail properties -->
+    <string name="mail_properties_activity_name">Email Properties</string>
+    <string name="mail_password">Password</string>
+    
     <string name="app_name">WhereAreYou</string>
     <string name="menu_settings">Settings</string>
 
+    <!-- Check Email Result -->
+    <string name="check_email_result_title">Check Email</string>
+    <string name="check_email_result">Check Email:</string>
+    <string name="check_email_result_wait">Checking email. Please, wait...</string>
+    <string name="check_email_result_authentication_failed">Authentication failed</string>
+    <string name="check_email_result_connection_failed">Connection failed</string>
+    <string name="check_email_result_success">Success</string>
+    <string name="check_email_result_failure">Failure</string>
+    <string name="check_email_result_pending">Pending...</string>
+    
 </resources>

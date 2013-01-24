@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="lib" path="/Users/andreypereverzin/android-sdks/add-ons/addon-google_apis-google-7/libs/maps.jar"/>
+	<classpathentry kind="lib" path="libs/access-email-1.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/WhereAreYou-model-1.0.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

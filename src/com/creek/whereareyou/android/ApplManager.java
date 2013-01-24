@@ -1,5 +1,9 @@
 package com.creek.whereareyou.android;
 
+import android.util.Log;
+
+import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
+import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
 
 
@@ -12,6 +16,8 @@ public class ApplManager {
     
     private static ApplManager instance = new ApplManager();
     private LocationProvider locationProvider = new LocationProvider();
+    private GoogleAccountProvider accountProvider = new GoogleAccountProvider();
+    private MailAccountPropertiesProvider mailAccountPropertiesProvider = new MailAccountPropertiesProvider();
 
     private ApplManager() {
         //
@@ -23,5 +29,13 @@ public class ApplManager {
 
     public LocationProvider getLocationProvider() {
         return locationProvider;
+    }
+
+    public GoogleAccountProvider getAccountProvider() {
+        return accountProvider;
+    }
+
+    public MailAccountPropertiesProvider getMailAccountPropertiesProvider() {
+        return mailAccountPropertiesProvider;
     }
 }

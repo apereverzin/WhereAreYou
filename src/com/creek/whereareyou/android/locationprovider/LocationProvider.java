@@ -19,11 +19,12 @@ public class  LocationProvider {
     private LocationManager locationManager;
     
     public Location getLocation(Context context, LocationListener locationListener) {
+        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+
         if(!bestProviderDefined) {
             defineBestProvider(context);
         }
         
-        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         Log.d(TAG, "----- " + bestProvider);
         Location l = locationManager.getLastKnownLocation(bestProvider);
         
@@ -35,7 +36,6 @@ public class  LocationProvider {
     private void defineBestProvider(Context context) {
         Criteria criteria = createCriteria();
         
-        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
         bestProvider = locationManager.getBestProvider(criteria, true);
         
         bestProviderDefined = true;
