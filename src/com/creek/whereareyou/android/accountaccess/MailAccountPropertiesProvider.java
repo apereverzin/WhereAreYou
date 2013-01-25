@@ -9,6 +9,7 @@ import java.util.Properties;
 import android.os.Environment;
 import android.util.Log;
 
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyou.android.util.CryptoUtil;
 
@@ -22,8 +23,6 @@ public class MailAccountPropertiesProvider {
     private static final String PASSWORD_ENCRYPTION_SEED = "tobeornottobe";
     private Properties mailProperties = null;
 
-    public static final String MAIL_PASSWORD_PROPERTY = "mail.password";
-    
     public void persistProperties(Properties propsToPersist) throws IOException, CryptoException {
         File f = new File(getPropertiesFilePath());
         f.createNewFile();

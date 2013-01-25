@@ -3,12 +3,17 @@ package com.creek.whereareyou.android.activity.map;
 import java.util.List;
 
 import android.accounts.Account;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.ApplManager;
+import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -21,6 +26,10 @@ import com.google.android.maps.Overlay;
  */
 public class MainMapActivity extends MapActivity {
     private static final String TAG = MainMapActivity.class.getSimpleName();
+
+    private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
+    private static final int CONTACTS_TO_TRACK_MENU_ITEM = Menu.FIRST + 1;
+    private static final int CONTACTS_TO_INFORM_MENU_ITEM = Menu.FIRST + 2;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -51,6 +60,38 @@ public class MainMapActivity extends MapActivity {
         Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
 
         updateWithNewLocation(l);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        Log.i(TAG, "onCreateOptionsMenu() called");
+
+        menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.edit_email_account);
+        menu.add(0, CONTACTS_TO_TRACK_MENU_ITEM, 0, R.string.to_track);
+        menu.add(0, CONTACTS_TO_INFORM_MENU_ITEM, 0, R.string.to_inform);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+        case EMAIL_ACCOUNT_MENU_ITEM:
+            intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
+            startActivity(intent);
+            return true;
+        case CONTACTS_TO_TRACK_MENU_ITEM:
+            intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
+            startActivity(intent);
+            return true;
+        case CONTACTS_TO_INFORM_MENU_ITEM:
+            intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
+            startActivity(intent);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
     }
 
     private void updateWithNewLocation(Location location) {

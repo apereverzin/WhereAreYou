@@ -2,14 +2,20 @@ package com.creek.whereareyou.android.activity.account;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import com.creek.accessemail.connector.mail.ConnectorException;
 import com.creek.accessemail.connector.mail.MailConnector;
-import com.creek.accessemail.connector.mail.PredefinedMailProperties;
+import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.ApplManager;
-import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
-import static com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider.MAIL_PASSWORD_PROPERTY;
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 import com.creek.whereareyou.android.util.CryptoException;
 
@@ -60,18 +66,23 @@ public class EmailAccountEditActivity extends Activity {
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----testButton clicked");
-                Properties fullProps = PredefinedMailProperties.getPredefinedProperties(googleAccount.name);
-                if (fullProps != null) {
-                    fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
-                    final Bundle bundle = new Bundle();
-                    bundle.putSerializable(MAIL_PROPERTIES, fullProps);
-                    Intent intent = new Intent(EmailAccountEditActivity.this, CheckEmailResultActivity.class);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                } else {
-                    // TODO no full props dialog
-                    setResult(RESULT_OK);
+                try {
+                    Log.d(TAG, "-----testButton clicked");
+                    Properties fullProps = getPredefinedProperties(googleAccount.name);
+                    if (fullProps != null) {
+                        fullProps.setProperty(MAIL_USERNAME_PROPERTY, extractUserNameFromEmailAddress(googleAccount.name));
+                        fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
+                        final Bundle bundle = new Bundle();
+                        bundle.putSerializable(MAIL_PROPERTIES, fullProps);
+                        Intent intent = new Intent(EmailAccountEditActivity.this, CheckEmailResultActivity.class);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    } else {
+                        // TODO no full props dialog
+                        setResult(RESULT_OK);
+                    }
+                } catch (AddressException ex) {
+                    showException(EmailAccountEditActivity.this, ex);
                 }
             }
         });
@@ -79,12 +90,13 @@ public class EmailAccountEditActivity extends Activity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 try {
-                    Properties fullProps = PredefinedMailProperties.getPredefinedProperties(googleAccount.name);
+                    Properties fullProps = getPredefinedProperties(googleAccount.name);
                     
                     Properties props = new Properties();
                     props.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                     
                     if (fullProps != null) {
+                        fullProps.setProperty(MAIL_USERNAME_PROPERTY, extractUserNameFromEmailAddress(googleAccount.name));
                         fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                         MailConnector connector = new MailConnector(fullProps);
                         connector.checkSMTPConnection();
@@ -94,6 +106,8 @@ public class EmailAccountEditActivity extends Activity {
 
                     setResult(RESULT_OK);
                     finish();
+                } catch (AddressException ex) {
+                    showException(EmailAccountEditActivity.this, ex);
                 } catch (ConnectorException ex) {
                     showException(EmailAccountEditActivity.this, ex);
                 } catch (IOException ex) {
@@ -113,5 +127,10 @@ public class EmailAccountEditActivity extends Activity {
         if(resultCode == RESULT_OK){
             finish();
         }
+    }
+    
+    private String extractUserNameFromEmailAddress(String emailAddress) throws AddressException {
+        StringTokenizer st = new StringTokenizer(emailAddress, "@");
+        return st.nextToken();
     }
 }
