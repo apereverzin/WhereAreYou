@@ -29,4 +29,7 @@
     <string name="check_email_result_failure">Failure</string>
     <string name="check_email_result_pending">Pending...</string>
     
+    <!-- Contacts -->
+    <string name="no_contacts">No contacts</string>
+    
 </resources>

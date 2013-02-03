@@ -4,8 +4,8 @@ import android.util.Log;
 
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
+import com.creek.whereareyou.android.contacts.ContactsProvider;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
-
 
 /**
  * 
@@ -18,6 +18,8 @@ public class ApplManager {
     private LocationProvider locationProvider = new LocationProvider();
     private GoogleAccountProvider accountProvider = new GoogleAccountProvider();
     private MailAccountPropertiesProvider mailAccountPropertiesProvider = new MailAccountPropertiesProvider();
+    private FileProvider fileProvider = new FileProvider();
+    private ContactsProvider contactsProvider = new ContactsProvider();
 
     private ApplManager() {
         //
@@ -37,5 +39,13 @@ public class ApplManager {
 
     public MailAccountPropertiesProvider getMailAccountPropertiesProvider() {
         return mailAccountPropertiesProvider;
+    }
+
+    public FileProvider getFileProvider() {
+        return fileProvider;
+    }
+
+    public ContactsProvider getContactsProvider() {
+        return contactsProvider;
     }
 }

@@ -10,6 +10,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
+
+import com.creek.whereareyou.android.ApplManager;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyou.android.util.CryptoUtil;
 
@@ -24,7 +26,7 @@ public class MailAccountPropertiesProvider {
     private Properties mailProperties = null;
 
     public void persistProperties(Properties propsToPersist) throws IOException, CryptoException {
-        File f = new File(getPropertiesFilePath());
+        File f = ApplManager.getInstance().getFileProvider().getFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
         f.createNewFile();
         String password = propsToPersist.getProperty(MAIL_PASSWORD_PROPERTY);
         String cryptPassword = CryptoUtil.encrypt(PASSWORD_ENCRYPTION_SEED, password);
@@ -37,7 +39,7 @@ public class MailAccountPropertiesProvider {
     public Properties getMailProperties() throws IOException, CryptoException {
         Log.i(TAG, "-----getMailProperties");
         if (mailProperties == null) {
-            File f = new File(getPropertiesFilePath());
+            File f = ApplManager.getInstance().getFileProvider().getFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
             if (f.exists()) {
                 mailProperties = new Properties();
                 mailProperties.load(new FileInputStream(f));
@@ -51,9 +53,5 @@ public class MailAccountPropertiesProvider {
         String cryptPassword = props.getProperty(MAIL_PASSWORD_PROPERTY);
         String password = CryptoUtil.decrypt(PASSWORD_ENCRYPTION_SEED, cryptPassword);
         props.setProperty(MAIL_PASSWORD_PROPERTY, password);
-    }
-    
-    private String getPropertiesFilePath() {
-        return Environment.getExternalStorageDirectory().getPath() + WHEREAREYOU_PROPERTIES_FILE_PATH;
     }
 }
