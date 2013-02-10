@@ -1,12 +1,8 @@
 package com.creek.whereareyou.android.accountaccess;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import android.os.Environment;
 import android.util.Log;
 
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
@@ -25,13 +21,13 @@ public class MailAccountPropertiesProvider {
     private static final String PASSWORD_ENCRYPTION_SEED = "tobeornottobe";
     private Properties mailProperties = null;
 
-    public void persistProperties(Properties propsToPersist) throws IOException, CryptoException {
-        File f = ApplManager.getInstance().getFileProvider().getFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
-        f.createNewFile();
+    public void persistMailProperties(Properties propsToPersist) throws IOException, CryptoException {
         String password = propsToPersist.getProperty(MAIL_PASSWORD_PROPERTY);
         String cryptPassword = CryptoUtil.encrypt(PASSWORD_ENCRYPTION_SEED, password);
         propsToPersist.setProperty(MAIL_PASSWORD_PROPERTY, cryptPassword);
-        propsToPersist.store(new FileOutputStream(f), "");
+        
+        ApplManager.getInstance().getFileProvider().persistPropertiesToFile(WHEREAREYOU_PROPERTIES_FILE_PATH, propsToPersist);
+
         propsToPersist.setProperty(MAIL_PASSWORD_PROPERTY, password);
         mailProperties = propsToPersist;
     }
@@ -39,10 +35,8 @@ public class MailAccountPropertiesProvider {
     public Properties getMailProperties() throws IOException, CryptoException {
         Log.i(TAG, "-----getMailProperties");
         if (mailProperties == null) {
-            File f = ApplManager.getInstance().getFileProvider().getFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
-            if (f.exists()) {
-                mailProperties = new Properties();
-                mailProperties.load(new FileInputStream(f));
+            mailProperties = ApplManager.getInstance().getFileProvider().getPropertiesFromFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
+            if (mailProperties != null) {
                 decryptPassword(mailProperties);
             }
         }

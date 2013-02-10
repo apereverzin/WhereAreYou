@@ -101,7 +101,7 @@ public class EmailAccountEditActivity extends Activity {
                         MailConnector connector = new MailConnector(fullProps);
                         connector.checkSMTPConnection();
                         
-                        ApplManager.getInstance().getMailAccountPropertiesProvider().persistProperties(props);
+                        ApplManager.getInstance().getMailAccountPropertiesProvider().persistMailProperties(props);
                     }
 
                     setResult(RESULT_OK);

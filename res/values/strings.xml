@@ -32,4 +32,10 @@
     <!-- Contacts -->
     <string name="no_contacts">No contacts</string>
     
+    <!-- Contact List Menu Items -->
+    <string name="menu_add_contact">Add Contact</string>
+    <string name="menu_view_contact">Add Contact</string>
+    <string name="menu_edit_contact">Add Contact</string>
+    <string name="menu_exclude_contact">Add Contact</string>
+    
 </resources>

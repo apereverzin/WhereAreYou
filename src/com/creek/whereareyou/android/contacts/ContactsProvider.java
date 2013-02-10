@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
@@ -16,8 +15,8 @@ import android.provider.ContactsContract.CommonDataKinds.Email;
  * @author andreypereverzin
  */
 public class ContactsProvider {
-    private static final String CONTACTS_TO_INFORM_FILE_PATH = "/Android/contactstoinform.csv";
-    private static final String CONTACTS_TO_MONITOR_FILE_PATH = "/Android/contactstomonitor.csv";
+    private static final String CONTACTS_TO_INFORM_FILE_PATH = "/Android/contactstoinform.json";
+    private static final String CONTACTS_TO_MONITOR_FILE_PATH = "/Android/contactstomonitor.json";
 
     private static String[] PROJECTION = {
             ContactsContract.Contacts._ID,
