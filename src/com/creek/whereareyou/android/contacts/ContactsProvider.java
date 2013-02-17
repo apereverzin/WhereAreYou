@@ -3,20 +3,26 @@ package com.creek.whereareyou.android.contacts;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
+
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.util.Log;
 
 /**
  * 
  * @author andreypereverzin
  */
 public class ContactsProvider {
+    private static final String TAG = ContactsProvider.class.getSimpleName();
+
     private static final String CONTACTS_TO_INFORM_FILE_PATH = "/Android/contactstoinform.json";
-    private static final String CONTACTS_TO_MONITOR_FILE_PATH = "/Android/contactstomonitor.json";
+    private static final String CONTACTS_TO_TRACE_FILE_PATH = "/Android/contactstotrace.json";
 
     private static String[] PROJECTION = {
             ContactsContract.Contacts._ID,
@@ -43,7 +49,6 @@ public class ContactsProvider {
         
         try {
             cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, null, null, null);
-
             return getContactsList(cursor);
         } finally {
             if (cursor != null) {
@@ -103,14 +108,45 @@ public class ContactsProvider {
         
     }
     
-    public List<Contact> getContactsToMonitor() {
+    public List<Contact> getContactsToTrace() {
         List<Contact> contacts = new ArrayList<Contact>();
         
         return contacts;
     }
     
-    public void saveContactsToMonitor(List<Contact> contacts) {
+    public void saveContactsToTrace(List<Contact> contacts) {
         
+    }
+    
+    public List<Contact> getContactsToAddToTrace(Context context) {
+        List<Contact> allContacts = getAllContacts(context);
+        List<Contact> existingContacts = getContactsToTrace();
+        
+        allContacts.removeAll(existingContacts);
+        
+        return allContacts;
+    }
+    
+    public List<Contact> getContactsToAddToInform(Context context) {
+        List<Contact> allContacts = new ArrayList<Contact>();
+        List<Contact> existingContacts = getContactsToInform();
+        
+        allContacts.removeAll(existingContacts);
+        
+        return allContacts;
+    }
+    
+    public List<String> getContactEmails(Context context, String contactId) {
+        List<String> emails = new ArrayList<String>();
+        Cursor emailsCursor = context.getContentResolver().query(Email.CONTENT_URI, null, Email.CONTACT_ID + " = " + contactId, null, null);
+        while (emailsCursor.moveToNext()) {
+            String emailIdOfContact = emailsCursor.getString(emailsCursor.getColumnIndex(Email.DATA));
+            int emailType = emailsCursor.getInt(emailsCursor.getColumnIndex(Phone.TYPE));
+            Log.d(TAG, "-----emailIdOfContact: " + emailIdOfContact);
+            Log.d(TAG, "-----emailType: " + emailType);
+        }
+        emailsCursor.close();
+        return emails;
     }
     
     private List<Contact> getContactsList(Cursor cursor) {

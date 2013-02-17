@@ -38,6 +38,9 @@
 
         <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountEditActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.account.CheckEmailResultActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.contacts.ContactsActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.contacts.EditContactActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.contacts.ViewContactActivity" />
         
         <service android:name="com.creek.whereareyou.android.services.locationservice.LocationService">
             <intent-filter>

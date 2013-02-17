@@ -14,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.creek.whereareyoumodel.message.Transformable;
 import com.creek.whereareyoumodel.util.JSONTransformer;
 
 import android.os.Environment;
@@ -49,16 +50,12 @@ public class FileProvider {
         props.store(new FileOutputStream(f), "");
     }
     
-    public List<String[]> getPipeSeparatedStringsFromFile(String fileName) throws IOException {
-        List<String[]> strings = new ArrayList<String[]>();
-        
-        return strings;
-        
+    public Transformable getTransformableObjectFromFile(String fileName) throws IOException {
+        return null;
     }
     
-    public void persistPipeSeparatedStringsToFile(String fileName, List<String[]> strings) throws IOException {
+    public void persistTransformableObjectToFile(String fileName, Transformable object) throws IOException {
         File f = getFile(fileName);
         f.createNewFile();
-        
     }
 }
