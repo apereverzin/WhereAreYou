@@ -1,9 +1,8 @@
 package com.creek.whereareyou.android.contacts;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -119,21 +118,13 @@ public class ContactsProvider {
     }
     
     public List<Contact> getContactsToAddToTrace(Context context) {
-        List<Contact> allContacts = getAllContacts(context);
         List<Contact> existingContacts = getContactsToTrace();
-        
-        allContacts.removeAll(existingContacts);
-        
-        return allContacts;
+        return subtractContactsList(context, existingContacts);
     }
     
     public List<Contact> getContactsToAddToInform(Context context) {
-        List<Contact> allContacts = new ArrayList<Contact>();
         List<Contact> existingContacts = getContactsToInform();
-        
-        allContacts.removeAll(existingContacts);
-        
-        return allContacts;
+        return subtractContactsList(context, existingContacts);
     }
     
     public List<String> getContactEmails(Context context, String contactId) {
@@ -149,6 +140,14 @@ public class ContactsProvider {
         return emails;
     }
     
+    private List<Contact> subtractContactsList(Context context, List<Contact> existingContacts) {
+        List<Contact> allContacts = getAllContacts(context);
+        
+        allContacts.removeAll(existingContacts);
+        
+        return allContacts;
+    }
+    
     private List<Contact> getContactsList(Cursor cursor) {
         List<Contact> contacts = new ArrayList<Contact>();
 
@@ -156,6 +155,7 @@ public class ContactsProvider {
             contacts.add(buildContact(cursor));
         }
         
+        Collections.sort(contacts);
         return contacts;
     }
     

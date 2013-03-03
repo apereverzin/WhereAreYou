@@ -1,7 +1,5 @@
 package com.creek.whereareyou.android.activity.contacts;
 
-import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_ACTIVITY_MODE;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -10,27 +8,18 @@ import java.util.Map;
 
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.ApplManager;
-import com.creek.whereareyou.android.activity.map.MainMapActivity;
 import com.creek.whereareyou.android.contacts.Contact;
-import com.google.android.maps.Projection;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.provider.BaseColumns;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Email;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -48,19 +37,15 @@ public class ContactsActivity extends ListActivity {
     private static final int EXCLUDE_CONTACT_MENU_ITEM = Menu.FIRST + 1;
 
     private static final String CONTACT_NAME = "contact_name";
+    private static final String CONTACT_CHECK = "contact_check";
 
     public static final String CONTACT_SELECTED = "CONTACT_SELECTED";
     public static final String CONTACT_ACTIVITY_MODE = "CONTACT_ACTIVITY_MODE";
 
-    private static String[] projection = { ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME };
-
-    private List<Map<String, String>> contactsList;
     private List<Contact> contactsDataList;
-    private SimpleAdapter contactsListAdapter;
 
     private Mode mode;
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(getClass().getName(), "onCreate()");
@@ -70,18 +55,47 @@ public class ContactsActivity extends ListActivity {
         mode = (Mode) bundle.get(CONTACT_ACTIVITY_MODE);
 
         setActivityTitle();
+        contactsDataList = getContactsList();
 
         setContentView(R.layout.contacts_list);
-        contactsList = new LinkedList<Map<String, String>>();
 
-        contactsDataList = getContactsList();
-        for (Contact contact : contactsDataList) {
-            Map<String, String> contactMap = createMapForList(contact);
-            contactsList.add(contactMap);
+        if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode || Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
+            final List<Map<String, Object>> contactsList = new LinkedList<Map<String, Object>>();
+
+            for (Contact contact : contactsDataList) {
+                Map<String, Object> contactMap = createMapForList(contact);
+                contactsList.add(contactMap);
+            }
+
+            SimpleAdapter contactsListAdapter = 
+                    new SimpleAdapter(getApplicationContext(), contactsList, 
+                            R.layout.contact_row, new String[] { CONTACT_NAME }, new int[] { R.id.contact_name });
+            setListAdapter(contactsListAdapter);
+        } else {
+            final List<CheckBoxContact> contactsList = new ArrayList<CheckBoxContact>();
+            for (Contact contact : contactsDataList) {
+                CheckBoxContact checkBoxContact = new CheckBoxContact(contact);
+                contactsList.add(checkBoxContact);
+            }
+            ContactListCheckBoxAdapter contactsListAdapter = new ContactListCheckBoxAdapter(this, contactsList);
+            
+            ListView lv = (ListView) findViewById(android.R.id.list);
+            final Button saveButton = new Button(this);
+            saveButton.setText(getString(R.string.save));
+            lv.addFooterView(saveButton);
+            saveButton.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    for(CheckBoxContact checkBoxContact : contactsList) {
+                        System.out.println(checkBoxContact.getContact().getDisplayName() + checkBoxContact.isSelected());
+                    }
+
+                    setResult(RESULT_OK);
+                    finish();
+                }
+            });
+
+            setListAdapter(contactsListAdapter);
         }
-        
-        contactsListAdapter = new SimpleAdapter(getApplicationContext(), contactsList, R.layout.contact_row, new String[] { CONTACT_NAME }, new int[] { R.id.contact_name });
-        setListAdapter(contactsListAdapter);
         registerForContextMenu(getListView());
         Log.d(getClass().getName(), "onCreate() finished");
     }
@@ -92,7 +106,9 @@ public class ContactsActivity extends ListActivity {
         boolean result = super.onPrepareOptionsMenu(menu);
         menu.clear();
 
-        menu.add(0, ADD_CONTACT_MENU_ITEM, 0, R.string.menu_add_contact);
+        if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode || Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
+            menu.add(0, ADD_CONTACT_MENU_ITEM, 0, R.string.menu_add_contact);
+        }
 
         return result;
     }
@@ -102,13 +118,14 @@ public class ContactsActivity extends ListActivity {
         switch (item.getItemId()) {
         case ADD_CONTACT_MENU_ITEM:
             Log.d(getClass().getName(), "ADD_CONTACT_MENU_ITEM");
-            // contactsDataList =
-            // RepositoryManager.getInstance().getTripRepository().getTrips();
-            //
-            // recreateTripsList(contactsDataList);
-            // StringBuilder title = new
-            // StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.all_trips));
-            // setTitle(title);
+            if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode) {
+                startContactsActivity(Mode.ADD_CONTACT_TO_INFORM);
+            } else if (Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
+                startContactsActivity(Mode.ADD_CONTACT_TO_TRACE);
+            }
+
+            //recreateTripsList(contactsDataList);
+            setActivityTitle();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -181,10 +198,11 @@ public class ContactsActivity extends ListActivity {
         }
     }
 
-    private Map<String, String> createMapForList(Contact contact) {
-        Map<String, String> tripMap = new HashMap<String, String>();
-        tripMap.put(CONTACT_NAME, contact.toString());
-        return tripMap;
+    private Map<String, Object> createMapForList(Contact contact) {
+        Map<String, Object> contactMap = new HashMap<String, Object>();
+        contactMap.put(CONTACT_NAME, contact.getDisplayName());
+        contactMap.put(CONTACT_CHECK, Boolean.FALSE);
+        return contactMap;
     }
 
     // private void recreateTripsList(List<Trip> contactsDataList) {
@@ -216,9 +234,9 @@ public class ContactsActivity extends ListActivity {
         } else if (Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
             title.append(getString(R.string.contacts_to_trace));
         } else if (Mode.ADD_CONTACT_TO_INFORM == mode) {
-            title.append(getString(R.string.contacts_to_inform)).append(": ").append(R.string.add);
+            title.append(getString(R.string.contacts_to_inform)).append(": ").append(getString(R.string.add));
         } else if (Mode.ADD_CONTACT_TO_TRACE == mode) {
-            title.append(getString(R.string.contacts_to_trace)).append(": ").append(R.string.add);
+            title.append(getString(R.string.contacts_to_trace)).append(": ").append(getString(R.string.add));
         }
 
         setTitle(title);
@@ -235,4 +253,5 @@ public class ContactsActivity extends ListActivity {
     public static enum Mode {
         DISPLAY_CONTACTS_TO_INFORM, DISPLAY_CONTACTS_TO_TRACE, ADD_CONTACT_TO_INFORM, ADD_CONTACT_TO_TRACE;
     }
+
 }

@@ -1,9 +1,13 @@
 package com.creek.whereareyou.android;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -50,12 +54,41 @@ public class FileProvider {
         props.store(new FileOutputStream(f), "");
     }
     
-    public Transformable getTransformableObjectFromFile(String fileName) throws IOException {
-        return null;
+    public String getStringFromFile(String fileName) throws IOException {
+        File f = getFile(fileName);
+        if(!f.exists()) {
+            return "";
+        }
+        
+        FileReader fr = null;
+        BufferedReader br = null;
+        try {
+            fr = new FileReader(f);
+            br = new BufferedReader(fr);
+            return br.readLine();
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
     }
     
-    public void persistTransformableObjectToFile(String fileName, Transformable object) throws IOException {
+    public void persistStringToFile(String fileName, String value) throws IOException {
         File f = getFile(fileName);
+        if(f.exists()) {
+            f.delete();
+        }
+        
         f.createNewFile();
+        
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(f);
+            pw.write(value);
+        } finally {
+            if(pw != null) {
+                pw.close();
+            }
+        }
     }
 }

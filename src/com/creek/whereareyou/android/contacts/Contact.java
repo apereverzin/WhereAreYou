@@ -9,7 +9,7 @@ import com.creek.whereareyoumodel.message.Transformable;
  * @author andreypereverzin
  */
 @SuppressWarnings("serial")
-public class Contact implements Transformable {
+public class Contact implements Transformable, Comparable<Contact> {
     private static final String ID = "id";
     private static final String DISPLAY_NAME = "displayName";
     private static final String EMAIL = "email";
@@ -81,5 +81,10 @@ public class Contact implements Transformable {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(Contact other) {
+        return getDisplayName().compareTo(other.getDisplayName());
     }
 }
