@@ -6,20 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
-
-import javax.mail.MessagingException;
-
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.creek.whereareyoumodel.message.Transformable;
-import com.creek.whereareyoumodel.util.JSONTransformer;
 
 import android.os.Environment;
 

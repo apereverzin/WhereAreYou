@@ -36,7 +36,7 @@
     <string name="no_contacts">No contacts</string>
     
     <!-- Contact List Menu Items -->
-    <string name="menu_add_contact">Add Contact</string>
+    <string name="menu_add_contacts">Add Contacts</string>
     <string name="menu_view_contact">View Contact</string>
     <string name="menu_exclude_contact">Exclude Contact</string>
     

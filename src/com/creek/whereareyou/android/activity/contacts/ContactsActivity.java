@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.activity.contacts;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,6 +10,8 @@ import java.util.Map;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.ApplManager;
 import com.creek.whereareyou.android.contacts.Contact;
+import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
+import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -31,7 +34,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public class ContactsActivity extends ListActivity {
     private static final String TAG = ContactsActivity.class.getSimpleName();
 
-    private static final int ADD_CONTACT_MENU_ITEM = Menu.FIRST;
+    private static final int ADD_CONTACTS_MENU_ITEM = Menu.FIRST;
 
     private static final int VIEW_CONTACT_MENU_ITEM = Menu.FIRST;
     private static final int EXCLUDE_CONTACT_MENU_ITEM = Menu.FIRST + 1;
@@ -43,6 +46,7 @@ public class ContactsActivity extends ListActivity {
     public static final String CONTACT_ACTIVITY_MODE = "CONTACT_ACTIVITY_MODE";
 
     private List<Contact> contactsDataList;
+    private final ContactsPersistenceManager contactsPersistentManager = new ContactsPersistenceManager();
 
     private Mode mode;
 
@@ -59,7 +63,7 @@ public class ContactsActivity extends ListActivity {
 
         setContentView(R.layout.contacts_list);
 
-        if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode || Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
+        if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode) || Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
             final List<Map<String, Object>> contactsList = new LinkedList<Map<String, Object>>();
 
             for (Contact contact : contactsDataList) {
@@ -73,10 +77,12 @@ public class ContactsActivity extends ListActivity {
             setListAdapter(contactsListAdapter);
         } else {
             final List<CheckBoxContact> contactsList = new ArrayList<CheckBoxContact>();
+            
             for (Contact contact : contactsDataList) {
                 CheckBoxContact checkBoxContact = new CheckBoxContact(contact);
                 contactsList.add(checkBoxContact);
             }
+            
             ContactListCheckBoxAdapter contactsListAdapter = new ContactListCheckBoxAdapter(this, contactsList);
             
             ListView lv = (ListView) findViewById(android.R.id.list);
@@ -85,8 +91,25 @@ public class ContactsActivity extends ListActivity {
             lv.addFooterView(saveButton);
             saveButton.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View view) {
+                    List<Contact> contacts = new ArrayList<Contact>();
                     for(CheckBoxContact checkBoxContact : contactsList) {
-                        System.out.println(checkBoxContact.getContact().getDisplayName() + checkBoxContact.isSelected());
+                        if(checkBoxContact.isSelected()) {
+                            contacts.add(checkBoxContact.getContact());
+                        }
+                    }
+                    
+                    try {
+                        if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
+                            contactsPersistentManager.persistContactsToInformWhenAdding(contacts);
+                        } else if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) {
+                            contactsPersistentManager.persistContactsToTraceWhenAdding(contacts);
+                        } else if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
+                            contactsPersistentManager.persistContactsToInform(contacts);
+                        } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
+                            contactsPersistentManager.persistContactsToTrace(contacts);
+                        }
+                    } catch (IOException ex) {
+                        ActivityUtil.showException(ContactsActivity.this, ex);
                     }
 
                     setResult(RESULT_OK);
@@ -106,8 +129,8 @@ public class ContactsActivity extends ListActivity {
         boolean result = super.onPrepareOptionsMenu(menu);
         menu.clear();
 
-        if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode || Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
-            menu.add(0, ADD_CONTACT_MENU_ITEM, 0, R.string.menu_add_contact);
+        if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode) || Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
+            menu.add(0, ADD_CONTACTS_MENU_ITEM, 0, R.string.menu_add_contacts);
         }
 
         return result;
@@ -116,12 +139,12 @@ public class ContactsActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case ADD_CONTACT_MENU_ITEM:
-            Log.d(getClass().getName(), "ADD_CONTACT_MENU_ITEM");
-            if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode) {
-                startContactsActivity(Mode.ADD_CONTACT_TO_INFORM);
-            } else if (Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
-                startContactsActivity(Mode.ADD_CONTACT_TO_TRACE);
+        case ADD_CONTACTS_MENU_ITEM:
+            Log.d(getClass().getName(), "ADD_CONTACTS_MENU_ITEM");
+            if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
+                startContactsActivity(Mode.ADD_CONTACTS_TO_INFORM);
+            } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
+                startContactsActivity(Mode.ADD_CONTACTS_TO_TRACE);
             }
 
             //recreateTripsList(contactsDataList);
@@ -215,27 +238,33 @@ public class ContactsActivity extends ListActivity {
     // }
 
     private List<Contact> getContactsList() {
-        if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode) {
-            return ApplManager.getInstance().getContactsProvider().getContactsToInform();
-        } else if (Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
-            return ApplManager.getInstance().getContactsProvider().getContactsToTrace();
-        } else if (Mode.ADD_CONTACT_TO_INFORM == mode) {
-            return ApplManager.getInstance().getContactsProvider().getContactsToAddToInform(this);
-        } else /*if (Mode.ADD_CONTACT_TO_TRACE == mode) */ {
-            return ApplManager.getInstance().getContactsProvider().getContactsToAddToTrace(this);
+        try {
+            if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
+                return contactsPersistentManager.retrieveContactsToInform(this);
+            } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
+                return contactsPersistentManager.retrieveContactsToTrace(this);
+            } else if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
+                return contactsPersistentManager.retrieveContactsToAddToInform(this);
+            } else /* if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) */{
+                return contactsPersistentManager.retrieveContactsToAddToTrace(this);
+            }
+        } catch (IOException ex) {
+            ActivityUtil.showException(ContactsActivity.this, ex);
+            return new ArrayList<Contact>();
         }
+
     }
 
     private void setActivityTitle() {
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ");
 
-        if (Mode.DISPLAY_CONTACTS_TO_INFORM == mode) {
+        if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
             title.append(getString(R.string.contacts_to_inform));
-        } else if (Mode.DISPLAY_CONTACTS_TO_TRACE == mode) {
+        } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
             title.append(getString(R.string.contacts_to_trace));
-        } else if (Mode.ADD_CONTACT_TO_INFORM == mode) {
+        } else if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
             title.append(getString(R.string.contacts_to_inform)).append(": ").append(getString(R.string.add));
-        } else if (Mode.ADD_CONTACT_TO_TRACE == mode) {
+        } else if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) {
             title.append(getString(R.string.contacts_to_trace)).append(": ").append(getString(R.string.add));
         }
 
@@ -251,7 +280,7 @@ public class ContactsActivity extends ListActivity {
     }
 
     public static enum Mode {
-        DISPLAY_CONTACTS_TO_INFORM, DISPLAY_CONTACTS_TO_TRACE, ADD_CONTACT_TO_INFORM, ADD_CONTACT_TO_TRACE;
+        DISPLAY_CONTACTS_TO_INFORM, DISPLAY_CONTACTS_TO_TRACE, ADD_CONTACTS_TO_INFORM, ADD_CONTACTS_TO_TRACE;
     }
 
 }

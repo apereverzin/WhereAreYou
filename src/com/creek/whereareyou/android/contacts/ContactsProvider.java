@@ -20,9 +20,6 @@ import android.util.Log;
 public class ContactsProvider {
     private static final String TAG = ContactsProvider.class.getSimpleName();
 
-    private static final String CONTACTS_TO_INFORM_FILE_PATH = "/Android/contactstoinform.json";
-    private static final String CONTACTS_TO_TRACE_FILE_PATH = "/Android/contactstotrace.json";
-
     private static String[] PROJECTION = {
             ContactsContract.Contacts._ID,
             ContactsContract.Contacts.DISPLAY_NAME
@@ -96,37 +93,6 @@ public class ContactsProvider {
             }
         }
     }
-    
-    public List<Contact> getContactsToInform() {
-        List<Contact> contacts = new ArrayList<Contact>();
-        
-        return contacts;
-    }
-    
-    public void saveContactsToInform(List<Contact> contacts) {
-        
-    }
-    
-    public List<Contact> getContactsToTrace() {
-        List<Contact> contacts = new ArrayList<Contact>();
-        
-        return contacts;
-    }
-    
-    public void saveContactsToTrace(List<Contact> contacts) {
-        
-    }
-    
-    public List<Contact> getContactsToAddToTrace(Context context) {
-        List<Contact> existingContacts = getContactsToTrace();
-        return subtractContactsList(context, existingContacts);
-    }
-    
-    public List<Contact> getContactsToAddToInform(Context context) {
-        List<Contact> existingContacts = getContactsToInform();
-        return subtractContactsList(context, existingContacts);
-    }
-    
     public List<String> getContactEmails(Context context, String contactId) {
         List<String> emails = new ArrayList<String>();
         Cursor emailsCursor = context.getContentResolver().query(Email.CONTENT_URI, null, Email.CONTACT_ID + " = " + contactId, null, null);
@@ -138,14 +104,6 @@ public class ContactsProvider {
         }
         emailsCursor.close();
         return emails;
-    }
-    
-    private List<Contact> subtractContactsList(Context context, List<Contact> existingContacts) {
-        List<Contact> allContacts = getAllContacts(context);
-        
-        allContacts.removeAll(existingContacts);
-        
-        return allContacts;
     }
     
     private List<Contact> getContactsList(Cursor cursor) {
