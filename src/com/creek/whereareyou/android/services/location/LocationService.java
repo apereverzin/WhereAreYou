@@ -1,4 +1,4 @@
-package com.creek.whereareyou.android.services.locationservice;
+package com.creek.whereareyou.android.services.location;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,7 +23,7 @@ public class LocationService extends Service {
     LocationManager locationManager;
     String bestProvider;
     
-    private TimerTask updateTask = new TimerTask() {
+    private TimerTask locationTask = new TimerTask() {
         @Override
         public void run() {
             Log.i(TAG, "-------------------Timer task doing work");
@@ -41,8 +41,8 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        timer = new Timer("WhereAreYouTimer");
-        timer.schedule(updateTask, 1000L, 1 * 1000L);
+        timer = new Timer("WhereAreYouLocationTimer");
+        timer.schedule(locationTask, 1000L, 1 * 1000L);
         
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_COARSE);

@@ -11,8 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.ApplManager;
 import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_ACTIVITY_MODE;

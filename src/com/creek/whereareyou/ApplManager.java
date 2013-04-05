@@ -1,9 +1,9 @@
-package com.creek.whereareyou.android;
+package com.creek.whereareyou;
 
-import android.util.Log;
-
+import com.creek.whereareyou.android.FileProvider;
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
+import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.contacts.ContactsProvider;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
 
@@ -12,14 +12,13 @@ import com.creek.whereareyou.android.locationprovider.LocationProvider;
  * @author Andrey Pereverzin
  */
 public class ApplManager {
-    private static final String TAG = ApplManager.class.getSimpleName();
-    
     private static ApplManager instance = new ApplManager();
-    private LocationProvider locationProvider = new LocationProvider();
-    private GoogleAccountProvider accountProvider = new GoogleAccountProvider();
-    private MailAccountPropertiesProvider mailAccountPropertiesProvider = new MailAccountPropertiesProvider();
-    private FileProvider fileProvider = new FileProvider();
-    private ContactsProvider contactsProvider = new ContactsProvider();
+    private final LocationProvider locationProvider = new LocationProvider();
+    private final GoogleAccountProvider accountProvider = new GoogleAccountProvider();
+    private final MailAccountPropertiesProvider mailAccountPropertiesProvider = new MailAccountPropertiesProvider();
+    private final FileProvider fileProvider = new FileProvider();
+    private final ContactsProvider contactsProvider = new ContactsProvider();
+    private final ContactsPersistenceManager contactsPersistentManager = new ContactsPersistenceManager();
 
     private ApplManager() {
         //
@@ -47,5 +46,9 @@ public class ApplManager {
 
     public ContactsProvider getContactsProvider() {
         return contactsProvider;
+    }
+
+    public ContactsPersistenceManager getContactsPersistentManager() {
+        return contactsPersistentManager;
     }
 }

@@ -2,15 +2,15 @@ package com.creek.whereareyou.android.activity.contacts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.ApplManager;
 import com.creek.whereareyou.android.contacts.Contact;
-import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.app.ListActivity;
@@ -46,7 +46,6 @@ public class ContactsActivity extends ListActivity {
     public static final String CONTACT_ACTIVITY_MODE = "CONTACT_ACTIVITY_MODE";
 
     private List<Contact> contactsDataList;
-    private final ContactsPersistenceManager contactsPersistentManager = new ContactsPersistenceManager();
 
     private Mode mode;
 
@@ -60,17 +59,12 @@ public class ContactsActivity extends ListActivity {
 
         setActivityTitle();
         contactsDataList = getContactsList();
+        Collections.sort(contactsDataList);
 
         setContentView(R.layout.contacts_list);
 
         if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode) || Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
-            final List<Map<String, Object>> contactsList = new LinkedList<Map<String, Object>>();
-
-            for (Contact contact : contactsDataList) {
-                Map<String, Object> contactMap = createMapForList(contact);
-                contactsList.add(contactMap);
-            }
-
+            final List<Map<String, Object>> contactsList = createContactsList(contactsDataList);
             SimpleAdapter contactsListAdapter = 
                     new SimpleAdapter(getApplicationContext(), contactsList, 
                             R.layout.contact_row, new String[] { CONTACT_NAME }, new int[] { R.id.contact_name });
@@ -89,33 +83,8 @@ public class ContactsActivity extends ListActivity {
             final Button saveButton = new Button(this);
             saveButton.setText(getString(R.string.save));
             lv.addFooterView(saveButton);
-            saveButton.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View view) {
-                    List<Contact> contacts = new ArrayList<Contact>();
-                    for(CheckBoxContact checkBoxContact : contactsList) {
-                        if(checkBoxContact.isSelected()) {
-                            contacts.add(checkBoxContact.getContact());
-                        }
-                    }
-                    
-                    try {
-                        if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
-                            contactsPersistentManager.persistContactsToInformWhenAdding(contacts);
-                        } else if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) {
-                            contactsPersistentManager.persistContactsToTraceWhenAdding(contacts);
-                        } else if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
-                            contactsPersistentManager.persistContactsToInform(contacts);
-                        } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
-                            contactsPersistentManager.persistContactsToTrace(contacts);
-                        }
-                    } catch (IOException ex) {
-                        ActivityUtil.showException(ContactsActivity.this, ex);
-                    }
-
-                    setResult(RESULT_OK);
-                    finish();
-                }
-            });
+            
+            saveButton.setOnClickListener(new SaveButtonListener(this, contactsList, mode));
 
             setListAdapter(contactsListAdapter);
         }
@@ -147,37 +116,19 @@ public class ContactsActivity extends ListActivity {
                 startContactsActivity(Mode.ADD_CONTACTS_TO_TRACE);
             }
 
-            //recreateTripsList(contactsDataList);
+            ((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
             setActivityTitle();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    // @Override
-    // public void onResume() {
-    // Log.d(getClass().getName(), "onResume()");
-    // Trip lastCreatedTrip =
-    // RepositoryManager.getInstance().getTripRepository().getLastCreatedTrip();
-    // if (lastCreatedTrip != null) {
-    // contactsDataList.add(0, lastCreatedTrip);
-    // Map<String, String> tripMap = createTripMapForList(lastCreatedTrip);
-    // contactsList.add(0, tripMap);
-    // ((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
-    // }
-    // Trip lastUpdatedTrip =
-    // RepositoryManager.getInstance().getTripRepository().getLastUpdatedTrip();
-    // if (lastUpdatedTrip != null) {
-    // int ind = contactsDataList.indexOf(lastUpdatedTrip);
-    // contactsDataList.remove(ind);
-    // contactsDataList.add(ind, lastUpdatedTrip);
-    // Map<String, String> tripMap = createTripMapForList(lastUpdatedTrip);
-    // contactsList.remove(ind);
-    // contactsList.add(ind, tripMap);
-    // ((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
-    // }
-    // super.onResume();
-    // }
+    @Override
+    public void onResume() {
+        Log.d(getClass().getName(), "onResume() " + mode);
+        //((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
+        super.onResume();
+    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -228,25 +179,27 @@ public class ContactsActivity extends ListActivity {
         return contactMap;
     }
 
-    // private void recreateTripsList(List<Trip> contactsDataList) {
-    // contactsList.clear();
-    // for (Trip trip : contactsDataList) {
-    // Map<String, String> tripMap = createTripMapForList(trip);
-    // contactsList.add(tripMap);
-    // }
-    // ((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
-    // }
+    private List<Map<String, Object>> createContactsList(List<Contact> contactsDataList) {
+        final List<Map<String, Object>> contactsList = new LinkedList<Map<String, Object>>();
+
+        for (Contact contact : contactsDataList) {
+            Map<String, Object> contactMap = createMapForList(contact);
+            contactsList.add(contactMap);
+        }
+        
+        return contactsList;
+    }
 
     private List<Contact> getContactsList() {
         try {
             if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
-                return contactsPersistentManager.retrieveContactsToInform(this);
+                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToInform(this);
             } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
-                return contactsPersistentManager.retrieveContactsToTrace(this);
+                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToTrace(this);
             } else if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
-                return contactsPersistentManager.retrieveContactsToAddToInform(this);
+                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToAddToInform(this);
             } else /* if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) */{
-                return contactsPersistentManager.retrieveContactsToAddToTrace(this);
+                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToAddToTrace(this);
             }
         } catch (IOException ex) {
             ActivityUtil.showException(ContactsActivity.this, ex);
@@ -282,5 +235,4 @@ public class ContactsActivity extends ListActivity {
     public static enum Mode {
         DISPLAY_CONTACTS_TO_INFORM, DISPLAY_CONTACTS_TO_TRACE, ADD_CONTACTS_TO_INFORM, ADD_CONTACTS_TO_TRACE;
     }
-
 }
