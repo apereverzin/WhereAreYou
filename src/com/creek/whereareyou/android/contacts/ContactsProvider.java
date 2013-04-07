@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.contacts;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -38,53 +39,6 @@ public class ContactsProvider {
     public List<Contact> getContactsByIds(Context context, Set<String> contactIds) {
         return retrieveContactsByIds(context, contactIds);
     }
-
-//    public Contact getContactById(Context context, String contactId) {
-//        Cursor cursor = null;
-//
-//        try {
-//            cursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, CONTACT_PROJECTION, 
-//                    ContactsContract.Contacts._ID + " = ?", new String[] { contactId }, null);
-//
-//            if (cursor.moveToNext()) {
-//                return buildContact(contactId, cursor);
-//            }
-//
-//            return null;
-//        } finally {
-//            if (cursor != null) {
-//                cursor.close();
-//            }
-//        }
-//    }
-//    
-//    public List<Contact> getContactsByIds(Context context, List<String> contactIds) {
-//        Cursor cursor = null;
-//        
-//        try {
-//            cursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, CONTACT_PROJECTION, 
-//                    ContactsContract.Contacts._ID + " = ?", (String[])contactIds.toArray(), null);
-//        
-//            return getContactsList(cursor);
-//        } finally {
-//            if(cursor != null) {
-//                cursor.close();
-//            }
-//        }
-//    }
-//        
-//    public List<Contact> getAllContacts(Context context) {
-//        Cursor cursor = null;
-//        
-//        try {
-//            cursor = context.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, CONTACT_PROJECTION, null, null, null);
-//            return getContactsList(cursor);
-//        } finally {
-//            if (cursor != null) {
-//                cursor.close();
-//            }
-//        }
-//    }
     
     public List<String> getGoogleEmailsByContactId(Context context, String contactId) {
         ContentResolver cr = context.getContentResolver();
@@ -130,8 +84,8 @@ public class ContactsProvider {
         
         try {
             cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, CONTACT_PROJECTION, 
-                    contactIds == null ? null : ContactsContract.Contacts._ID + " = ?", 
-                    contactIds == null ? null : buildIdsArray(contactIds), ContactsContract.Contacts.DISPLAY_NAME);
+                    contactIds == null ? null : ContactsContract.Contacts._ID + buildINClause(contactIds), 
+                    null, ContactsContract.Contacts.DISPLAY_NAME);
         
             return getContactsList(cursor);
         } finally {
@@ -141,13 +95,16 @@ public class ContactsProvider {
         }
     }
     
-    private String[] buildIdsArray(Set<String> contactIds) {
-        String[] ids = new String[contactIds.size()];
-        int i = 0;
-        for(String contactId: contactIds) {
-            ids[i++] = contactId;
+    private String buildINClause(Set<String> contactIds) {
+        Iterator<String> iter = contactIds.iterator();
+        StringBuilder sb = new StringBuilder(" IN (");
+        if (iter.hasNext()) {
+            sb.append(iter.next());
+            while (iter.hasNext()) {
+                sb.append(",").append(iter.next());
+            }
         }
-        return ids;
+        return sb.append(")").toString();
     }
 
     private List<Contact> getContactsList(Cursor cursor) {
@@ -157,7 +114,6 @@ public class ContactsProvider {
             contacts.add(buildContact(cursor));
         }
         
-        Collections.sort(contacts);
         return contacts;
     }
     

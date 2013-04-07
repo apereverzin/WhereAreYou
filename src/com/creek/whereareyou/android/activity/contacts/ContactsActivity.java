@@ -59,7 +59,6 @@ public class ContactsActivity extends ListActivity {
 
         setActivityTitle();
         contactsDataList = getContactsList();
-        Collections.sort(contactsDataList);
 
         setContentView(R.layout.contacts_list);
 
