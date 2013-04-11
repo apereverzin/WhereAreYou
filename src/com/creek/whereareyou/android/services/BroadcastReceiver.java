@@ -1,7 +1,6 @@
 package com.creek.whereareyou.android.services;
 
 import com.creek.whereareyou.android.services.inform.InformService;
-import com.creek.whereareyou.android.services.location.LocationService;
 import com.creek.whereareyou.android.services.trace.TraceService;
 
 import android.content.Context;
@@ -16,7 +15,6 @@ public class BroadcastReceiver extends android.content.BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        startService(context, LocationService.class);
         startService(context, TraceService.class);
         startService(context, InformService.class);
     }

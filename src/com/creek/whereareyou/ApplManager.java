@@ -11,7 +11,7 @@ import com.creek.whereareyou.android.locationprovider.LocationProvider;
  * 
  * @author Andrey Pereverzin
  */
-public class ApplManager {
+public final class ApplManager {
     private static ApplManager instance = new ApplManager();
     private final LocationProvider locationProvider = new LocationProvider();
     private final GoogleAccountProvider accountProvider = new GoogleAccountProvider();
@@ -32,7 +32,7 @@ public class ApplManager {
         return locationProvider;
     }
 
-    public GoogleAccountProvider getAccountProvider() {
+    public GoogleAccountProvider getGoogleAccountProvider() {
         return accountProvider;
     }
 

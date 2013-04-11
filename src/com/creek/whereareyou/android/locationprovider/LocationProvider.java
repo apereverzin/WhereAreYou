@@ -1,5 +1,11 @@
 package com.creek.whereareyou.android.locationprovider;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.creek.whereareyou.android.activity.map.LocationAware;
+import com.creek.whereareyou.android.locationlistener.WhereLocationListener;
+
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,30 +21,36 @@ public class  LocationProvider {
     private static final String TAG = LocationProvider.class.getSimpleName();
 
     private String bestProvider;
-    private boolean bestProviderDefined = false;
+    private boolean locationUpdatesRequested = false;
     private LocationManager locationManager;
-    
-    public Location getLocation(Context context, LocationListener locationListener) {
-        locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+    private Location latestLocation;
+    private WhereLocationListener locationListener = new WhereLocationListener();
+        
+    public void initiateLocationUpdates(Context context) {
+        if (!locationUpdatesRequested) {
+            locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
-        if(!bestProviderDefined) {
             defineBestProvider(context);
-        }
-        
-        Log.d(TAG, "----- " + bestProvider);
-        Location l = locationManager.getLastKnownLocation(bestProvider);
-        
-        locationManager.requestLocationUpdates(bestProvider, 2000, 10, locationListener);
 
-        return l;
+            Log.d(TAG, "----------------------------==========================bestProvider: " + bestProvider);
+            locationManager.requestLocationUpdates(bestProvider, 2000, 10, locationListener);
+            
+            locationUpdatesRequested = true;
+        }
+    }
+    
+    public void requestLocationUpdates(LocationAware listener) {
+        locationListener.addLocationAwareComponent(listener);
+    }
+    
+    public void stopLocationUpdates(LocationAware listener) {
+        locationListener.removeLocationAwareComponent(listener);
     }
     
     private void defineBestProvider(Context context) {
         Criteria criteria = createCriteria();
         
         bestProvider = locationManager.getBestProvider(criteria, true);
-        
-        bestProviderDefined = true;
     }
     
     private Criteria createCriteria() {
@@ -50,5 +62,17 @@ public class  LocationProvider {
         criteria.setSpeedRequired(false);
         criteria.setCostAllowed(false);
         return criteria;
+    }
+
+    public Location getLatestLocation(Context context) {
+        if (!locationUpdatesRequested) {
+            initiateLocationUpdates(context);
+        }
+        
+        return latestLocation;
+    }
+
+    public void setLatestLocation(Location latestLocation) {
+        this.latestLocation = latestLocation;
     }
 }

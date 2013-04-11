@@ -1,6 +1,10 @@
 package com.creek.whereareyou.android.locationlistener;
 
-import com.creek.whereareyou.android.activity.map.MainMapActivity;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.creek.whereareyou.ApplManager;
+import com.creek.whereareyou.android.activity.map.LocationAware;
 import com.google.android.maps.GeoPoint;
 
 import android.location.GpsStatus;
@@ -15,6 +19,7 @@ import android.util.Log;
  */
 public class WhereLocationListener implements LocationListener {
     private static final String TAG = WhereLocationListener.class.getSimpleName();
+    private final Set<LocationAware> locationAwareComponents = new HashSet<LocationAware>();
 
     public void onProviderEnabled(String provider) {
         Log.d(getClass().getName(), "onProviderEnabled: " + provider);
@@ -44,12 +49,19 @@ public class WhereLocationListener implements LocationListener {
      * 
      */
     public void onLocationChanged(Location loc) {
-        Log.d(getClass().getName(), "onLocationChanged: " + loc);
-        loc.getTime();
-        loc.getLatitude();
-        loc.getLongitude();
-        loc.getAltitude();
-
-        GeoPoint point = new GeoPoint((int) loc.getLatitude(), (int) loc.getLongitude());
+//        GeoPoint point = new GeoPoint((int) loc.getLatitude(), (int) loc.getLongitude());
+        System.out.println("-------------onLocationChanged " + loc.getLatitude() + " " + loc.getLongitude());
+        for(LocationAware locationAwareComponent: locationAwareComponents) {
+            locationAwareComponent.updateWithNewLocation(loc);
+        }
+        ApplManager.getInstance().getLocationProvider().setLatestLocation(loc);
+    }
+    
+    public void addLocationAwareComponent(LocationAware component) {
+        locationAwareComponents.add(component);
+    }
+    
+    public void removeLocationAwareComponent(LocationAware component) {
+        locationAwareComponents.remove(component);
     }
 }

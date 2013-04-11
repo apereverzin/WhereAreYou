@@ -52,7 +52,7 @@ public class EmailAccountEditActivity extends Activity {
         saveButton = (Button) findViewById(R.id.mail_properties_button_save);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         
-        final Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
+        final Account googleAccount = ApplManager.getInstance().getGoogleAccountProvider().getEmailAccount(this);
         
         try {
             Properties props = ApplManager.getInstance().getMailAccountPropertiesProvider().getMailProperties();

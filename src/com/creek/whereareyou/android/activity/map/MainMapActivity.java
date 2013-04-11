@@ -2,7 +2,6 @@ package com.creek.whereareyou.android.activity.map;
 
 import java.util.List;
 
-import android.accounts.Account;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,6 +14,8 @@ import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
+import com.creek.whereareyou.android.locationlistener.WhereLocationListener;
+
 import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_ACTIVITY_MODE;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -26,7 +27,7 @@ import com.google.android.maps.Overlay;
  * 
  * @author Andrey Pereverzin
  */
-public class MainMapActivity extends MapActivity {
+public class MainMapActivity extends MapActivity implements LocationAware {
     private static final String TAG = MainMapActivity.class.getSimpleName();
 
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
@@ -58,10 +59,8 @@ public class MainMapActivity extends MapActivity {
         overlays.add(locationsOverlay);
         mapView.postInvalidate();
 
-        Location l = ApplManager.getInstance().getLocationProvider().getLocation(this, locationListener);
-        Account googleAccount = ApplManager.getInstance().getAccountProvider().getGoogleAccount(this);
-
-        updateWithNewLocation(l);
+        ApplManager.getInstance().getLocationProvider().initiateLocationUpdates(this);
+        ApplManager.getInstance().getLocationProvider().requestLocationUpdates(this);
     }
 
     @Override
@@ -92,8 +91,15 @@ public class MainMapActivity extends MapActivity {
             return super.onOptionsItemSelected(item);
         }
     }
+    
+    @Override
+    public void onDestroy() {
+        ApplManager.getInstance().getLocationProvider().stopLocationUpdates(this);
+        super.onDestroy();
+    }
 
-    private void updateWithNewLocation(Location location) {
+    @Override
+    public void updateWithNewLocation(Location location) {
         if (location != null) {
             locationsOverlay.setLocation(location);
             Double geoLat = location.getLatitude() * 1E6;
@@ -102,21 +108,6 @@ public class MainMapActivity extends MapActivity {
             mapController.animateTo(point);
         }
     }
-
-    private final LocationListener locationListener = new LocationListener() {
-        public void onLocationChanged(Location location) {
-            updateWithNewLocation(location);
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    };
 
     private void startContactsActivity(ContactsActivity.Mode mode) {
         Intent intent = new Intent(MainMapActivity.this, ContactsActivity.class);
