@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 import android.content.Context;
 
-import com.creek.whereareyou.ApplManager;
+import com.creek.whereareyou.manager.ApplManager;
 
 /**
  * 

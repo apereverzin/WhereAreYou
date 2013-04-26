@@ -10,11 +10,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import com.creek.whereareyou.android.locationlistener.WhereLocationListener;
+import com.creek.whereareyou.manager.ApplManager;
 
 import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_ACTIVITY_MODE;
 import com.google.android.maps.GeoPoint;

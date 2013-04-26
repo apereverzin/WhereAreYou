@@ -8,10 +8,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.contacts.Contact;
 import com.creek.whereareyou.android.util.ActivityUtil;
+import com.creek.whereareyou.manager.ApplManager;
 
 import android.app.ListActivity;
 import android.content.Intent;

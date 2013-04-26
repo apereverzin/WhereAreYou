@@ -13,12 +13,12 @@ import com.creek.accessemail.connector.mail.ConnectorException;
 import com.creek.accessemail.connector.mail.MailConnector;
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 
-import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 import com.creek.whereareyou.android.util.CryptoException;
+import com.creek.whereareyou.manager.ApplManager;
 
 import android.accounts.Account;
 import android.app.Activity;

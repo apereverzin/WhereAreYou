@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity.Mode;
 import com.creek.whereareyou.android.contacts.Contact;
 import com.creek.whereareyou.android.util.ActivityUtil;
+import com.creek.whereareyou.manager.ApplManager;
 
 import android.app.ListActivity;
 import static android.app.Activity.RESULT_OK;

@@ -7,9 +7,9 @@ import android.util.Log;
 
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 
-import com.creek.whereareyou.ApplManager;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyou.android.util.CryptoUtil;
+import com.creek.whereareyou.manager.ApplManager;
 
 /**
  * 

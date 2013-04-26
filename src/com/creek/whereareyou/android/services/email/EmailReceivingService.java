@@ -1,4 +1,4 @@
-package com.creek.whereareyou.android.services.inform;
+package com.creek.whereareyou.android.services.email;
 
 import java.util.List;
 import java.util.Timer;
@@ -23,23 +23,18 @@ import android.util.Log;
  * 
  * @author andreypereverzin
  */
-public class InformService extends Service {
-    private static final String TAG = InformService.class.getSimpleName();
+public class EmailReceivingService extends Service {
+    private static final String TAG = EmailReceivingService.class.getSimpleName();
 
     private Timer timer;
     protected ContentResolver contentResolver;
     protected ConnectivityManager cm;
     
-    private TimerTask informTask = new TimerTask() {
+    private TimerTask emailReceivingTask = new TimerTask() {
         @Override
         public void run() {
             Log.i(TAG, "===================EmailReceivingService doing work");
-            Location location = ApplManager.getInstance().getLocationProvider().getLatestLocation(InformService.this);
-            //NetworkLocationProvider.onCellLocationChanged();
-//            if(location != null) {
-//                Log.i(TAG, "===================EmailReceivingService doing work: " + location.getLatitude() + " " + location.getLongitude());
-//                Log.i(TAG, "===================EmailReceivingService doing work: " + System.currentTimeMillis() + " " + location.getTime());
-//            }
+            ApplManager.getInstance().
         }
     };
 
@@ -55,7 +50,7 @@ public class InformService extends Service {
         contentResolver = getContentResolver();
 
         timer = new Timer("WhereAreYouInformTimer");
-        timer.schedule(informTask, 1000L, 30 * 1000L);
+        timer.schedule(emailReceivingTask, 1000L, 30 * 1000L);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.creek.whereareyou.android.services.trace;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.creek.whereareyou.ApplManager;
+import com.creek.whereareyou.manager.ApplManager;
 
 import android.accounts.Account;
 import android.app.Service;
@@ -23,10 +23,10 @@ public class TraceService extends Service {
     private TimerTask traceTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "-------------------TraceService doing work");
+            //Log.i(TAG, "-------------------TraceService doing work");
             Account emailAccount = ApplManager.getInstance().getGoogleAccountProvider().getEmailAccount(TraceService.this);
             if (emailAccount != null) {
-                Log.i(TAG, "-------------------TraceService doing work " + emailAccount.name);
+                //Log.i(TAG, "-------------------TraceService doing work " + emailAccount.name);
             }
         }
     };
