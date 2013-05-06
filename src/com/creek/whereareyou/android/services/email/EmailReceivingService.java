@@ -34,7 +34,7 @@ public class EmailReceivingService extends Service {
         @Override
         public void run() {
             Log.i(TAG, "===================EmailReceivingService doing work");
-            ApplManager.getInstance().
+            //ApplManager.getInstance().
         }
     };
 
