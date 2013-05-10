@@ -19,24 +19,24 @@ import android.util.Log;
  * 
  * @author andreypereverzin
  */
-public class ContactsProvider {
-    private static final String TAG = ContactsProvider.class.getSimpleName();
+public class AndroidContactsProvider {
+    private static final String TAG = AndroidContactsProvider.class.getSimpleName();
 
     private static String[] CONTACT_PROJECTION = {
             ContactsContract.Contacts._ID,
             ContactsContract.Contacts.DISPLAY_NAME
     };
 
-    public Contact getContactById(Context context, String contactId) {
-        List<Contact> contacts =  retrieveContactsByIds(context, Collections.singleton(contactId));
+    public AndroidContact getContactById(Context context, String contactId) {
+        List<AndroidContact> contacts =  retrieveContactsByIds(context, Collections.singleton(contactId));
         return contacts.size() > 0 ? contacts.get(0) : null;
     }
     
-    public List<Contact> getAllContacts(Context context) {
+    public List<AndroidContact> getAllContacts(Context context) {
         return retrieveContactsByIds(context, null);
     }
     
-    public List<Contact> getContactsByIds(Context context, Set<String> contactIds) {
+    public List<AndroidContact> getContactsByIds(Context context, Set<String> contactIds) {
         return retrieveContactsByIds(context, contactIds);
     }
     
@@ -77,7 +77,7 @@ public class ContactsProvider {
         return emails;
     }
     
-    private List<Contact> retrieveContactsByIds(Context context, Set<String> contactIds) {
+    private List<AndroidContact> retrieveContactsByIds(Context context, Set<String> contactIds) {
         ContentResolver cr = context.getContentResolver();
         
         Cursor cursor = null;
@@ -107,8 +107,8 @@ public class ContactsProvider {
         return sb.append(")").toString();
     }
 
-    private List<Contact> getContactsList(Cursor cursor) {
-        List<Contact> contacts = new ArrayList<Contact>();
+    private List<AndroidContact> getContactsList(Cursor cursor) {
+        List<AndroidContact> contacts = new ArrayList<AndroidContact>();
 
         while (cursor.moveToNext()) {
             contacts.add(buildContact(cursor));
@@ -117,10 +117,10 @@ public class ContactsProvider {
         return contacts;
     }
     
-    private Contact buildContact(Cursor cursor) {
+    private AndroidContact buildContact(Cursor cursor) {
         String contactId = cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
         String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-        Contact contact = new Contact(contactId);
+        AndroidContact contact = new AndroidContact(contactId);
         contact.setDisplayName(contactName);
         return contact;
     }

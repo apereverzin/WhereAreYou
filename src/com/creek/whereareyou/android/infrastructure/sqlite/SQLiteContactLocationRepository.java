@@ -6,8 +6,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.ContactLocationData;
+import com.creek.whereareyoumodel.domain.LocationData;
+import com.creek.whereareyoumodel.domain.OwnerLocationData;
 import com.creek.whereareyoumodel.repository.ContactLocationRepository;
 
 /**
@@ -16,6 +17,8 @@ import com.creek.whereareyoumodel.repository.ContactLocationRepository;
  */
 public class SQLiteContactLocationRepository extends AbstractSQLiteRepository implements ContactLocationRepository {
 
+    static final String SENDER_EMAIL_FIELD_NAME = "sender_email";
+    static final String TIME_SENT_FIELD_NAME = "time_sent";
     static final String LOCATION_TIME_FIELD_NAME = "location_time";
     static final String ACCURACY_FIELD_NAME = "accuracy";
     static final String LATITUDE_FIELD_NAME = "latitude";
@@ -24,6 +27,20 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
     static final String HAS_ACCURACY_FIELD_NAME = "has_accuracy";
     static final String HAS_SPEED_FIELD_NAME = "has_speed";
     static final String CONTACT_ID_FIELD_NAME = "contact_id";
+
+    static final String CONTACT_LOCATION_DATA_TABLE_CREATE = 
+            "create table " + CONTACT_LOCATION_DATA_TABLE 
+            + " (" + ID_FIELD_NAME + " integer primary key autoincrement, " 
+            + SENDER_EMAIL_FIELD_NAME + " text not null, "
+            + TIME_SENT_FIELD_NAME + " real not null, "
+            + LOCATION_TIME_FIELD_NAME + " real not null, "
+            + ACCURACY_FIELD_NAME + "accuracy real not null, "
+            + LATITUDE_FIELD_NAME + " real not null, " 
+            + LONGITUDE_FIELD_NAME + " real not null, "
+            + SPEED_FIELD_NAME + " real not null, "
+            + HAS_ACCURACY_FIELD_NAME + " int not null, " 
+            + HAS_SPEED_FIELD_NAME + " int not null, "
+            + CONTACT_ID_FIELD_NAME + " int not null);";
 
     public SQLiteContactLocationRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
@@ -71,41 +88,44 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
     
     private ContentValues getContactContentValues(ContactLocationData contactLocationData) {
         ContentValues values = new ContentValues();
-        values.put(EMAIL_FIELD_NAME, contactLocationData.getEmail());
+        values.put(LOCATION_TIME_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLocationTime());
+        values.put(SENDER_EMAIL_FIELD_NAME, contactLocationData.getOwnerLocationData().getSenderEmail());
+        values.put(TIME_SENT_FIELD_NAME, contactLocationData.getOwnerLocationData().getTimeSent());
+        values.put(ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getAccuracy());
+        values.put(LATITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLatitude());
+        values.put(LONGITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLongitude());
+        values.put(SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getSpeed());
+        values.put(HAS_ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasAccuracy() ? 1 : 0);
+        values.put(HAS_SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasSpeed() ? 1 : 0);
         values.put(CONTACT_ID_FIELD_NAME, contactLocationData.getContactId());
-        values.put(DISPLAY_NAME_FIELD_NAME, contactLocationData.getDisplayName());
-        values.put(LOCATION_REQUEST_ALLOWED_FIELD_NAME, contactLocationData.isLocationRequestAllowed() ? 1 : 0);
-        values.put(LOCATION_REQUEST_RECEIVED_FIELD_NAME, contactLocationData.isLocationRequestReceived() ? 1 : 0);
-        values.put(RECEIVED_LOCATION_REQUEST_TIMESTAMP_FIELD_NAME, contactLocationData.getReceivedLocationRequestTimestamp());
-        values.put(LOCATION_REQUEST_AGREED_FIELD_NAME, contactLocationData.isLocationRequestAgreed() ? 1 : 0);
-        values.put(LOCATION_REQUEST_SENT_FIELD_NAME, contactLocationData.isLocationRequestSent() ? 1 : 0);
-        values.put(SENT_LOCATION_REQUEST_TIMESTAMP_FIELD_NAME, contactLocationData.getSentLocationRequestTimestamp());
         return values;
     }
     
-    private ContactLocationData createContactLocationDataFromCursor(Cursor contactDataCursor) {
+    private ContactLocationData createContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
         ContactLocationData contactLocationData = new ContactLocationData();
-        contactLocationData.setId(contactDataCursor.getInt(0));
-        contactLocationData.setContactId(contactDataCursor.getInt(1));
-        contactLocationData.setDisplayName(contactDataCursor.getString(2));
-        contactLocationData.setLocationRequestAllowed(contactDataCursor.getInt(3) == 1);
-        contactLocationData.setLocationRequestReceived(contactDataCursor.getInt(4) == 1);
-        contactLocationData.setReceivedLocationRequestTimestamp(contactDataCursor.getLong(5));
-        contactLocationData.setLocationRequestAgreed(contactDataCursor.getInt(6) == 1);
-        contactLocationData.setLocationRequestSent(contactDataCursor.getInt(7) == 1);
-        contactLocationData.setSentLocationRequestTimestamp(contactDataCursor.getLong(8));
-        contactLocationData.setDisplayName(contactDataCursor.getString(2));
-        contactLocationData.setDisplayName(contactDataCursor.getString(2));
-        contactLocationData.setDisplayName(contactDataCursor.getString(2));
+        contactLocationData.setId(contactLocationDataCursor.getInt(0));
+        String senderEmail = contactLocationDataCursor.getString(1);
+        long timeSent = contactLocationDataCursor.getLong(2);
+        float accuracy = contactLocationDataCursor.getFloat(3);
+        double latitude = contactLocationDataCursor.getDouble(4);
+        double longitude = contactLocationDataCursor.getDouble(5);
+        float speed = contactLocationDataCursor.getFloat(6);
+        boolean hasAccuracy = contactLocationDataCursor.getInt(7) == 1;
+        boolean hasSpeed = contactLocationDataCursor.getInt(8) == 1;
+        LocationData locationData = new LocationData(accuracy, latitude, longitude, speed, hasAccuracy, hasSpeed);
+        OwnerLocationData ownerLocationData = new OwnerLocationData(senderEmail, timeSent, locationData);
+        contactLocationData.setOwnerLocationData(ownerLocationData);
         return contactLocationData;
     }
     
     protected String getTableName() {
-        return SQLiteDbManager.CONTACT_DATA_TABLE;
+        return CONTACT_DATA_TABLE;
     }
     
     protected String[] getFieldNames() {
-        return new String[] {SQLiteDbManager.ID_FIELD_NAME,
+        return new String[] {ID_FIELD_NAME,
+                SENDER_EMAIL_FIELD_NAME,
+                TIME_SENT_FIELD_NAME,
                 LOCATION_TIME_FIELD_NAME,
                 ACCURACY_FIELD_NAME,
                 LATITUDE_FIELD_NAME,
@@ -117,10 +137,10 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
         };
     }
     
-    private ContactData getContactDataFromCursor(Cursor contactDataCursor) {
-        if (contactDataCursor != null && contactDataCursor.getCount() > 0) {
-            contactDataCursor.moveToFirst();
-            return createContactLocationDataFromCursor(contactDataCursor);
+    private ContactLocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
+        if (contactLocationDataCursor != null && contactLocationDataCursor.getCount() > 0) {
+            contactLocationDataCursor.moveToFirst();
+            return createContactLocationDataFromCursor(contactLocationDataCursor);
         }
         return null;
     }

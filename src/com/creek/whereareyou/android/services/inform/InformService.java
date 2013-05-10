@@ -1,10 +1,9 @@
 package com.creek.whereareyou.android.services.inform;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.creek.whereareyou.manager.ApplManager;
+import com.creek.whereareyou.android.locationprovider.LocationProvider;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -13,10 +12,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.IBinder;
-import android.telephony.NeighboringCellInfo;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 /**
@@ -34,7 +29,7 @@ public class InformService extends Service {
         @Override
         public void run() {
             Log.i(TAG, "===================EmailReceivingService doing work");
-            Location location = ApplManager.getInstance().getLocationProvider().getLatestLocation(InformService.this);
+            Location location = new LocationProvider().getLatestLocation(InformService.this);
             //NetworkLocationProvider.onCellLocationChanged();
 //            if(location != null) {
 //                Log.i(TAG, "===================EmailReceivingService doing work: " + location.getLatitude() + " " + location.getLongitude());

@@ -27,6 +27,19 @@ public class SQLiteContactRepository extends AbstractSQLiteRepository implements
     static final String LOCATION_REQUEST_SENT_FIELD_NAME = "location_request_sent";
     static final String SENT_LOCATION_REQUEST_TIMESTAMP_FIELD_NAME = "sent_location_request_timestamp";
 
+    static final String CONTACT_DATA_TABLE_CREATE = 
+            "create table " + CONTACT_DATA_TABLE 
+            + " (" + ID_FIELD_NAME + " integer primary key autoincrement, " 
+            + EMAIL_FIELD_NAME + " text not null, " 
+            + CONTACT_ID_FIELD_NAME + " text not null, "
+            + DISPLAY_NAME_FIELD_NAME + " text not null, "
+            + LOCATION_REQUEST_ALLOWED_FIELD_NAME + " int not null, "
+            + LOCATION_REQUEST_RECEIVED_FIELD_NAME + " int not null, "
+            + RECEIVED_LOCATION_REQUEST_TIMESTAMP_FIELD_NAME + " real not null, "
+            + LOCATION_REQUEST_AGREED_FIELD_NAME + " int not null, "
+            + LOCATION_REQUEST_SENT_FIELD_NAME + " int not null, "
+            + SENT_LOCATION_REQUEST_TIMESTAMP_FIELD_NAME + " real not null);";
+
     private String EMAIL_FIELD_EQUALS = EMAIL_FIELD_NAME + "=";
     private String CONTACT_ID_FIELD_EQUALS = CONTACT_ID_FIELD_NAME + "=";
 
@@ -37,7 +50,7 @@ public class SQLiteContactRepository extends AbstractSQLiteRepository implements
     @Override
     public ContactData createContactData(ContactData contactData) {
         ContentValues values = getContactContentValues(contactData);
-        long id = whereAreYouDb.insert(SQLiteDbManager.CONTACT_DATA_TABLE, null, values);
+        long id = whereAreYouDb.insert(CONTACT_DATA_TABLE, null, values);
         contactData.setId((int)id);
         Log.d(getClass().getName(), "ContactData created: " + contactData);
         return contactData;
@@ -109,7 +122,7 @@ public class SQLiteContactRepository extends AbstractSQLiteRepository implements
     public boolean updateContactData(ContactData contactData) {
         Log.d(getClass().getName(), "updateContactData: " + contactData.getId());
         ContentValues values = getContactContentValues(contactData);
-        return whereAreYouDb.update(SQLiteDbManager.CONTACT_DATA_TABLE, values, ID_FIELD_EQUALS + contactData.getId(), null) > 0;
+        return whereAreYouDb.update(CONTACT_DATA_TABLE, values, ID_FIELD_EQUALS + contactData.getId(), null) > 0;
     }
 
     private ContentValues getContactContentValues(ContactData contactData) {
@@ -144,11 +157,11 @@ public class SQLiteContactRepository extends AbstractSQLiteRepository implements
     }
     
     protected String getTableName() {
-        return SQLiteDbManager.CONTACT_DATA_TABLE;
+        return CONTACT_DATA_TABLE;
     }
     
     protected String[] getFieldNames() {
-        return new String[] {SQLiteDbManager.ID_FIELD_NAME,
+        return new String[] {ID_FIELD_NAME,
                 EMAIL_FIELD_NAME,
                 CONTACT_ID_FIELD_NAME,
                 DISPLAY_NAME_FIELD_NAME,

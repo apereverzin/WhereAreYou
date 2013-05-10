@@ -1,16 +1,16 @@
 package com.creek.whereareyou.android.activity.contacts;
 
-import com.creek.whereareyou.android.contacts.Contact;
+import com.creek.whereareyou.android.contacts.AndroidContact;
 
 public class CheckBoxContact {
-    private final Contact contact;
+    private final AndroidContact contact;
     private boolean selected = false;
     
-    public CheckBoxContact(Contact contact) {
+    public CheckBoxContact(AndroidContact contact) {
         this.contact = contact;
     }
 
-    public Contact getContact() {
+    public AndroidContact getContact() {
         return contact;
     }
 

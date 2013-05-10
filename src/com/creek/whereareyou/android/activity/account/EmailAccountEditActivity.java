@@ -3,11 +3,8 @@ package com.creek.whereareyou.android.activity.account;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 
 import com.creek.accessemail.connector.mail.ConnectorException;
 import com.creek.accessemail.connector.mail.MailConnector;
@@ -17,8 +14,10 @@ import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
+
+import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
+import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.CryptoException;
-import com.creek.whereareyou.manager.ApplManager;
 
 import android.accounts.Account;
 import android.app.Activity;
@@ -40,22 +39,24 @@ public class EmailAccountEditActivity extends Activity {
     private EditText passwordText;
     private Button testButton;
     private Button saveButton;
+    private MailAccountPropertiesProvider mailAccountPropertiesProvider;
     
     static final String MAIL_PROPERTIES = "MAIL_PROPERTIES";
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        mailAccountPropertiesProvider = new MailAccountPropertiesProvider();
         setContentView(R.layout.mail_properties);
         passwordText = (EditText) findViewById(R.id.mail_password);
         testButton = (Button) findViewById(R.id.mail_properties_button_test);
         saveButton = (Button) findViewById(R.id.mail_properties_button_save);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         
-        final Account googleAccount = ApplManager.getInstance().getGoogleAccountProvider().getEmailAccount(this);
+        final Account googleAccount = new GoogleAccountProvider().getEmailAccount(this);
         
         try {
-            Properties props = ApplManager.getInstance().getMailAccountPropertiesProvider().getMailProperties();
+            Properties props = mailAccountPropertiesProvider.getMailProperties();
             if (props != null) {
                 passwordText.setText(props.getProperty(MAIL_PASSWORD_PROPERTY));
             }
@@ -102,7 +103,7 @@ public class EmailAccountEditActivity extends Activity {
                         MailConnector connector = new MailConnector(fullProps);
                         connector.checkSMTPConnection();
                         
-                        ApplManager.getInstance().getMailAccountPropertiesProvider().persistMailProperties(props);
+                        mailAccountPropertiesProvider.persistMailProperties(props);
                     }
 
                     setResult(RESULT_OK);

@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.creek.whereareyou.android.activity.map.LocationAware;
-import com.creek.whereareyou.manager.ApplManager;
 import com.google.android.maps.GeoPoint;
 
 import android.location.GpsStatus;

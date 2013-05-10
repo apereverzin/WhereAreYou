@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,8 +12,7 @@ import android.view.MenuItem;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
-import com.creek.whereareyou.android.locationlistener.WhereLocationListener;
-import com.creek.whereareyou.manager.ApplManager;
+import com.creek.whereareyou.android.locationprovider.LocationProvider;
 
 import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_ACTIVITY_MODE;
 import com.google.android.maps.GeoPoint;
@@ -29,6 +27,8 @@ import com.google.android.maps.Overlay;
  */
 public class MainMapActivity extends MapActivity implements LocationAware {
     private static final String TAG = MainMapActivity.class.getSimpleName();
+
+    private LocationProvider locationProvider;
 
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
     private static final int CONTACTS_TO_TRACE_MENU_ITEM = Menu.FIRST + 1;
@@ -58,9 +58,11 @@ public class MainMapActivity extends MapActivity implements LocationAware {
         List<Overlay> overlays = mapView.getOverlays();
         overlays.add(locationsOverlay);
         mapView.postInvalidate();
+        
+        locationProvider = new LocationProvider();
 
-        ApplManager.getInstance().getLocationProvider().initiateLocationUpdates(this);
-        ApplManager.getInstance().getLocationProvider().requestLocationUpdates(this);
+        locationProvider.initiateLocationUpdates(this);
+        locationProvider.requestLocationUpdates(this);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     
     @Override
     public void onDestroy() {
-        ApplManager.getInstance().getLocationProvider().stopLocationUpdates(this);
+        locationProvider.stopLocationUpdates(this);
         super.onDestroy();
     }
 

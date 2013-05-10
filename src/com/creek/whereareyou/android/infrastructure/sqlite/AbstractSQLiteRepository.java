@@ -10,8 +10,10 @@ import android.util.Log;
  */
 public abstract class AbstractSQLiteRepository {
     protected final SQLiteDatabase whereAreYouDb;
-    
-    protected String ID_FIELD_EQUALS = SQLiteDbManager.ID_FIELD_NAME + "=";
+    static final String ID_FIELD_NAME = "_id";    
+    static final String ID_FIELD_EQUALS = ID_FIELD_NAME + "=";
+    static final String CONTACT_DATA_TABLE = "contact_data";
+    static final String CONTACT_LOCATION_DATA_TABLE = "contact_location";
     
     public AbstractSQLiteRepository(SQLiteDatabase whereAreYouDb) {
         this.whereAreYouDb = whereAreYouDb;

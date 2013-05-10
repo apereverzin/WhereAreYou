@@ -2,12 +2,14 @@ package com.creek.whereareyou.android.activity.contacts;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity.Mode;
-import com.creek.whereareyou.android.contacts.Contact;
+import com.creek.whereareyou.android.contacts.AndroidContact;
+import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyou.manager.ApplManager;
 
 import android.app.ListActivity;
 import static android.app.Activity.RESULT_OK;
@@ -29,22 +31,22 @@ public class SaveButtonListener implements View.OnClickListener {
     }
 
     public void onClick(View view) {
-        List<Contact> contacts = new ArrayList<Contact>();
+        Map<String, AndroidContact> contacts = new HashMap<String, AndroidContact>();
         for(CheckBoxContact checkBoxContact : contactsList) {
             if(checkBoxContact.isSelected()) {
-                contacts.add(checkBoxContact.getContact());
+                contacts.put(checkBoxContact.getContact().getId(), checkBoxContact.getContact());
             }
         }
         
         try {
             if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
-                ApplManager.getInstance().getContactsPersistentManager().persistContactsToInformWhenAdding(contacts);
+                ContactsPersistenceManager.getInstance().persistContactsToInformWhenAdding(contacts);
             } else if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) {
-                ApplManager.getInstance().getContactsPersistentManager().persistContactsToTraceWhenAdding(contacts);
+                ContactsPersistenceManager.getInstance().persistContactsToTraceWhenAdding(contacts);
             } else if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
-                ApplManager.getInstance().getContactsPersistentManager().persistContactsToInform(contacts);
+                ContactsPersistenceManager.getInstance().persistContactsToInform(contacts);
             } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
-                ApplManager.getInstance().getContactsPersistentManager().persistContactsToTrace(contacts);
+                ContactsPersistenceManager.getInstance().persistContactsToTrace(contacts);
             }
         } catch (IOException ex) {
             ActivityUtil.showException(activity, ex);

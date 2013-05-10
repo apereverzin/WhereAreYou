@@ -2,152 +2,141 @@ package com.creek.whereareyou.android.contacts;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import android.content.Context;
 
-import com.creek.whereareyou.manager.ApplManager;
+import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactRepository;
+import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteDbManager;
+import com.creek.whereareyoumodel.domain.ContactData;
+import com.creek.whereareyoumodel.repository.ContactRepository;
 
 /**
  * 
  * @author andreypereverzin
  */
 public class ContactsPersistenceManager {
-    private static final String CONTACTS_TO_INFORM_FILE_NAME = "/Android/whereareyoucontactstoinform.txt";
-    private static final String CONTACTS_TO_TRACE_FILE_NAME = "/Android/whereareyoucontactstotrace.txt";
-    private static final String CONTACTS_SEPARATOR = "|";
-    private static final String CONTACT_DETAILS_SEPARATOR = ",";
-    private static final String DISABLED = "0";
-    private static final String ENABLED = "1";
+    private static final ContactsPersistenceManager instance = new ContactsPersistenceManager();
 
-    public List<Contact> retrieveContactsToInform(Context context) throws IOException {
-        return retrieveContacts(context, CONTACTS_TO_INFORM_FILE_NAME);
+    private final AndroidContactsProvider androidContactsProvider = new AndroidContactsProvider();
+    private ContactRepository contactRepository;
+
+    private ContactsPersistenceManager() {
+        //
     }
 
-    public void persistContactsToInformWhenAdding(List<Contact> contacts) throws IOException {
-        String existingContactsString = getContactIds(CONTACTS_TO_INFORM_FILE_NAME);
-        persistContacts(CONTACTS_TO_INFORM_FILE_NAME, new StringBuilder(existingContactsString), contacts);
+    public static ContactsPersistenceManager getInstance() {
+        return instance;
     }
 
-    public void persistContactsToInform(List<Contact> contacts) throws IOException {
-        persistContacts(CONTACTS_TO_INFORM_FILE_NAME, new StringBuilder(""), contacts);
+    public void initialise(Context ctx) {
+        SQLiteDbManager.getInstance().initialise(ctx);
+        contactRepository = new SQLiteContactRepository(SQLiteDbManager.getInstance().getDatabase());
     }
 
-    public List<Contact> retrieveContactsToTrace(Context context) throws IOException {
-        return retrieveContacts(context, CONTACTS_TO_TRACE_FILE_NAME);
+    public List<AndroidContact> retrieveContactsToInform() throws IOException {
+        // TODO Add getContactsToInform() method
+        List<ContactData> contacts = contactRepository.getAllContactData();
+        List<AndroidContact> androidContacts = new ArrayList<AndroidContact>();
+        for (int i = 0; i < contacts.size(); i++) {
+            ContactData contact = contacts.get(i);
+            if (contact.isLocationRequestAllowed()) {
+                AndroidContact androidContact = new AndroidContact(contact);
+                androidContacts.add(androidContact);
+            }
+        }
+        return androidContacts;
     }
 
-    public void persistContactsToTraceWhenAdding(List<Contact> contacts) throws IOException {
-        String existingContactsString = getContactIds(CONTACTS_TO_TRACE_FILE_NAME);
-        persistContacts(CONTACTS_TO_TRACE_FILE_NAME, new StringBuilder(existingContactsString), contacts);
+    public void persistContactsToInformWhenAdding(Map<String, AndroidContact> androidContacts) throws IOException {
+        for (String contactId: androidContacts.keySet()) {
+            ContactData contact = contactRepository.getContactDataByContactId(contactId);
+            if (contact == null) {
+                AndroidContact androidContact = androidContacts.get(contactId);
+                contact = createContactData(androidContact);
+                contact.setLocationRequestAllowed(true);
+                contactRepository.createContactData(contact);
+            } else {
+                contact.setLocationRequestAllowed(true);
+                contactRepository.updateContactData(contact);
+            }
+        }
     }
 
-    public void persistContactsToTrace(List<Contact> contacts) throws IOException {
-        persistContacts(CONTACTS_TO_TRACE_FILE_NAME, new StringBuilder(""), contacts);
+    public void persistContactsToInform(Map<String, AndroidContact> androidContacts) throws IOException {
+        List<ContactData> contacts = contactRepository.getAllContactData();
+        for (ContactData contact: contacts) {
+            if (!androidContacts.containsKey(contact.getContactId())) {
+                contact.setLocationRequestAllowed(false);
+                contactRepository.updateContactData(contact);
+            }
+        }
     }
 
-    public List<Contact> retrieveContacts(Context context, String fileName) throws IOException {
-        String contactIds = getContactIds(fileName);
-        return convertSeparatedStringToContacts(context, contactIds);
+    public List<AndroidContact> retrieveContactsToTrace() throws IOException {
+        // TODO Add getContactsToTrace() method
+        List<ContactData> contacts = contactRepository.getAllContactData();
+        List<AndroidContact> androidContacts = new ArrayList<AndroidContact>();
+        for (int i = 0; i < contacts.size(); i++) {
+            ContactData contact = contacts.get(i);
+            if (contact.isLocationRequestAgreed()) {
+                AndroidContact androidContact = new AndroidContact(contact);
+                androidContacts.add(androidContact);
+            }
+        }
+        return androidContacts;
     }
 
-    public List<Contact> retrieveContactsToAddToTrace(Context context) throws IOException {
-        List<Contact> existingContacts = retrieveContactsToTrace(context);
+    public void persistContactsToTraceWhenAdding(Map<String, AndroidContact> androidContacts) throws IOException {
+        for (String contactId: androidContacts.keySet()) {
+            ContactData contact = contactRepository.getContactDataByContactId(contactId);
+            if (contact == null) {
+                AndroidContact androidContact = androidContacts.get(contactId);
+                contact = createContactData(androidContact);
+                contact.setLocationRequestAgreed(true);
+                contactRepository.createContactData(contact);
+            } else {
+                contact.setLocationRequestAgreed(true);
+                contactRepository.updateContactData(contact);
+            }
+        }
+    }
+
+    public void persistContactsToTrace(Map<String, AndroidContact> androidContacts) throws IOException {
+        List<ContactData> contacts = contactRepository.getAllContactData();
+        for (ContactData contact: contacts) {
+            if (!androidContacts.containsKey(contact.getContactId())) {
+                contact.setLocationRequestAgreed(false);
+                contactRepository.updateContactData(contact);
+            }
+        }
+    }
+
+    public List<AndroidContact> retrieveContactsToAddToTrace(Context context) throws IOException {
+        List<AndroidContact> existingContacts = retrieveContactsToTrace();
         return subtractContactsList(context, existingContacts);
     }
 
-    public List<Contact> retrieveContactsToAddToInform(Context context) throws IOException {
-        List<Contact> existingContacts = retrieveContactsToInform(context);
+    public List<AndroidContact> retrieveContactsToAddToInform(Context context) throws IOException {
+        List<AndroidContact> existingContacts = retrieveContactsToInform();
         return subtractContactsList(context, existingContacts);
     }
 
-    private void persistContacts(String fileName, StringBuilder separatedExistingContactIds, List<Contact> contacts) throws IOException {
-        StringBuilder separatedContactIds = convertContactsToSeparatedString(contacts);
-
-        if (separatedExistingContactIds.length() > 0) {
-            separatedExistingContactIds.append(CONTACTS_SEPARATOR);
-        }
-        separatedExistingContactIds.append(separatedContactIds);
-
-        ApplManager.getInstance().getFileProvider().persistStringToFile(fileName, separatedExistingContactIds.toString());
-    }
-
-    private String getContactIds(String fileName) throws IOException {
-        return ApplManager.getInstance().getFileProvider().getStringFromFile(fileName);
-    }
-
-    private StringBuilder convertContactsToSeparatedString(List<Contact> contacts) {
-        StringBuilder sb = new StringBuilder();
-
-        for (Contact contact : contacts) {
-            sb.append(convertContactDetailsToSeparatedString(contact));
-            sb.append(CONTACTS_SEPARATOR);
-        }
-
-        int l = sb.lastIndexOf(CONTACTS_SEPARATOR);
-        if (l > 0) {
-            sb.setLength(l);
-        }
-
-        return sb;
-    }
-
-    private String convertContactDetailsToSeparatedString(Contact contact) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(contact.getId());
-        sb.append(CONTACT_DETAILS_SEPARATOR);
-        sb.append(contact.isEnabled() ? ENABLED : DISABLED);
-
-        return sb.toString();
-    }
-
-    private List<Contact> convertSeparatedStringToContacts(Context context, String contactsString) {
-        List<Contact> contacts = new ArrayList<Contact>();
-        Contact convertedContact;
-
-        StringTokenizer st = new StringTokenizer(contactsString, CONTACTS_SEPARATOR);
-        Map<String, Boolean> convertedContactIds = new HashMap<String, Boolean>();
-        while (st.hasMoreTokens()) {
-            convertedContact = convertSeparatedStringToContactDetails(st.nextToken());
-            convertedContactIds.put(convertedContact.getId(), convertedContact.isEnabled());
-//            Contact contact = ApplManager.getInstance().getContactsProvider().getContactById(context, convertedContact.getId());
-//            if (contact != null) {
-//                contact.setEnabled(convertedContact.isEnabled());
-//                contacts.add(contact);
-//            }
-        }
-        contacts = ApplManager.getInstance().getContactsProvider().getContactsByIds(context, convertedContactIds.keySet());
-        for(Contact contact: contacts) {
-            contact.setEnabled(convertedContactIds.get(contact.getId()));
-        }
-
-        return contacts;
-    }
-
-    private Contact convertSeparatedStringToContactDetails(String contactDetailsString) {
-        StringTokenizer st = new StringTokenizer(contactDetailsString, CONTACT_DETAILS_SEPARATOR);
-
-        Contact contact = new Contact(st.nextToken());
-        if (st.hasMoreTokens()) {
-            contact.setEnabled(ENABLED.equals(st.nextToken()));
-        }
-
-        return contact;
-    }
-
-    private void addContactsList(List<Contact> existingContacts, List<Contact> contactsToAdd) {
-        existingContacts.addAll(contactsToAdd);
-    }
-
-    private List<Contact> subtractContactsList(Context context, List<Contact> existingContacts) {
-        List<Contact> allContacts = ApplManager.getInstance().getContactsProvider().getAllContacts(context);
+    private List<AndroidContact> subtractContactsList(Context context, List<AndroidContact> existingContacts) {
+        List<AndroidContact> allContacts = androidContactsProvider.getAllContacts(context);
 
         allContacts.removeAll(existingContacts);
 
         return allContacts;
+    }
+    
+    private ContactData createContactData(AndroidContact androidContact) {
+        ContactData contactData = new ContactData();
+        
+        contactData.setContactId(androidContact.getId());
+        contactData.setEmail(androidContact.getEmail());
+        contactData.setDisplayName(androidContact.getDisplayName());
+        return contactData;
     }
 }

@@ -2,16 +2,15 @@ package com.creek.whereareyou.android.activity.contacts;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.contacts.Contact;
+import com.creek.whereareyou.android.contacts.AndroidContact;
+import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyou.manager.ApplManager;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -44,8 +43,8 @@ public class ContactsActivity extends ListActivity {
 
     public static final String CONTACT_SELECTED = "CONTACT_SELECTED";
     public static final String CONTACT_ACTIVITY_MODE = "CONTACT_ACTIVITY_MODE";
-
-    private List<Contact> contactsDataList;
+    
+    private List<AndroidContact> contactsDataList;
 
     private Mode mode;
 
@@ -56,6 +55,8 @@ public class ContactsActivity extends ListActivity {
 
         Bundle bundle = getIntent().getExtras();
         mode = (Mode) bundle.get(CONTACT_ACTIVITY_MODE);
+        
+        ContactsPersistenceManager.getInstance().initialise(this);
 
         setActivityTitle();
         contactsDataList = getContactsList();
@@ -71,7 +72,7 @@ public class ContactsActivity extends ListActivity {
         } else {
             final List<CheckBoxContact> contactsList = new ArrayList<CheckBoxContact>();
             
-            for (Contact contact : contactsDataList) {
+            for (AndroidContact contact : contactsDataList) {
                 CheckBoxContact checkBoxContact = new CheckBoxContact(contact);
                 contactsList.add(checkBoxContact);
             }
@@ -140,7 +141,7 @@ public class ContactsActivity extends ListActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final Contact contactSelected = contactsDataList.get((int) info.id);
+        final AndroidContact contactSelected = contactsDataList.get((int) info.id);
         final Bundle bundle = new Bundle();
         bundle.putSerializable(CONTACT_SELECTED, contactSelected);
         switch (item.getItemId()) {
@@ -171,17 +172,17 @@ public class ContactsActivity extends ListActivity {
         }
     }
 
-    private Map<String, Object> createMapForList(Contact contact) {
+    private Map<String, Object> createMapForList(AndroidContact contact) {
         Map<String, Object> contactMap = new HashMap<String, Object>();
         contactMap.put(CONTACT_NAME, contact.getDisplayName());
         contactMap.put(CONTACT_CHECK, Boolean.FALSE);
         return contactMap;
     }
 
-    private List<Map<String, Object>> createContactsList(List<Contact> contactsDataList) {
+    private List<Map<String, Object>> createContactsList(List<AndroidContact> contactsDataList) {
         final List<Map<String, Object>> contactsList = new LinkedList<Map<String, Object>>();
 
-        for (Contact contact : contactsDataList) {
+        for (AndroidContact contact : contactsDataList) {
             Map<String, Object> contactMap = createMapForList(contact);
             contactsList.add(contactMap);
         }
@@ -189,20 +190,20 @@ public class ContactsActivity extends ListActivity {
         return contactsList;
     }
 
-    private List<Contact> getContactsList() {
+    private List<AndroidContact> getContactsList() {
         try {
             if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
-                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToInform(this);
+                return ContactsPersistenceManager.getInstance().retrieveContactsToInform();
             } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
-                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToTrace(this);
+                return ContactsPersistenceManager.getInstance().retrieveContactsToTrace();
             } else if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
-                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToAddToInform(this);
+                return ContactsPersistenceManager.getInstance().retrieveContactsToAddToInform(this);
             } else /* if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) */{
-                return ApplManager.getInstance().getContactsPersistentManager().retrieveContactsToAddToTrace(this);
+                return ContactsPersistenceManager.getInstance().retrieveContactsToAddToTrace(this);
             }
         } catch (IOException ex) {
             ActivityUtil.showException(ContactsActivity.this, ex);
-            return new ArrayList<Contact>();
+            return new ArrayList<AndroidContact>();
         }
 
     }

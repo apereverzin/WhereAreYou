@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.creek.whereareyou.manager.ApplManager;
-
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Context;

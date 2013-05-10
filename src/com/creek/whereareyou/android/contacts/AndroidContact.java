@@ -2,19 +2,30 @@ package com.creek.whereareyou.android.contacts;
 
 import java.io.Serializable;
 
+import com.creek.whereareyoumodel.domain.ContactData;
+
 /**
  * 
  * @author andreypereverzin
  */
 @SuppressWarnings("serial")
-public class Contact implements Comparable<Contact>, Serializable {
+public class AndroidContact implements Comparable<AndroidContact>, Serializable {
     private final String id;
     private String displayName;
     private String email;
-    private boolean enabled;
+    private boolean locationRequestAgreed;
+    private boolean locationRequestAllowed;
 
-    public Contact(String id) {
+    public AndroidContact(String id) {
         this.id = id;
+    }
+
+    public AndroidContact(ContactData contactData) {
+        this.id = contactData.getContactId();
+        this.displayName = contactData.getContactId();
+        this.email = contactData.getContactId();
+        this.locationRequestAgreed = contactData.isLocationRequestAgreed();
+        this.locationRequestAgreed = contactData.isLocationRequestAgreed();
     }
 
     public String getDisplayName() {
@@ -37,12 +48,20 @@ public class Contact implements Comparable<Contact>, Serializable {
         return id;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public boolean isLocationRequestAgreed() {
+        return locationRequestAgreed;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setLocationRequestAgreed(boolean locationRequestAgreed) {
+        this.locationRequestAgreed = locationRequestAgreed;
+    }
+
+    public boolean isLocationRequestAllowed() {
+        return locationRequestAllowed;
+    }
+
+    public void setLocationRequestAllowed(boolean locationRequestAllowed) {
+        this.locationRequestAllowed = locationRequestAllowed;
     }
 
     @Override
@@ -61,7 +80,7 @@ public class Contact implements Comparable<Contact>, Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Contact other = (Contact) obj;
+        AndroidContact other = (AndroidContact) obj;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -71,7 +90,7 @@ public class Contact implements Comparable<Contact>, Serializable {
     }
 
     @Override
-    public int compareTo(Contact other) {
+    public int compareTo(AndroidContact other) {
         return getDisplayName().compareTo(other.getDisplayName());
     }
 }
