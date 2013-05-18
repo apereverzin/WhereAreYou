@@ -14,7 +14,6 @@ import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
 
-import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_ACTIVITY_MODE;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -84,10 +83,10 @@ public class MainMapActivity extends MapActivity implements LocationAware {
             startActivity(intent);
             return true;
         case CONTACTS_TO_TRACE_MENU_ITEM:
-            startContactsActivity(ContactsActivity.Mode.DISPLAY_CONTACTS_TO_TRACE);
+            startContactsActivity();
             return true;
         case CONTACTS_TO_INFORM_MENU_ITEM:
-            startContactsActivity(ContactsActivity.Mode.DISPLAY_CONTACTS_TO_INFORM);
+            startContactsActivity();
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -111,11 +110,8 @@ public class MainMapActivity extends MapActivity implements LocationAware {
         }
     }
 
-    private void startContactsActivity(ContactsActivity.Mode mode) {
+    private void startContactsActivity() {
         Intent intent = new Intent(MainMapActivity.this, ContactsActivity.class);
-        final Bundle bundle = new Bundle();
-        bundle.putSerializable(CONTACT_ACTIVITY_MODE, mode);
-        intent.putExtras(bundle);
         startActivity(intent);
     }
 }

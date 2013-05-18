@@ -29,9 +29,9 @@ public class SQLiteDbManager {
     public void initialise(Context ctx) {
         if (!initialized) {
             whereAreYouDb = ctx.openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
-            if (!databaseExists()) {
+            //if (!databaseExists()) {
                 createDatabase();
-            }
+            //}
             
             initialized = true;
         }
@@ -46,23 +46,29 @@ public class SQLiteDbManager {
     }
 
     private void createDatabase() {
-        whereAreYouDb.execSQL(DROP_TABLE + AbstractSQLiteRepository.CONTACT_DATA_TABLE);
-        whereAreYouDb.execSQL(DROP_TABLE + AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE);
-        whereAreYouDb.execSQL(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
-        whereAreYouDb.execSQL(AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE);
+        dropTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
+        dropTable(AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE);
+        whereAreYouDb.execSQL(SQLiteContactLocationRepository.CONTACT_LOCATION_DATA_TABLE_CREATE);
+        whereAreYouDb.execSQL(SQLiteContactRepository.CONTACT_DATA_TABLE_CREATE);
     }
 
     private boolean databaseExists() {
         try {
-            whereAreYouDb.query(AbstractSQLiteRepository.CONTACT_DATA_TABLE, 
-                    new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
-            whereAreYouDb.query(AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE, 
-                    new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
+            queryTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
+            queryTable(AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE);
             Log.d(getClass().getName(), "db exists");
             return true;
         } catch (SQLiteException ex) {
             Log.d(getClass().getName(), "db does not exist");
             return false;
         }
+    }
+    
+    private void dropTable(String tableName) {
+        whereAreYouDb.execSQL(String.format("%s %s", DROP_TABLE, tableName));
+    }
+    
+    private void queryTable(String tableName) {
+        whereAreYouDb.query(tableName, new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
     }
 }

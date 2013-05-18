@@ -7,6 +7,7 @@ import com.creek.whereareyou.R;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.util.Log;
 
 /**
@@ -15,6 +16,8 @@ import android.util.Log;
  *
  */
 public class ActivityUtil {
+    private static final String TITLE_ENTRIES_SEPARATOR = "> ";
+    
     public static void showException(Activity parent, Throwable ex) {
         if(ex != null) {
             Log.e(parent.getClass().getSimpleName(), ex.getLocalizedMessage(), ex);
@@ -69,5 +72,17 @@ public class ActivityUtil {
             String propName = propNames.nextElement();
             Log.d(TAG, propName + "=" + props.getProperty(propName));
         }
+    }
+    
+    public static final void setActivityTitle(Activity activity, int... ids) {
+        StringBuilder title = new StringBuilder();
+        for(int i = 0; i < ids.length; i++) {
+            title.append(activity.getString(ids[i]));
+            if (i < ids.length - 1) {
+                title.append(TITLE_ENTRIES_SEPARATOR);
+            }
+        }
+        
+        activity.setTitle(title);
     }
 }

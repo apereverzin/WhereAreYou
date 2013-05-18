@@ -29,7 +29,7 @@
         <uses-library android:name="com.google.android.maps" />
 
         <activity
-            android:name="com.creek.whereareyou.android.activity.map.MainMapActivity"   
+            android:name="com.creek.whereareyou.android.activity.contacts.ContactsActivity"   
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,8 +39,7 @@
 
         <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountEditActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.account.CheckEmailResultActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.contacts.ContactsActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.contacts.EditContactActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.map.MainMapActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.contacts.ViewContactActivity" />
         
         <service android:name="com.creek.whereareyou.android.services.inform.InformService">

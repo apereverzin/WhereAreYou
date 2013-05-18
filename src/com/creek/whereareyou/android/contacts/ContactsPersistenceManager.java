@@ -1,7 +1,7 @@
 package com.creek.whereareyou.android.contacts;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,21 +35,7 @@ public class ContactsPersistenceManager {
         contactRepository = new SQLiteContactRepository(SQLiteDbManager.getInstance().getDatabase());
     }
 
-    public List<AndroidContact> retrieveContactsToInform() throws IOException {
-        // TODO Add getContactsToInform() method
-        List<ContactData> contacts = contactRepository.getAllContactData();
-        List<AndroidContact> androidContacts = new ArrayList<AndroidContact>();
-        for (int i = 0; i < contacts.size(); i++) {
-            ContactData contact = contacts.get(i);
-            if (contact.isLocationRequestAllowed()) {
-                AndroidContact androidContact = new AndroidContact(contact);
-                androidContacts.add(androidContact);
-            }
-        }
-        return androidContacts;
-    }
-
-    public void persistContactsToInformWhenAdding(Map<String, AndroidContact> androidContacts) throws IOException {
+    public void persistContacts(Map<String, AndroidContact> androidContacts) throws IOException {
         for (String contactId: androidContacts.keySet()) {
             ContactData contact = contactRepository.getContactDataByContactId(contactId);
             if (contact == null) {
@@ -64,71 +50,44 @@ public class ContactsPersistenceManager {
         }
     }
 
-    public void persistContactsToInform(Map<String, AndroidContact> androidContacts) throws IOException {
-        List<ContactData> contacts = contactRepository.getAllContactData();
-        for (ContactData contact: contacts) {
-            if (!androidContacts.containsKey(contact.getContactId())) {
-                contact.setLocationRequestAllowed(false);
-                contactRepository.updateContactData(contact);
-            }
-        }
+    public ContactData retrieveContactDataByContactId(String contactId) {
+        return contactRepository.getContactDataByContactId(contactId);
+    }
+    
+    public List<AndroidContact> retrieveContacts(Context context) throws IOException {
+        Map<String, AndroidContact> existingContacts = retrievePersistedContacts();
+        return combineContactsLists(context, existingContacts);
     }
 
-    public List<AndroidContact> retrieveContactsToTrace() throws IOException {
-        // TODO Add getContactsToTrace() method
+    private Map<String, AndroidContact> retrievePersistedContacts() throws IOException {
         List<ContactData> contacts = contactRepository.getAllContactData();
-        List<AndroidContact> androidContacts = new ArrayList<AndroidContact>();
+        Map<String, AndroidContact> androidContacts = new HashMap<String, AndroidContact>();
         for (int i = 0; i < contacts.size(); i++) {
             ContactData contact = contacts.get(i);
-            if (contact.isLocationRequestAgreed()) {
-                AndroidContact androidContact = new AndroidContact(contact);
-                androidContacts.add(androidContact);
-            }
+            AndroidContact androidContact = new AndroidContact(contact);
+            androidContacts.put(androidContact.getId(), androidContact);
         }
         return androidContacts;
     }
 
-    public void persistContactsToTraceWhenAdding(Map<String, AndroidContact> androidContacts) throws IOException {
-        for (String contactId: androidContacts.keySet()) {
-            ContactData contact = contactRepository.getContactDataByContactId(contactId);
-            if (contact == null) {
-                AndroidContact androidContact = androidContacts.get(contactId);
-                contact = createContactData(androidContact);
-                contact.setLocationRequestAgreed(true);
-                contactRepository.createContactData(contact);
-            } else {
-                contact.setLocationRequestAgreed(true);
-                contactRepository.updateContactData(contact);
-            }
-        }
-    }
-
-    public void persistContactsToTrace(Map<String, AndroidContact> androidContacts) throws IOException {
-        List<ContactData> contacts = contactRepository.getAllContactData();
-        for (ContactData contact: contacts) {
-            if (!androidContacts.containsKey(contact.getContactId())) {
-                contact.setLocationRequestAgreed(false);
-                contactRepository.updateContactData(contact);
-            }
-        }
-    }
-
-    public List<AndroidContact> retrieveContactsToAddToTrace(Context context) throws IOException {
-        List<AndroidContact> existingContacts = retrieveContactsToTrace();
-        return subtractContactsList(context, existingContacts);
-    }
-
-    public List<AndroidContact> retrieveContactsToAddToInform(Context context) throws IOException {
-        List<AndroidContact> existingContacts = retrieveContactsToInform();
-        return subtractContactsList(context, existingContacts);
-    }
-
-    private List<AndroidContact> subtractContactsList(Context context, List<AndroidContact> existingContacts) {
+    private List<AndroidContact> combineContactsLists(Context context, Map<String, AndroidContact> persistedContacts) {
         List<AndroidContact> allContacts = androidContactsProvider.getAllContacts(context);
 
-        allContacts.removeAll(existingContacts);
+        for (int i = 0; i < allContacts.size(); i++) {
+            AndroidContact androidContact = allContacts.get(i);
+            AndroidContact persistedContact = persistedContacts.get(androidContact.getId());
+            combineContacts(androidContact, persistedContact);
+        }
 
         return allContacts;
+    }
+
+    private void combineContacts(AndroidContact androidContact, AndroidContact persistedContact) {
+        if (persistedContact != null) {
+            androidContact.setEmail(persistedContact.getEmail());
+            androidContact.setLocationRequestAllowed(persistedContact.isLocationRequestAllowed());
+            androidContact.setLocationRequestAgreed(persistedContact.isLocationRequestAgreed());
+        }
     }
     
     private ContactData createContactData(AndroidContact androidContact) {

@@ -22,8 +22,8 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
 
     public AndroidContact(ContactData contactData) {
         this.id = contactData.getContactId();
-        this.displayName = contactData.getContactId();
-        this.email = contactData.getContactId();
+        this.displayName = contactData.getDisplayName();
+        this.email = contactData.getEmail();
         this.locationRequestAgreed = contactData.isLocationRequestAgreed();
         this.locationRequestAgreed = contactData.isLocationRequestAgreed();
     }
@@ -92,5 +92,11 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
     @Override
     public int compareTo(AndroidContact other) {
         return getDisplayName().compareTo(other.getDisplayName());
+    }
+
+    @Override
+    public String toString() {
+        return "AndroidContact [id=" + id + ", displayName=" + displayName + ", email=" + email + ", locationRequestAgreed=" + locationRequestAgreed + ", locationRequestAllowed="
+                + locationRequestAllowed + "]";
     }
 }

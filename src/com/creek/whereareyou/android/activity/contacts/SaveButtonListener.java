@@ -1,12 +1,10 @@
 package com.creek.whereareyou.android.activity.contacts;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.creek.whereareyou.android.activity.contacts.ContactsActivity.Mode;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
@@ -22,12 +20,10 @@ import android.view.View;
 public class SaveButtonListener implements View.OnClickListener {
     private final ListActivity activity;
     private final List<CheckBoxContact> contactsList;
-    private final Mode mode;
     
-    public SaveButtonListener(ListActivity activity, List<CheckBoxContact> contactsList, Mode mode) {
+    public SaveButtonListener(ListActivity activity, List<CheckBoxContact> contactsList) {
         this.activity = activity;
         this.contactsList = contactsList;
-        this.mode = mode;
     }
 
     public void onClick(View view) {
@@ -39,15 +35,7 @@ public class SaveButtonListener implements View.OnClickListener {
         }
         
         try {
-            if (Mode.ADD_CONTACTS_TO_INFORM.equals(mode)) {
-                ContactsPersistenceManager.getInstance().persistContactsToInformWhenAdding(contacts);
-            } else if (Mode.ADD_CONTACTS_TO_TRACE.equals(mode)) {
-                ContactsPersistenceManager.getInstance().persistContactsToTraceWhenAdding(contacts);
-            } else if (Mode.DISPLAY_CONTACTS_TO_INFORM.equals(mode)) {
-                ContactsPersistenceManager.getInstance().persistContactsToInform(contacts);
-            } else if (Mode.DISPLAY_CONTACTS_TO_TRACE.equals(mode)) {
-                ContactsPersistenceManager.getInstance().persistContactsToTrace(contacts);
-            }
+            ContactsPersistenceManager.getInstance().persistContacts(contacts);
         } catch (IOException ex) {
             ActivityUtil.showException(activity, ex);
         }
