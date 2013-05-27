@@ -28,12 +28,12 @@ public class InformService extends Service {
     private TimerTask informTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "===================EmailReceivingService doing work");
+            Log.i(TAG, "===================EmailSendingAndReceivingService doing work");
             Location location = new LocationProvider().getLatestLocation(InformService.this);
             //NetworkLocationProvider.onCellLocationChanged();
 //            if(location != null) {
-//                Log.i(TAG, "===================EmailReceivingService doing work: " + location.getLatitude() + " " + location.getLongitude());
-//                Log.i(TAG, "===================EmailReceivingService doing work: " + System.currentTimeMillis() + " " + location.getTime());
+//                Log.i(TAG, "===================EmailSendingAndReceivingService doing work: " + location.getLatitude() + " " + location.getLongitude());
+//                Log.i(TAG, "===================EmailSendingAndReceivingService doing work: " + System.currentTimeMillis() + " " + location.getTime());
 //            }
         }
     };
@@ -50,7 +50,7 @@ public class InformService extends Service {
         contentResolver = getContentResolver();
 
         timer = new Timer("WhereAreYouInformTimer");
-        timer.schedule(informTask, 1000L, 30 * 1000L);
+        //timer.schedule(informTask, 1000L, 30 * 1000L);
     }
 
     @Override

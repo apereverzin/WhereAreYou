@@ -45,10 +45,10 @@
     <string name="contact_display_name">Name</string>
     <string name="contact_email">email</string>
     <string name="location_requests_allowed">Location Requests Allowed</string>
-    <string name="last_sent_location_request">Location Requests Allowed</string>
-    <string name="last_received_location_response">Location Requests Allowed</string>
-    <string name="last_received_location_request">Location Requests Allowed</string>
-    <string name="last_sent_location_response">Location Requests Allowed</string>
+    <string name="last_sent_location_request">Request Sent at</string>
+    <string name="last_received_location_response">Last Location at</string>
+    <string name="last_received_location_request">Request Received at</string>
+    <string name="last_sent_location_response">Location Sent at</string>
     <string name="request_location">Request Location</string>
     
 </resources>

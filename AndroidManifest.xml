@@ -54,9 +54,9 @@
             </intent-filter>
         </service>
         
-        <service android:name="com.creek.whereareyou.android.services.email.EmailReceivingService">
+        <service android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService">
             <intent-filter>
-                <action android:name="com.creek.whereareyou.android.services.email.EmailReceivingService" />
+                <action android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService" />
             </intent-filter>
         </service>
         

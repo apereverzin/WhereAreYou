@@ -23,7 +23,7 @@ public class TraceService extends Service {
         @Override
         public void run() {
             //Log.i(TAG, "-------------------TraceService doing work");
-            Account emailAccount = new GoogleAccountProvider().getEmailAccount(TraceService.this);
+            Account emailAccount = GoogleAccountProvider.getInstance().getEmailAccount(TraceService.this);
             if (emailAccount != null) {
                 //Log.i(TAG, "-------------------TraceService doing work " + emailAccount.name);
             }
@@ -40,7 +40,7 @@ public class TraceService extends Service {
         super.onCreate();
 
         timer = new Timer("WhereAreYouTraceTimer");
-        timer.schedule(traceTask, 1000L, 1 * 1000L);
+        //timer.schedule(traceTask, 1000L, 1 * 1000L);
     }
 
     @Override

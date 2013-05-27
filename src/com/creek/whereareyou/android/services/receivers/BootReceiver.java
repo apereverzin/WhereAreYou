@@ -1,5 +1,6 @@
  package com.creek.whereareyou.android.services.receivers;
 
+import com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService;
 import com.creek.whereareyou.android.services.inform.InformService;
 import com.creek.whereareyou.android.services.trace.TraceService;
 
@@ -18,8 +19,9 @@ public class BootReceiver extends android.content.BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        startService(context, TraceService.class);
-        startService(context, InformService.class);
+//        startService(context, TraceService.class);
+//        startService(context, InformService.class);
+        startService(context, EmailSendingAndReceivingService.class);
 //        Intent activeIntent = new Intent(context, LocationChangedReceiver.class);
 //        PendingIntent locationListenerPendingIntent = PendingIntent.getBroadcast(context, 0, activeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 //        LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);

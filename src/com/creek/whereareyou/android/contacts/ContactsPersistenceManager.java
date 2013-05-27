@@ -7,10 +7,11 @@ import java.util.Map;
 
 import android.content.Context;
 
-import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactRepository;
+import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactDataRepository;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteDbManager;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
-import com.creek.whereareyoumodel.repository.ContactRepository;
+import com.creek.whereareyoumodel.repository.ContactDataRepository;
 
 /**
  * 
@@ -20,7 +21,7 @@ public class ContactsPersistenceManager {
     private static final ContactsPersistenceManager instance = new ContactsPersistenceManager();
 
     private final AndroidContactsProvider androidContactsProvider = new AndroidContactsProvider();
-    private ContactRepository contactRepository;
+    private ContactDataRepository contactDataRepository;
 
     private ContactsPersistenceManager() {
         //
@@ -32,26 +33,24 @@ public class ContactsPersistenceManager {
 
     public void initialise(Context ctx) {
         SQLiteDbManager.getInstance().initialise(ctx);
-        contactRepository = new SQLiteContactRepository(SQLiteDbManager.getInstance().getDatabase());
+        contactDataRepository = new SQLiteContactDataRepository(SQLiteDbManager.getInstance().getDatabase());
     }
 
     public void persistContacts(Map<String, AndroidContact> androidContacts) throws IOException {
         for (String contactId: androidContacts.keySet()) {
-            ContactData contact = contactRepository.getContactDataByContactId(contactId);
+            ContactData contact = contactDataRepository.getContactDataByContactId(contactId);
             if (contact == null) {
                 AndroidContact androidContact = androidContacts.get(contactId);
                 contact = createContactData(androidContact);
-                contact.setLocationRequestAllowed(true);
-                contactRepository.createContactData(contact);
+                contactDataRepository.create(contact);
             } else {
-                contact.setLocationRequestAllowed(true);
-                contactRepository.updateContactData(contact);
+                contactDataRepository.update(contact);
             }
         }
     }
 
     public ContactData retrieveContactDataByContactId(String contactId) {
-        return contactRepository.getContactDataByContactId(contactId);
+        return contactDataRepository.getContactDataByContactId(contactId);
     }
     
     public List<AndroidContact> retrieveContacts(Context context) throws IOException {
@@ -60,7 +59,7 @@ public class ContactsPersistenceManager {
     }
 
     private Map<String, AndroidContact> retrievePersistedContacts() throws IOException {
-        List<ContactData> contacts = contactRepository.getAllContactData();
+        List<ContactData> contacts = contactDataRepository.getAllContactData();
         Map<String, AndroidContact> androidContacts = new HashMap<String, AndroidContact>();
         for (int i = 0; i < contacts.size(); i++) {
             ContactData contact = contacts.get(i);
@@ -85,16 +84,15 @@ public class ContactsPersistenceManager {
     private void combineContacts(AndroidContact androidContact, AndroidContact persistedContact) {
         if (persistedContact != null) {
             androidContact.setEmail(persistedContact.getEmail());
-            androidContact.setLocationRequestAllowed(persistedContact.isLocationRequestAllowed());
-            androidContact.setLocationRequestAgreed(persistedContact.isLocationRequestAgreed());
+            androidContact.setRequestAllowed(persistedContact.isRequestAllowed());
         }
     }
     
     private ContactData createContactData(AndroidContact androidContact) {
         ContactData contactData = new ContactData();
         
-        contactData.setContactId(androidContact.getId());
-        contactData.setEmail(androidContact.getEmail());
+        ContactCompoundId contactCompoundId = new ContactCompoundId(androidContact.getId(), androidContact.getEmail());
+        contactData.setContactCompoundId(contactCompoundId);
         contactData.setDisplayName(androidContact.getDisplayName());
         return contactData;
     }

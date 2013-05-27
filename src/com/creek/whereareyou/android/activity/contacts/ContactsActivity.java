@@ -39,13 +39,13 @@ public class ContactsActivity extends ListActivity {
     private static final String CONTACT_NAME = "contact_name";
     private static final String CONTACT_CHECK = "contact_check";
 
-    public static final String CONTACT_SELECTED = "CONTACT_SELECTED";
+    static final String CONTACT_SELECTED = "CONTACT_SELECTED";
     
     private List<AndroidContact> contactsDataList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreate()");
+        Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
         ContactsPersistenceManager.getInstance().initialise(this);
@@ -90,19 +90,19 @@ public class ContactsActivity extends ListActivity {
 
         registerForContextMenu(getListView());
 
-        Log.d(getClass().getName(), "onCreate() finished");
+        Log.d(TAG, "onCreate() finished");
     }
 
     @Override
     public void onResume() {
-        Log.d(getClass().getName(), "onResume()");
+        Log.d(TAG, "onResume()");
         //((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
         super.onResume();
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d(getClass().getName(), "onCreateContextMenu()");
+        Log.d(TAG, "onCreateContextMenu()");
         super.onCreateContextMenu(menu, v, menuInfo);
         final AndroidContact contactSelected = contactsDataList.get((int)((AdapterContextMenuInfo)menuInfo).id);
         menu.add(0, VIEW_CONTACT_DETAILS_MENU_ITEM, 0, R.string.menu_view_contact_details);
@@ -118,16 +118,16 @@ public class ContactsActivity extends ListActivity {
         bundle.putSerializable(CONTACT_SELECTED, contactSelected);
         switch (item.getItemId()) {
         case VIEW_CONTACT_DETAILS_MENU_ITEM:
-            Log.d(getClass().getName(), "VIEW_CONTACT_DETAILS_MENU_ITEM");
+            Log.d(TAG, "VIEW_CONTACT_DETAILS_MENU_ITEM: " + contactSelected.getId());
             Intent intent = new Intent(ContactsActivity.this, ViewContactActivity.class);
             intent.putExtras(bundle);
             startActivity(intent);
             return true;
         case VIEW_CONTACT_LAST_LOCATION_MENU_ITEM:
-            Log.d(getClass().getName(), "VIEW_CONTACT_LAST_LOCATION_MENU_ITEM");
+            Log.d(TAG, "VIEW_CONTACT_LAST_LOCATION_MENU_ITEM");
             return true;
         case REQUEST_CONTACT_LOCATION_MENU_ITEM:
-            Log.d(getClass().getName(), "REQUEST_CONTACT_LOCATION_MENU_ITEM");
+            Log.d(TAG, "REQUEST_CONTACT_LOCATION_MENU_ITEM");
             return true;
         default:
             return super.onContextItemSelected(item);

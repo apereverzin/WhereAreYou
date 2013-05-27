@@ -15,10 +15,10 @@ import com.creek.whereareyoumodel.repository.ContactLocationRepository;
  * 
  * @author andreypereverzin
  */
-public class SQLiteContactLocationRepository extends AbstractSQLiteRepository implements ContactLocationRepository {
+public final class SQLiteContactLocationRepository extends AbstractSQLiteRepository<ContactLocationData> implements ContactLocationRepository {
 
-    static final String SENDER_EMAIL_FIELD_NAME = "sender_email";
     static final String TIME_SENT_FIELD_NAME = "time_sent";
+    static final String TIME_RECEIVED_FIELD_NAME = "time_received";
     static final String LOCATION_TIME_FIELD_NAME = "location_time";
     static final String ACCURACY_FIELD_NAME = "accuracy";
     static final String LATITUDE_FIELD_NAME = "latitude";
@@ -28,11 +28,11 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
     static final String HAS_SPEED_FIELD_NAME = "has_speed";
     static final String CONTACT_ID_FIELD_NAME = "contact_id";
 
-    static final String CONTACT_LOCATION_DATA_TABLE_CREATE = 
-            "create table " + CONTACT_LOCATION_DATA_TABLE 
+    static final String CONTACT_LOCATION_TABLE_CREATE = 
+            "create table " + CONTACT_LOCATION_TABLE 
             + " (" + ID_FIELD_NAME + " integer primary key autoincrement, " 
-            + SENDER_EMAIL_FIELD_NAME + " text not null, "
             + TIME_SENT_FIELD_NAME + " real not null, "
+            + TIME_RECEIVED_FIELD_NAME + " real not null, "
             + LOCATION_TIME_FIELD_NAME + " real not null, "
             + ACCURACY_FIELD_NAME + "accuracy real not null, "
             + LATITUDE_FIELD_NAME + " real not null, " 
@@ -44,16 +44,6 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
 
     public SQLiteContactLocationRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
-    }
-
-    @Override
-    public ContactLocationData saveContactLocationData(ContactLocationData contactLocationData) {
-        return null;
-    }
-
-    @Override
-    public boolean deleteContactLocationData(int id) {
-        return super.delete(id) ;
     }
 
     @Override
@@ -86,45 +76,14 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
         return null;
     }
     
-    private ContentValues getContactContentValues(ContactLocationData contactLocationData) {
-        ContentValues values = new ContentValues();
-        values.put(LOCATION_TIME_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLocationTime());
-        values.put(SENDER_EMAIL_FIELD_NAME, contactLocationData.getOwnerLocationData().getSenderEmail());
-        values.put(TIME_SENT_FIELD_NAME, contactLocationData.getOwnerLocationData().getTimeSent());
-        values.put(ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getAccuracy());
-        values.put(LATITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLatitude());
-        values.put(LONGITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLongitude());
-        values.put(SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getSpeed());
-        values.put(HAS_ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasAccuracy() ? 1 : 0);
-        values.put(HAS_SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasSpeed() ? 1 : 0);
-        values.put(CONTACT_ID_FIELD_NAME, contactLocationData.getContactId());
-        return values;
-    }
-    
-    private ContactLocationData createContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
-        ContactLocationData contactLocationData = new ContactLocationData();
-        contactLocationData.setId(contactLocationDataCursor.getInt(0));
-        String senderEmail = contactLocationDataCursor.getString(1);
-        long timeSent = contactLocationDataCursor.getLong(2);
-        float accuracy = contactLocationDataCursor.getFloat(3);
-        double latitude = contactLocationDataCursor.getDouble(4);
-        double longitude = contactLocationDataCursor.getDouble(5);
-        float speed = contactLocationDataCursor.getFloat(6);
-        boolean hasAccuracy = contactLocationDataCursor.getInt(7) == 1;
-        boolean hasSpeed = contactLocationDataCursor.getInt(8) == 1;
-        LocationData locationData = new LocationData(accuracy, latitude, longitude, speed, hasAccuracy, hasSpeed);
-        OwnerLocationData ownerLocationData = new OwnerLocationData(senderEmail, timeSent, locationData);
-        contactLocationData.setOwnerLocationData(ownerLocationData);
-        return contactLocationData;
-    }
-    
+    @Override
     protected String getTableName() {
-        return CONTACT_DATA_TABLE;
+        return CONTACT_LOCATION_TABLE;
     }
     
+    @Override
     protected String[] getFieldNames() {
         return new String[] {ID_FIELD_NAME,
-                SENDER_EMAIL_FIELD_NAME,
                 TIME_SENT_FIELD_NAME,
                 LOCATION_TIME_FIELD_NAME,
                 ACCURACY_FIELD_NAME,
@@ -137,10 +96,46 @@ public class SQLiteContactLocationRepository extends AbstractSQLiteRepository im
         };
     }
     
+    @Override
+    protected ContentValues getContentValues(ContactLocationData contactLocationData) {
+        ContentValues values = new ContentValues();
+        values.put(LOCATION_TIME_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLocationTime());
+        values.put(TIME_SENT_FIELD_NAME, contactLocationData.getOwnerLocationData().getTimeSent());
+        values.put(TIME_RECEIVED_FIELD_NAME, contactLocationData.getTimeReceived());
+        values.put(ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getAccuracy());
+        values.put(LATITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLatitude());
+        values.put(LONGITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLongitude());
+        values.put(SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getSpeed());
+        values.put(HAS_ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasAccuracy() ? 1 : 0);
+        values.put(HAS_SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasSpeed() ? 1 : 0);
+        values.put(CONTACT_ID_FIELD_NAME, contactLocationData.getContactCompoundId().getContactId());
+        return values;
+    }
+    
+    @Override
+    protected ContactLocationData createEntityFromCursor(Cursor contactLocationDataCursor) {
+        ContactLocationData contactLocationData = new ContactLocationData();
+        contactLocationData.setId(contactLocationDataCursor.getInt(0));
+        String senderEmail = contactLocationDataCursor.getString(1);
+        long timeSent = contactLocationDataCursor.getLong(2);
+        long timeReceived = contactLocationDataCursor.getLong(3);
+        float accuracy = contactLocationDataCursor.getFloat(4);
+        double latitude = contactLocationDataCursor.getDouble(5);
+        double longitude = contactLocationDataCursor.getDouble(6);
+        float speed = contactLocationDataCursor.getFloat(7);
+        boolean hasAccuracy = contactLocationDataCursor.getInt(8) == 1;
+        boolean hasSpeed = contactLocationDataCursor.getInt(9) == 1;
+        LocationData locationData = new LocationData(accuracy, latitude, longitude, speed, hasAccuracy, hasSpeed);
+        OwnerLocationData ownerLocationData = new OwnerLocationData(timeSent, locationData);
+        contactLocationData.setOwnerLocationData(ownerLocationData);
+        contactLocationData.setTimeReceived(timeReceived);
+        return contactLocationData;
+    }
+        
     private ContactLocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
         if (contactLocationDataCursor != null && contactLocationDataCursor.getCount() > 0) {
             contactLocationDataCursor.moveToFirst();
-            return createContactLocationDataFromCursor(contactLocationDataCursor);
+            return createEntityFromCursor(contactLocationDataCursor);
         }
         return null;
     }

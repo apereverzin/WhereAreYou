@@ -13,7 +13,16 @@ public class GoogleAccountProvider {
     private static final String TAG = GoogleAccountProvider.class.getSimpleName();
     private static final String GOOGLE_ACCOUNT_PREFIX = "com.google";
     private Account emailAccount = null;
+    private static final GoogleAccountProvider instance = new GoogleAccountProvider();
 
+    private GoogleAccountProvider() {
+        //
+    }
+    
+    public static final GoogleAccountProvider getInstance() {
+        return instance;
+    }
+    
     public Account getEmailAccount(Context context) {
         if (!isEmailAccountAlreadyFound()) {
             emailAccount = findEmailAccount(context);

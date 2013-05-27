@@ -13,19 +13,16 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
     private final String id;
     private String displayName;
     private String email;
-    private boolean locationRequestAgreed;
-    private boolean locationRequestAllowed;
+    private boolean requestAllowed;
 
     public AndroidContact(String id) {
         this.id = id;
     }
 
     public AndroidContact(ContactData contactData) {
-        this.id = contactData.getContactId();
+        this.id = contactData.getContactCompoundId().getContactId();
         this.displayName = contactData.getDisplayName();
-        this.email = contactData.getEmail();
-        this.locationRequestAgreed = contactData.isLocationRequestAgreed();
-        this.locationRequestAgreed = contactData.isLocationRequestAgreed();
+        this.email = contactData.getContactCompoundId().getContactEmail();
     }
 
     public String getDisplayName() {
@@ -48,20 +45,12 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
         return id;
     }
 
-    public boolean isLocationRequestAgreed() {
-        return locationRequestAgreed;
+    public boolean isRequestAllowed() {
+        return requestAllowed;
     }
 
-    public void setLocationRequestAgreed(boolean locationRequestAgreed) {
-        this.locationRequestAgreed = locationRequestAgreed;
-    }
-
-    public boolean isLocationRequestAllowed() {
-        return locationRequestAllowed;
-    }
-
-    public void setLocationRequestAllowed(boolean locationRequestAllowed) {
-        this.locationRequestAllowed = locationRequestAllowed;
+    public void setRequestAllowed(boolean requestAllowed) {
+        this.requestAllowed = requestAllowed;
     }
 
     @Override
@@ -96,7 +85,6 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
 
     @Override
     public String toString() {
-        return "AndroidContact [id=" + id + ", displayName=" + displayName + ", email=" + email + ", locationRequestAgreed=" + locationRequestAgreed + ", locationRequestAllowed="
-                + locationRequestAllowed + "]";
+        return "AndroidContact [id=" + id + ", displayName=" + displayName + ", email=" + email + ", requestAllowed=" + requestAllowed + "]";
     }
 }

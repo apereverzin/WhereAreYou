@@ -11,6 +11,8 @@ import android.util.Log;
  * 
  */
 public class SQLiteDbManager {
+    private static final String TAG = SQLiteDbManager.class.getSimpleName();
+    
     private static final SQLiteDbManager instance = new SQLiteDbManager();
     private boolean initialized = false;
     private SQLiteDatabase whereAreYouDb;
@@ -47,19 +49,25 @@ public class SQLiteDbManager {
 
     private void createDatabase() {
         dropTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
-        dropTable(AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE);
-        whereAreYouDb.execSQL(SQLiteContactLocationRepository.CONTACT_LOCATION_DATA_TABLE_CREATE);
-        whereAreYouDb.execSQL(SQLiteContactRepository.CONTACT_DATA_TABLE_CREATE);
+        dropTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
+        dropTable(AbstractSQLiteRepository.CONTACT_RESPONSE_TABLE);
+        dropTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
+        whereAreYouDb.execSQL(SQLiteContactDataRepository.CONTACT_DATA_TABLE_CREATE);
+        whereAreYouDb.execSQL(SQLiteContactRequestRepository.CONTACT_REQUEST_TABLE_CREATE);
+        whereAreYouDb.execSQL(SQLiteContactResponseRepository.CONTACT_RESPONSE_TABLE_CREATE);
+        whereAreYouDb.execSQL(SQLiteContactLocationRepository.CONTACT_LOCATION_TABLE_CREATE);
     }
 
     private boolean databaseExists() {
         try {
             queryTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
-            queryTable(AbstractSQLiteRepository.CONTACT_LOCATION_DATA_TABLE);
-            Log.d(getClass().getName(), "db exists");
+            queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
+            queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
+            queryTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
+            Log.d(TAG, "db exists");
             return true;
         } catch (SQLiteException ex) {
-            Log.d(getClass().getName(), "db does not exist");
+            Log.d(TAG, "db does not exist");
             return false;
         }
     }

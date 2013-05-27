@@ -21,6 +21,8 @@ import android.widget.TextView;
  * @author Andrey Pereverzin
  */
 public class ViewContactActivity extends Activity {
+    private static final String TAG = ViewContactActivity.class.getSimpleName();
+
     private TextView displayNameText;
     private EditText emailText;
     private TextView emailTextView;
@@ -52,12 +54,12 @@ public class ViewContactActivity extends Activity {
         final AndroidContact contact = (AndroidContact) extras.get(ContactsActivity.CONTACT_SELECTED);
         ContactData contactData = ContactsPersistenceManager.getInstance().retrieveContactDataByContactId(contact.getId());
         
-        Log.d(getClass().getName(), "onCreate() " + contact);
+        Log.d(TAG, "onCreate() " + contact);
 
         displayNameText.setText(contact.getDisplayName());
         if (contact.getEmail() == null) {
             emailTextView.setVisibility(View.INVISIBLE);
-            emailText.setText(contactData.getEmail());
+            emailText.setText("");
             saveButton.setVisibility(View.INVISIBLE);
         } else {
             emailText.setVisibility(View.INVISIBLE);
@@ -69,11 +71,18 @@ public class ViewContactActivity extends Activity {
                 }
             });
         }
-        locationRequestsAllowedCheckBox.setChecked(contact.isLocationRequestAllowed());
-        lastSentLocationRequestText.setText(Util.formatDateTime(contactData.getSentLocationRequestTimestamp()));
-        lastReceivedLocationResponseText.setText(Util.formatDateTime(contactData.getReceivedLocationRequestTimestamp()));
-        lastReceivedLocationRequestText.setText(Util.formatDateTime(contactData.getReceivedLocationRequestTimestamp()));
-        lastSentLocationResponseText.setText(Util.formatDateTime(contactData.getSentLocationRequestTimestamp()));
+        locationRequestsAllowedCheckBox.setChecked(contact.isRequestAllowed());
+        if(contactData == null) {
+            lastSentLocationRequestText.setText("");
+            lastReceivedLocationResponseText.setText("");
+            lastReceivedLocationRequestText.setText("");
+            lastSentLocationResponseText.setText("");
+        } else {
+//            lastSentLocationRequestText.setText(Util.formatDateTime(contactData.getSentRequestTimestamp()));
+//            lastReceivedLocationResponseText.setText(Util.formatDateTime(contactData.getReceivedRequestTimestamp()));
+//            lastReceivedLocationRequestText.setText(Util.formatDateTime(contactData.getReceivedRequestTimestamp()));
+//            lastSentLocationResponseText.setText(Util.formatDateTime(contactData.getSentRequestTimestamp()));
+        }
 
         sendLocationRequestButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {

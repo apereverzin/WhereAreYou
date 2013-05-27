@@ -18,14 +18,14 @@ import android.util.Log;
 public class ActivityUtil {
     private static final String TITLE_ENTRIES_SEPARATOR = "> ";
     
-    public static void showException(Activity parent, Throwable ex) {
+    public static void showException(Context parent, Throwable ex) {
         if(ex != null) {
             Log.e(parent.getClass().getSimpleName(), ex.getLocalizedMessage(), ex);
             new AlertDialog.Builder(parent).setTitle("Error").setMessage(ex.getLocalizedMessage()).setNeutralButton("Close", null).show();
         }
     }
     
-    public static void showAlert(Activity parent, String alert) {
+    public static void showAlert(Context parent, String alert) {
         new AlertDialog.Builder(parent).setTitle("Error").setMessage(alert).setNeutralButton("Close", null).show();
     }
     

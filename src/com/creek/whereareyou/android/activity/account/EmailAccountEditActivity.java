@@ -39,24 +39,22 @@ public class EmailAccountEditActivity extends Activity {
     private EditText passwordText;
     private Button testButton;
     private Button saveButton;
-    private MailAccountPropertiesProvider mailAccountPropertiesProvider;
     
     static final String MAIL_PROPERTIES = "MAIL_PROPERTIES";
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mailAccountPropertiesProvider = new MailAccountPropertiesProvider();
         setContentView(R.layout.mail_properties);
         passwordText = (EditText) findViewById(R.id.mail_password);
         testButton = (Button) findViewById(R.id.mail_properties_button_test);
         saveButton = (Button) findViewById(R.id.mail_properties_button_save);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         
-        final Account googleAccount = new GoogleAccountProvider().getEmailAccount(this);
+        final Account googleAccount = GoogleAccountProvider.getInstance().getEmailAccount(this);
         
         try {
-            Properties props = mailAccountPropertiesProvider.getMailProperties();
+            Properties props = MailAccountPropertiesProvider.getInstance().getMailProperties();
             if (props != null) {
                 passwordText.setText(props.getProperty(MAIL_PASSWORD_PROPERTY));
             }
@@ -103,7 +101,7 @@ public class EmailAccountEditActivity extends Activity {
                         MailConnector connector = new MailConnector(fullProps);
                         connector.checkSMTPConnection();
                         
-                        mailAccountPropertiesProvider.persistMailProperties(props);
+                        MailAccountPropertiesProvider.getInstance().persistMailProperties(props);
                     }
 
                     setResult(RESULT_OK);

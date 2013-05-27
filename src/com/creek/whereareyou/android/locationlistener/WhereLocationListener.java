@@ -24,13 +24,13 @@ public class WhereLocationListener extends AbstractLocationListener implements L
     public void onStatusChanged(String provider, int status, Bundle extras) {
         Log.d(TAG, "onStatusChanged: " + provider + " " + status);
         if (status == GpsStatus.GPS_EVENT_FIRST_FIX) {
-            Log.d(getClass().getName(), "fix");
+            Log.d(TAG, "fix");
         } else if (status == GpsStatus.GPS_EVENT_SATELLITE_STATUS) {
-            Log.d(getClass().getName(), "status");
+            Log.d(TAG, "status");
         } else if (status == GpsStatus.GPS_EVENT_STARTED) {
-            Log.d(getClass().getName(), "started");
+            Log.d(TAG, "started");
         } else if (status == GpsStatus.GPS_EVENT_STOPPED) {
-            Log.d(getClass().getName(), "stopped");
+            Log.d(TAG, "stopped");
         }
     }
 

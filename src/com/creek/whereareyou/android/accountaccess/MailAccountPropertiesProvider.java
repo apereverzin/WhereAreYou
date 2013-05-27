@@ -21,7 +21,17 @@ public class MailAccountPropertiesProvider {
     private static final String PASSWORD_ENCRYPTION_SEED = "tobeornottobe";
     private Properties mailProperties = null;
     private final FileProvider fileProvider = new FileProvider();
+    
+    private static final MailAccountPropertiesProvider instance = new MailAccountPropertiesProvider();
 
+    private MailAccountPropertiesProvider() {
+        //
+    }
+    
+    public static final MailAccountPropertiesProvider getInstance() {
+        return instance;
+    }
+    
     public void persistMailProperties(Properties propsToPersist) throws IOException, CryptoException {
         String password = propsToPersist.getProperty(MAIL_PASSWORD_PROPERTY);
         String cryptPassword = CryptoUtil.encrypt(PASSWORD_ENCRYPTION_SEED, password);
@@ -34,7 +44,7 @@ public class MailAccountPropertiesProvider {
     }
 
     public Properties getMailProperties() throws IOException, CryptoException {
-        Log.i(TAG, "-----getMailProperties");
+        Log.i(TAG, "getMailProperties");
         if (mailProperties == null) {
             mailProperties = fileProvider.getPropertiesFromFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
             if (mailProperties != null) {
