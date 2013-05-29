@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.services.email;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Timer;
@@ -8,8 +9,13 @@ import java.util.TimerTask;
 import com.creek.accessemail.connector.mail.PredefinedMailProperties;
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
+import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
+import com.creek.whereareyoumodel.domain.ContactRequest;
+import com.creek.whereareyoumodel.domain.ContactResponse;
+import com.creek.whereareyoumodel.domain.OwnerLocationRequest;
 import com.creek.whereareyoumodel.message.GenericMessage;
+import com.creek.whereareyoumodel.message.OwnerLocationRequestMessage;
 import com.creek.whereareyoumodel.service.LocationMessagesService;
 
 import android.accounts.Account;
@@ -49,6 +55,15 @@ public class EmailSendingAndReceivingService extends Service {
                 LocationMessagesService locationMessagesService = new LocationMessagesService(mailProps);
                 Set<GenericMessage> messages = locationMessagesService.receiveMessages();
                 Log.d(TAG, "===================messages.size(): " + messages.size());
+                
+                List<ContactRequest> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnsentContactRequests();
+                List<ContactResponse> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
+                for(ContactRequest contactRequest: unsentRequests) {
+                    contactRequest.setTimeSent(System.currentTimeMillis());
+                    OwnerLocationRequest ownerLocationRequest = new OwnerLocationRequest(contactRequest.getTimeSent(), contactRequest.getCode(), contactRequest.getMessage());
+                    OwnerLocationRequestMessage ownerLocationRequestMesage = new OwnerLocationRequestMessage(ownerLocationRequest, "productVersion", "senderEmail");
+                    locationMessagesService.sendOwnerLocationRequestMessage(ownerLocationRequestMesage, new String[]{contactRequest.getContactCompoundId().getContactEmail()});
+                }
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
             }

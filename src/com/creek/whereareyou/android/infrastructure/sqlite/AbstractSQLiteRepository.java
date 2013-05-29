@@ -19,7 +19,11 @@ import android.util.Log;
 public abstract class AbstractSQLiteRepository<T extends Identifiable> implements IdentifiableRepository<T> {
     private static final String TAG = AbstractSQLiteRepository.class.getSimpleName();
     protected final SQLiteDatabase whereAreYouDb;
+
     static final String ID_FIELD_NAME = "_id";    
+    static final String CONTACT_ID_FIELD_NAME = "contact_id";
+    static final String EMAIL_FIELD_NAME = "email";
+
     static final String CONTACT_DATA_TABLE = "contact_data";
     static final String CONTACT_REQUEST_TABLE = "contact_request";
     static final String CONTACT_RESPONSE_TABLE = "contact_response";
@@ -54,9 +58,20 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         return whereAreYouDb.delete(getTableName(), createWhereCriteria(ID_FIELD_NAME, Integer.toString(id)), null) > 0;
     }
 
+
+    protected List<T> retrieveEntitiesByCriteria(String fieldName, String fieldValue) {
+        Cursor cursor = null;
+        try {
+            cursor = createCursor(fieldName, fieldValue, null, null);
+            return createEntityListFromCursor(cursor);
+        } finally {
+            SQLiteUtils.closeCursor(cursor);
+        }
+    }
+
     protected Cursor createCursor(String fieldName, String fieldValue, String[] selectionArgs, String orderBy) {
         Log.d(TAG, "createCursor()");
-        return whereAreYouDb.query(getTableName(), getFieldNames(), createWhereCriteria(fieldName, fieldValue), selectionArgs, null, null, orderBy);
+        return createCursor(createWhereCriteria(fieldName, fieldValue), selectionArgs, orderBy);
     }
     
     protected Cursor createCursor(String criteria, String[] selectionArgs, String orderBy) {
@@ -66,6 +81,19 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     
     protected String createWhereCriteria(String fieldName, String fieldValue) {
         return String.format("%s=%s", fieldName, fieldValue);
+    }
+    
+    protected String createWhereAndCriteria(String[] criteria) {
+        StringBuilder sb = new StringBuilder();
+        
+        for (int i = 0; i < criteria.length; i++) {
+            sb.append(criteria[i]);
+            if (i < criteria.length - 1) {
+                sb.append(" AND ");
+            }
+        }
+        
+        return sb.toString();
     }
     
     protected List<T> createEntityListFromCursor(Cursor cursor) {

@@ -47,42 +47,46 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     }
 
     @Override
-    public List<ContactLocationData> getContactLocationDataByContactId(int email) {
+    public final List<ContactLocationData> getContactLocationDataByContactId(int email) {
         return null;
     }
 
     @Override
-    public List<ContactLocationData> getContactLocationDataByEmail(String email) {
+    public final List<ContactLocationData> getContactLocationDataByEmail(String email) {
         return null;
     }
 
     @Override
-    public List<ContactLocationData> getContactLocationDataByIdOfContact(String contactId) {
+    public final List<ContactLocationData> getContactLocationDataByIdOfContact(String contactId) {
         return null;
     }
 
     @Override
-    public ContactLocationData getLatestContactLocationDataByContactId(int contactId) {
+    public final ContactLocationData getLatestContactLocationDataByContactId(int contactId) {
         return null;
     }
 
     @Override
-    public ContactLocationData getLatestContactLocationDataByEmail(String contactId) {
+    public final ContactLocationData getLatestContactLocationDataByEmail(String contactId) {
         return null;
     }
 
     @Override
-    public ContactLocationData getLatestContactLocationDataByIdOfContact(String contactId) {
+    public final ContactLocationData getLatestContactLocationDataByIdOfContact(String contactId) {
         return null;
     }
     
     @Override
-    protected String getTableName() {
+    protected final String getTableName() {
         return CONTACT_LOCATION_TABLE;
     }
     
+    static final String getCreateTableCommand() {
+        return CONTACT_LOCATION_TABLE_CREATE;
+    }
+    
     @Override
-    protected String[] getFieldNames() {
+    protected final String[] getFieldNames() {
         return new String[] {ID_FIELD_NAME,
                 TIME_SENT_FIELD_NAME,
                 LOCATION_TIME_FIELD_NAME,
@@ -97,7 +101,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     }
     
     @Override
-    protected ContentValues getContentValues(ContactLocationData contactLocationData) {
+    protected final ContentValues getContentValues(ContactLocationData contactLocationData) {
         ContentValues values = new ContentValues();
         values.put(LOCATION_TIME_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLocationTime());
         values.put(TIME_SENT_FIELD_NAME, contactLocationData.getOwnerLocationData().getTimeSent());
@@ -113,7 +117,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     }
     
     @Override
-    protected ContactLocationData createEntityFromCursor(Cursor contactLocationDataCursor) {
+    protected final ContactLocationData createEntityFromCursor(Cursor contactLocationDataCursor) {
         ContactLocationData contactLocationData = new ContactLocationData();
         contactLocationData.setId(contactLocationDataCursor.getInt(0));
         String senderEmail = contactLocationDataCursor.getString(1);

@@ -7,11 +7,9 @@ import java.util.Map;
 
 import android.content.Context;
 
-import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactDataRepository;
-import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteDbManager;
+import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
-import com.creek.whereareyoumodel.repository.ContactDataRepository;
 
 /**
  * 
@@ -21,7 +19,6 @@ public class ContactsPersistenceManager {
     private static final ContactsPersistenceManager instance = new ContactsPersistenceManager();
 
     private final AndroidContactsProvider androidContactsProvider = new AndroidContactsProvider();
-    private ContactDataRepository contactDataRepository;
 
     private ContactsPersistenceManager() {
         //
@@ -32,25 +29,24 @@ public class ContactsPersistenceManager {
     }
 
     public void initialise(Context ctx) {
-        SQLiteDbManager.getInstance().initialise(ctx);
-        contactDataRepository = new SQLiteContactDataRepository(SQLiteDbManager.getInstance().getDatabase());
+        SQLiteRepositoryManager.getInstance().initialise(ctx);
     }
 
     public void persistContacts(Map<String, AndroidContact> androidContacts) throws IOException {
         for (String contactId: androidContacts.keySet()) {
-            ContactData contact = contactDataRepository.getContactDataByContactId(contactId);
+            ContactData contact = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByContactId(contactId);
             if (contact == null) {
                 AndroidContact androidContact = androidContacts.get(contactId);
                 contact = createContactData(androidContact);
-                contactDataRepository.create(contact);
+                SQLiteRepositoryManager.getInstance().getContactDataRepository().create(contact);
             } else {
-                contactDataRepository.update(contact);
+                SQLiteRepositoryManager.getInstance().getContactDataRepository().update(contact);
             }
         }
     }
 
     public ContactData retrieveContactDataByContactId(String contactId) {
-        return contactDataRepository.getContactDataByContactId(contactId);
+        return SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByContactId(contactId);
     }
     
     public List<AndroidContact> retrieveContacts(Context context) throws IOException {
@@ -59,7 +55,7 @@ public class ContactsPersistenceManager {
     }
 
     private Map<String, AndroidContact> retrievePersistedContacts() throws IOException {
-        List<ContactData> contacts = contactDataRepository.getAllContactData();
+        List<ContactData> contacts = SQLiteRepositoryManager.getInstance().getContactDataRepository().getAllContactData();
         Map<String, AndroidContact> androidContacts = new HashMap<String, AndroidContact>();
         for (int i = 0; i < contacts.size(); i++) {
             ContactData contact = contacts.get(i);
