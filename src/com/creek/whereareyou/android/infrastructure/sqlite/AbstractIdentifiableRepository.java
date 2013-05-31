@@ -17,12 +17,12 @@ public abstract class AbstractIdentifiableRepository<T extends Identifiable> ext
     
     @Override
     protected T createEntityFromCursor(Cursor cursor) {
-        T t = createInstance();
+        T t = createEntityInstance();
         t.setId(cursor.getInt(0));
         ContactCompoundId contactCompoundId = new ContactCompoundId(cursor.getString(1), cursor.getString(2));
         t.setContactCompoundId(contactCompoundId);
         return t;
     }
     
-    protected abstract T createInstance();
+    protected abstract T createEntityInstance();
 }

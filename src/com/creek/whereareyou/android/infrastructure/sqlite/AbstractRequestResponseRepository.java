@@ -2,7 +2,7 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import java.util.List;
 
-import com.creek.whereareyoumodel.domain.AbstractRequestResponse;
+import com.creek.whereareyoumodel.domain.RequestResponse;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @author andreypereverzin
  */
-public abstract class AbstractRequestResponseRepository<T extends AbstractRequestResponse> extends AbstractIdentifiableRepository<T> {
+public abstract class AbstractRequestResponseRepository<T extends RequestResponse> extends AbstractIdentifiableRepository<T> {
     static final String TIME_SENT_FIELD_NAME = "time_sent";
     static final String TIME_RECEIVED_FIELD_NAME = "time_rcvd";
     static final String TIME_CREATED_FIELD_NAME = "time_crtd";
@@ -76,5 +76,5 @@ public abstract class AbstractRequestResponseRepository<T extends AbstractReques
         Cursor cursor = createCursor(criteria, null, null);
         return createEntityListFromCursor(cursor);
     }
-    protected abstract T createInstance();
+    protected abstract T createEntityInstance();
 }

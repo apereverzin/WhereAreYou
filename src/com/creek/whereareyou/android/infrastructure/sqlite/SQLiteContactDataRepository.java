@@ -116,7 +116,7 @@ public final class SQLiteContactDataRepository extends AbstractIdentifiableRepos
     }
     
     @Override
-    protected final ContactData createInstance() {
+    protected final ContactData createEntityInstance() {
         return new ContactData();
     }
 

@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.creek.whereareyoumodel.domain.ContactLocationData;
 import com.creek.whereareyoumodel.domain.LocationData;
-import com.creek.whereareyoumodel.domain.OwnerLocationData;
 import com.creek.whereareyoumodel.repository.ContactLocationRepository;
+import com.creek.whereareyoumodel.valueobject.OwnerLocationData;
 
 /**
  * 

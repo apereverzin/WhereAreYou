@@ -61,7 +61,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     }
     
     @Override
-    protected final ContactRequest createInstance() {
+    protected final ContactRequest createEntityInstance() {
         return new ContactRequest();
     }
 }
