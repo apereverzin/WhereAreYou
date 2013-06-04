@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @author andreypereverzin
  */
-public abstract class AbstractRequestResponseRepository<T extends RequestResponse> extends AbstractIdentifiableRepository<T> {
+public abstract class AbstractRequestResponseRepository extends AbstractIdentifiableRepository<RequestResponse> {
     static final String TIME_SENT_FIELD_NAME = "time_sent";
     static final String TIME_RECEIVED_FIELD_NAME = "time_rcvd";
     static final String TIME_CREATED_FIELD_NAME = "time_crtd";
@@ -35,27 +35,27 @@ public abstract class AbstractRequestResponseRepository<T extends RequestRespons
     }
 
     @Override
-    protected final ContentValues getContentValues(T t) {
+    protected final ContentValues getContentValues(RequestResponse requestResponse) {
         ContentValues values = new ContentValues();
-        values.put(CONTACT_ID_FIELD_NAME, t.getContactCompoundId().getContactId());
-        values.put(EMAIL_FIELD_NAME, t.getContactCompoundId().getContactEmail());
-        values.put(MESSAGE_FIELD_NAME, t.getMessage());
-        values.put(CODE_FIELD_NAME, t.getCode());
-        values.put(TIME_SENT_FIELD_NAME, t.getTimeSent());
-        values.put(TIME_RECEIVED_FIELD_NAME, t.getTimeReceived());
-        values.put(TIME_CREATED_FIELD_NAME, t.getTimeCreated());
+        values.put(CONTACT_ID_FIELD_NAME, requestResponse.getContactCompoundId().getContactId());
+        values.put(EMAIL_FIELD_NAME, requestResponse.getContactCompoundId().getContactEmail());
+        values.put(MESSAGE_FIELD_NAME, requestResponse.getMessage());
+        values.put(CODE_FIELD_NAME, requestResponse.getCode());
+        values.put(TIME_SENT_FIELD_NAME, requestResponse.getTimeSent());
+        values.put(TIME_RECEIVED_FIELD_NAME, requestResponse.getTimeReceived());
+        values.put(TIME_CREATED_FIELD_NAME, requestResponse.getTimeCreated());
         return values;
     }
 
     @Override
-    protected final T createEntityFromCursor(Cursor cursor) {
-        T t = super.createEntityFromCursor(cursor);
-        t.setMessage(cursor.getString(3));
-        t.setCode(cursor.getInt(4));
-        t.setTimeSent(cursor.getLong(5));
-        t.setTimeReceived(cursor.getLong(6));
-        t.setTimeCreated(cursor.getLong(7));
-        return t;
+    protected final RequestResponse createEntityFromCursor(Cursor cursor) {
+        RequestResponse requestResponse = super.createEntityFromCursor(cursor);
+        requestResponse.setMessage(cursor.getString(3));
+        requestResponse.setCode(cursor.getInt(4));
+        requestResponse.setTimeSent(cursor.getLong(5));
+        requestResponse.setTimeReceived(cursor.getLong(6));
+        requestResponse.setTimeCreated(cursor.getLong(7));
+        return requestResponse;
     }
     
     @Override
@@ -71,10 +71,14 @@ public abstract class AbstractRequestResponseRepository<T extends RequestRespons
         };
     }
     
-    protected final List<T> getUnsent() {
+    protected final List<RequestResponse> getUnsent() {
         String criteria = createWhereAndCriteria(new String[]{TIME_CREATED_FIELD_NAME + ">0", TIME_SENT_FIELD_NAME + "=0"});
         Cursor cursor = createCursor(criteria, null, null);
         return createEntityListFromCursor(cursor);
     }
-    protected abstract T createEntityInstance();
+    
+    @Override
+    protected final RequestResponse createEntityInstance() {
+        return new RequestResponse();
+    }
 }

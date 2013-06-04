@@ -9,14 +9,11 @@ import android.accounts.Account;
 import com.creek.accessemail.connector.mail.PredefinedMailProperties;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.CryptoException;
-import com.creek.whereareyoumodel.domain.ContactRequest;
-import com.creek.whereareyoumodel.domain.ContactResponse;
-import com.creek.whereareyoumodel.message.RequestMessage;
-import com.creek.whereareyoumodel.message.ResponseMessage;
+import com.creek.whereareyoumodel.domain.RequestResponse;
+import com.creek.whereareyoumodel.message.AbstractMessage;
 import com.creek.whereareyoumodel.service.MessagesService;
 import com.creek.whereareyoumodel.service.ServiceException;
-import com.creek.whereareyoumodel.valueobject.OwnerRequest;
-import com.creek.whereareyoumodel.valueobject.OwnerResponse;
+import com.creek.whereareyoumodel.valueobject.OwnerRequestResponse;
 
 /**
  * 
@@ -37,23 +34,13 @@ public class EmailSendingReceivingManager {
         messagesService = new MessagesService(mailProps);
     }
 
-    public void sendContactRequests(List<ContactRequest> contactRequests) throws ServiceException {
+    public void sendMessages(List<RequestResponse> contactRequests, MessageFactory messageFactory) throws ServiceException {
         for(int i = 0; i < contactRequests.size(); i++) {
-            ContactRequest contactRequest = contactRequests.get(i);
+            RequestResponse contactRequest = contactRequests.get(i);
             contactRequest.setTimeSent(System.currentTimeMillis());
-            OwnerRequest ownerRequest = new OwnerRequest(contactRequest.getTimeSent(), contactRequest.getCode(), contactRequest.getMessage());
-            RequestMessage ownerRequestMessage = new RequestMessage(ownerRequest, account.name);
-            messagesService.sendMessage(ownerRequestMessage, contactRequest.getContactCompoundId().getContactEmail());
-        }
-    }
-
-    public void sendContactResponses(List<ContactResponse> contactResponses) throws ServiceException {
-        for(int i = 0; i < contactResponses.size(); i++) {
-            ContactResponse contactResponse = contactResponses.get(i);
-            contactResponse.setTimeSent(System.currentTimeMillis());
-            OwnerResponse ownerResponse = new OwnerResponse(contactResponse.getTimeSent(), contactResponse.getCode(), contactResponse.getMessage());
-            ResponseMessage ownerResponseMessage = new ResponseMessage(ownerResponse, account.name);
-            messagesService.sendMessage(ownerResponseMessage, contactResponse.getContactCompoundId().getContactEmail());
+            OwnerRequestResponse ownerRequest = new OwnerRequestResponse(contactRequest);
+            AbstractMessage message = messageFactory.createMessage(ownerRequest, account.name);
+            messagesService.sendMessage(message, contactRequest.getContactCompoundId().getContactEmail());
         }
     }
 }

@@ -6,14 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.creek.whereareyoumodel.domain.ContactResponse;
+import com.creek.whereareyoumodel.domain.RequestResponse;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
 
 /**
  * 
  * @author andreypereverzin
  */
-public final class SQLiteContactResponseRepository extends AbstractRequestResponseRepository<ContactResponse> implements ContactResponseRepository {
+public final class SQLiteContactResponseRepository extends AbstractRequestResponseRepository implements ContactResponseRepository {
     private static final String TAG = SQLiteContactResponseRepository.class.getSimpleName();
 
     public SQLiteContactResponseRepository(SQLiteDatabase whereAreYouDb) {
@@ -21,7 +21,7 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     }
 
     @Override
-    public final List<ContactResponse> getAllContactResponses() {
+    public final List<RequestResponse> getAllContactResponses() {
         Log.d(TAG, "getAllContactResponses()");
 
         Cursor contactDataCursor = null;
@@ -34,19 +34,19 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     }
 
     @Override
-    public final List<ContactResponse> getContactResponsesByContactId(String contactId) {
+    public final List<RequestResponse> getContactResponsesByContactId(String contactId) {
         Log.d(TAG, "getContactRequestsByContactId()");
         return retrieveEntitiesByCriteria(CONTACT_ID_FIELD_NAME, contactId);
     }
 
     @Override
-    public final List<ContactResponse> getContactResponsesByEmail(String email) {
+    public final List<RequestResponse> getContactResponsesByEmail(String email) {
         Log.d(TAG, "getContactResponsesByEmail()");
         return retrieveEntitiesByCriteria(EMAIL_FIELD_NAME, email);
     }
 
     @Override
-    public final List<ContactResponse> getUnsentContactResponses() {
+    public final List<RequestResponse> getUnsentContactResponses() {
         Log.d(TAG, "getUnsentContactResponses()");
         return getUnsent();
     }
@@ -58,10 +58,5 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     
     static final String getCreateTableCommand() {
         return String.format(TABLE_CREATE, CONTACT_RESPONSE_TABLE);
-    }
-    
-    @Override
-    protected final ContactResponse createEntityInstance() {
-        return new ContactResponse();
     }
 }

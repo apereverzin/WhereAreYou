@@ -13,7 +13,7 @@ import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
-import com.creek.whereareyoumodel.domain.ContactRequest;
+import com.creek.whereareyoumodel.domain.RequestResponse;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -131,7 +131,7 @@ public class ContactsActivity extends ListActivity {
             return true;
         case REQUEST_CONTACT_LOCATION_MENU_ITEM:
             Log.d(TAG, "REQUEST_CONTACT_LOCATION_MENU_ITEM");
-            ContactRequest contactRequest = new ContactRequest();
+            RequestResponse contactRequest = new RequestResponse();
             ContactCompoundId contactCompoundId = new ContactCompoundId(contactSelected.getId(), contactSelected.getEmail());
             contactRequest.setContactCompoundId(contactCompoundId);
             contactRequest.setCode(1);

@@ -7,8 +7,7 @@ import java.util.TimerTask;
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyoumodel.domain.ContactRequest;
-import com.creek.whereareyoumodel.domain.ContactResponse;
+import com.creek.whereareyoumodel.domain.RequestResponse;
 
 import android.accounts.Account;
 import android.app.Service;
@@ -41,11 +40,11 @@ public class EmailSendingAndReceivingService extends Service {
                 //Set<GenericMessage> messages = locationMessagesService.receiveMessages();
                 //Log.d(TAG, "===================messages.size(): " + messages.size());
                 
-                List<ContactRequest> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnsentContactRequests();
-                List<ContactResponse> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
+                List<RequestResponse> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnsentContactRequests();
+                List<RequestResponse> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
                 EmailSendingReceivingManager emailSendingReceivingManager = new EmailSendingReceivingManager(account);
-                emailSendingReceivingManager.sendContactRequests(unsentRequests);
-                emailSendingReceivingManager.sendContactResponses(unsentResponses);
+                emailSendingReceivingManager.sendMessages(unsentRequests, new RequestMessageFactory());
+                emailSendingReceivingManager.sendMessages(unsentResponses, new ResponseMessageFactory());
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
             }
