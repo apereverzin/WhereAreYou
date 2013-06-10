@@ -6,7 +6,7 @@ import android.location.LocationManager;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class SingleUpdateLocationListener extends AbstractLocationListener implements LocationListener {
     private static final String TAG = SingleUpdateLocationListener.class.getSimpleName();

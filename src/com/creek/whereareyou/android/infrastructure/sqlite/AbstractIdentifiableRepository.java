@@ -1,14 +1,14 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.Identifiable;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public abstract class AbstractIdentifiableRepository<T extends Identifiable> extends AbstractSQLiteRepository<T> {
     public AbstractIdentifiableRepository(SQLiteDatabase whereAreYouDb) {

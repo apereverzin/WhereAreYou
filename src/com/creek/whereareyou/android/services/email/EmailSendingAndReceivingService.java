@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.services.email;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,7 +8,14 @@ import java.util.TimerTask;
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyoumodel.domain.RequestResponse;
+import com.creek.whereareyoumodel.repository.ContactRequestRepository;
+import com.creek.whereareyoumodel.repository.ContactResponseRepository;
+import com.creek.whereareyoumodel.repository.IdentifiableRepository;
+import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
+import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
+import com.creek.whereareyoumodel.service.ServiceException;
+import com.creek.whereareyoumodel.valueobject.OwnerRequestResponse;
 
 import android.accounts.Account;
 import android.app.Service;
@@ -20,7 +28,7 @@ import android.util.Log;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class EmailSendingAndReceivingService extends Service {
     private static final String TAG = EmailSendingAndReceivingService.class.getSimpleName();
@@ -40,11 +48,14 @@ public class EmailSendingAndReceivingService extends Service {
                 //Set<GenericMessage> messages = locationMessagesService.receiveMessages();
                 //Log.d(TAG, "===================messages.size(): " + messages.size());
                 
-                List<RequestResponse> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnsentContactRequests();
-                List<RequestResponse> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
-                EmailSendingReceivingManager emailSendingReceivingManager = new EmailSendingReceivingManager(account);
-                emailSendingReceivingManager.sendMessages(unsentRequests, new RequestMessageFactory());
-                emailSendingReceivingManager.sendMessages(unsentResponses, new ResponseMessageFactory());
+                ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
+                ContactResponseRepository contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+                
+                List<ContactRequest> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnsentContactRequests();
+                List<ContactResponse> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
+                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(account);
+                List<ContactRequest> failedRequests = sendGenericRequestsResponses(contactRequestRepository, emailSendingAndReceivingManager, unsentRequests, new RequestMessageFactory());
+                List<ContactResponse> failedResponses = sendGenericRequestsResponses(contactResponseRepository, emailSendingAndReceivingManager, unsentResponses, new ResponseMessageFactory());
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
             }
@@ -71,5 +82,21 @@ public class EmailSendingAndReceivingService extends Service {
         super.onDestroy();
         timer.cancel();
         timer = null;
+    }
+    
+    private <T extends GenericRequestResponse> List<T> sendGenericRequestsResponses(IdentifiableRepository<T> repository, EmailSendingAndReceivingManager emailSendingAndReceivingManager, List<T> dataList, MessageFactory<OwnerRequestResponse> messageFactory) {
+        List<T> unsentDataList = new ArrayList<T>();
+        for (int i = 0; i < dataList.size(); i++) {
+            T data = dataList.get(i);
+            try {
+                emailSendingAndReceivingManager.sendMessage(data, messageFactory);
+                repository.update(data);
+            } catch(ServiceException ex) {
+                // TODO
+                unsentDataList.add(data);
+            }
+        }
+        dataList.removeAll(unsentDataList);
+        return unsentDataList;
     }
 }

@@ -10,7 +10,7 @@ import com.google.android.maps.GeoPoint;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class Util {
     private static final String DATE_FORMAT = "dd-MM-yyyy";

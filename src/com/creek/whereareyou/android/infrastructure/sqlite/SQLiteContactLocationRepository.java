@@ -6,14 +6,14 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.creek.whereareyoumodel.domain.ContactLocationData;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.repository.ContactLocationRepository;
-import com.creek.whereareyoumodel.valueobject.OwnerLocationData;
+import com.creek.whereareyoumodel.domain.sendable.ContactLocationData;
+import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public final class SQLiteContactLocationRepository extends AbstractSQLiteRepository<ContactLocationData> implements ContactLocationRepository {
 
@@ -130,7 +130,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         boolean hasAccuracy = contactLocationDataCursor.getInt(8) == 1;
         boolean hasSpeed = contactLocationDataCursor.getInt(9) == 1;
         LocationData locationData = new LocationData(accuracy, latitude, longitude, speed, hasAccuracy, hasSpeed);
-        OwnerLocationData ownerLocationData = new OwnerLocationData(timeSent, locationData);
+        SendableLocationData ownerLocationData = new SendableLocationData(timeSent, locationData);
         contactLocationData.setOwnerLocationData(ownerLocationData);
         contactLocationData.setTimeReceived(timeReceived);
         return contactLocationData;

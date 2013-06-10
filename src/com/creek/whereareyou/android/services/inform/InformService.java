@@ -16,7 +16,7 @@ import android.util.Log;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class InformService extends Service {
     private static final String TAG = InformService.class.getSimpleName();

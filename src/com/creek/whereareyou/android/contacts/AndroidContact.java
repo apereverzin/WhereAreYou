@@ -6,7 +6,7 @@ import com.creek.whereareyoumodel.domain.ContactData;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 @SuppressWarnings("serial")
 public class AndroidContact implements Comparable<AndroidContact>, Serializable {

@@ -15,7 +15,7 @@ import android.view.View;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class SaveButtonListener implements View.OnClickListener {
     private final ListActivity activity;

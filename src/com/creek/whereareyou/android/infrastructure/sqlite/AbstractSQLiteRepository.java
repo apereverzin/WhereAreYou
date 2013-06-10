@@ -14,7 +14,7 @@ import android.util.Log;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public abstract class AbstractSQLiteRepository<T extends Identifiable> implements IdentifiableRepository<T> {
     private static final String TAG = AbstractSQLiteRepository.class.getSimpleName();

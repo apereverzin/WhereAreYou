@@ -14,7 +14,7 @@ import com.creek.whereareyoumodel.repository.ContactDataRepository;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public final class SQLiteContactDataRepository extends AbstractIdentifiableRepository<ContactData> implements ContactDataRepository {
     private static final String TAG = SQLiteContactDataRepository.class.getSimpleName();

@@ -2,7 +2,7 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import java.util.List;
 
-import com.creek.whereareyoumodel.domain.RequestResponse;
+import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -10,9 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
-public abstract class AbstractRequestResponseRepository extends AbstractIdentifiableRepository<RequestResponse> {
+public abstract class AbstractRequestResponseRepository <T extends GenericRequestResponse> extends AbstractIdentifiableRepository<T> {
     static final String TIME_SENT_FIELD_NAME = "time_sent";
     static final String TIME_RECEIVED_FIELD_NAME = "time_rcvd";
     static final String TIME_CREATED_FIELD_NAME = "time_crtd";
@@ -35,7 +35,7 @@ public abstract class AbstractRequestResponseRepository extends AbstractIdentifi
     }
 
     @Override
-    protected final ContentValues getContentValues(RequestResponse requestResponse) {
+    protected final ContentValues getContentValues(T requestResponse) {
         ContentValues values = new ContentValues();
         values.put(CONTACT_ID_FIELD_NAME, requestResponse.getContactCompoundId().getContactId());
         values.put(EMAIL_FIELD_NAME, requestResponse.getContactCompoundId().getContactEmail());
@@ -48,8 +48,8 @@ public abstract class AbstractRequestResponseRepository extends AbstractIdentifi
     }
 
     @Override
-    protected final RequestResponse createEntityFromCursor(Cursor cursor) {
-        RequestResponse requestResponse = super.createEntityFromCursor(cursor);
+    protected final T createEntityFromCursor(Cursor cursor) {
+        T requestResponse = super.createEntityFromCursor(cursor);
         requestResponse.setMessage(cursor.getString(3));
         requestResponse.setCode(cursor.getInt(4));
         requestResponse.setTimeSent(cursor.getLong(5));
@@ -61,8 +61,8 @@ public abstract class AbstractRequestResponseRepository extends AbstractIdentifi
     @Override
     protected final String[] getFieldNames() {
         return new String[] {ID_FIELD_NAME,
-                EMAIL_FIELD_NAME,
                 CONTACT_ID_FIELD_NAME,
+                EMAIL_FIELD_NAME,
                 MESSAGE_FIELD_NAME,
                 CODE_FIELD_NAME,
                 TIME_SENT_FIELD_NAME,
@@ -71,14 +71,9 @@ public abstract class AbstractRequestResponseRepository extends AbstractIdentifi
         };
     }
     
-    protected final List<RequestResponse> getUnsent() {
+    protected final List<T> getUnsent() {
         String criteria = createWhereAndCriteria(new String[]{TIME_CREATED_FIELD_NAME + ">0", TIME_SENT_FIELD_NAME + "=0"});
         Cursor cursor = createCursor(criteria, null, null);
         return createEntityListFromCursor(cursor);
-    }
-    
-    @Override
-    protected final RequestResponse createEntityInstance() {
-        return new RequestResponse();
     }
 }

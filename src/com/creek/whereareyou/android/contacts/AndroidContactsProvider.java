@@ -17,7 +17,7 @@ import android.util.Log;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class AndroidContactsProvider {
     private static final String TAG = AndroidContactsProvider.class.getSimpleName();

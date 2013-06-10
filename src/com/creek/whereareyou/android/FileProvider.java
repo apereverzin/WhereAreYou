@@ -13,7 +13,7 @@ import android.os.Environment;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class FileProvider {
 

@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class SQLiteUtils {
     public static void closeCursor(Cursor cursor) {

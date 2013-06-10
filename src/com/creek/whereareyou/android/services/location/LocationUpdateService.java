@@ -5,7 +5,7 @@ import android.content.Intent;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class LocationUpdateService extends IntentService {
     private static final String TAG = "LocationUpdateService";

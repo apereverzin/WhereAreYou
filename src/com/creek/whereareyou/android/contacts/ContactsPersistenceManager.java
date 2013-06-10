@@ -13,7 +13,7 @@ import com.creek.whereareyoumodel.domain.ContactData;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class ContactsPersistenceManager {
     private static final ContactsPersistenceManager instance = new ContactsPersistenceManager();
@@ -82,6 +82,9 @@ public class ContactsPersistenceManager {
             androidContact.setEmail(persistedContact.getEmail());
             androidContact.setRequestAllowed(persistedContact.isRequestAllowed());
         }
+        
+        // TODO hack
+        androidContact.setEmail("andrey.pereverzin@gmail.com");
     }
     
     private ContactData createContactData(AndroidContact androidContact) {

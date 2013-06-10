@@ -10,10 +10,10 @@ import java.util.Map;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
+import com.creek.whereareyou.android.contacts.RequestResponseFactory;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyoumodel.domain.ContactCompoundId;
-import com.creek.whereareyoumodel.domain.RequestResponse;
+import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -131,14 +131,7 @@ public class ContactsActivity extends ListActivity {
             return true;
         case REQUEST_CONTACT_LOCATION_MENU_ITEM:
             Log.d(TAG, "REQUEST_CONTACT_LOCATION_MENU_ITEM");
-            RequestResponse contactRequest = new RequestResponse();
-            ContactCompoundId contactCompoundId = new ContactCompoundId(contactSelected.getId(), contactSelected.getEmail());
-            contactRequest.setContactCompoundId(contactCompoundId);
-            contactRequest.setCode(1);
-            contactRequest.setMessage("");
-            contactRequest.setTimeCreated(System.currentTimeMillis());
-            contactRequest.setTimeSent(0L);
-            contactRequest.setTimeReceived(0L);
+            ContactRequest contactRequest = RequestResponseFactory.getInstance().createContactLocationRequest(contactSelected);
             SQLiteRepositoryManager.getInstance().getContactRequestRepository().create(contactRequest);
             return true;
         default:

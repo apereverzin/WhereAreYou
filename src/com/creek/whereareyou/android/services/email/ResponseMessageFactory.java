@@ -6,7 +6,7 @@ import com.creek.whereareyoumodel.valueobject.OwnerRequestResponse;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public class ResponseMessageFactory implements MessageFactory<OwnerRequestResponse> {
     @Override

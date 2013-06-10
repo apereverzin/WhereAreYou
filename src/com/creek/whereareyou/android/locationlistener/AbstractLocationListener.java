@@ -1,7 +1,5 @@
 package com.creek.whereareyou.android.locationlistener;
 
-import com.creek.whereareyou.android.locationprovider.LocationProvider;
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -9,7 +7,7 @@ import android.util.Log;
 
 /**
  * 
- * @author andreypereverzin
+ * @author Andrey Pereverzin
  */
 public abstract class AbstractLocationListener implements LocationListener {
     private static final String TAG = AbstractLocationListener.class.getSimpleName();
