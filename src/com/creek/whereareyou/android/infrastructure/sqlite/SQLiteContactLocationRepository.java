@@ -6,9 +6,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.repository.ContactLocationRepository;
 import com.creek.whereareyoumodel.domain.sendable.ContactLocationData;
+import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 
 /**
@@ -17,8 +19,6 @@ import com.creek.whereareyoumodel.valueobject.SendableLocationData;
  */
 public final class SQLiteContactLocationRepository extends AbstractSQLiteRepository<ContactLocationData> implements ContactLocationRepository {
 
-    static final String TIME_SENT_FIELD_NAME = "time_sent";
-    static final String TIME_RECEIVED_FIELD_NAME = "time_received";
     static final String LOCATION_TIME_FIELD_NAME = "location_time";
     static final String ACCURACY_FIELD_NAME = "accuracy";
     static final String LATITUDE_FIELD_NAME = "latitude";
@@ -27,20 +27,6 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     static final String HAS_ACCURACY_FIELD_NAME = "has_accuracy";
     static final String HAS_SPEED_FIELD_NAME = "has_speed";
     static final String CONTACT_ID_FIELD_NAME = "contact_id";
-
-    static final String CONTACT_LOCATION_TABLE_CREATE = 
-            "create table " + CONTACT_LOCATION_TABLE 
-            + " (" + ID_FIELD_NAME + " integer primary key autoincrement, " 
-            + TIME_SENT_FIELD_NAME + " real not null, "
-            + TIME_RECEIVED_FIELD_NAME + " real not null, "
-            + LOCATION_TIME_FIELD_NAME + " real not null, "
-            + ACCURACY_FIELD_NAME + "accuracy real not null, "
-            + LATITUDE_FIELD_NAME + " real not null, " 
-            + LONGITUDE_FIELD_NAME + " real not null, "
-            + SPEED_FIELD_NAME + " real not null, "
-            + HAS_ACCURACY_FIELD_NAME + " int not null, " 
-            + HAS_SPEED_FIELD_NAME + " int not null, "
-            + CONTACT_ID_FIELD_NAME + " int not null);";
 
     public SQLiteContactLocationRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
@@ -81,31 +67,38 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         return CONTACT_LOCATION_TABLE;
     }
     
-    static final String getCreateTableCommand() {
-        return CONTACT_LOCATION_TABLE_CREATE;
+    @Override
+    protected final String[] getFieldNames() {
+        return Util.concatArrays(super.getFieldNames(), new String[] {
+            LOCATION_TIME_FIELD_NAME,
+            ACCURACY_FIELD_NAME,
+            LATITUDE_FIELD_NAME,
+            LONGITUDE_FIELD_NAME,
+            SPEED_FIELD_NAME,
+            HAS_ACCURACY_FIELD_NAME,
+            HAS_SPEED_FIELD_NAME,
+            CONTACT_ID_FIELD_NAME
+        });
     }
     
     @Override
-    protected final String[] getFieldNames() {
-        return new String[] {ID_FIELD_NAME,
-                TIME_SENT_FIELD_NAME,
-                LOCATION_TIME_FIELD_NAME,
-                ACCURACY_FIELD_NAME,
-                LATITUDE_FIELD_NAME,
-                LONGITUDE_FIELD_NAME,
-                SPEED_FIELD_NAME,
-                HAS_ACCURACY_FIELD_NAME,
-                HAS_SPEED_FIELD_NAME,
-                CONTACT_ID_FIELD_NAME
-        };
+    protected String[] getFieldTypes() {
+        return Util.concatArrays(super.getFieldTypes(), new String[] { 
+            "real not null", 
+            "real not null", 
+            "real not null", 
+            "real not null", 
+            "real not null", 
+            "int not null", 
+            "int not null", 
+            "int not null"
+        });
     }
     
     @Override
     protected final ContentValues getContentValues(ContactLocationData contactLocationData) {
-        ContentValues values = new ContentValues();
+        ContentValues values = super.getContentValues(contactLocationData);
         values.put(LOCATION_TIME_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLocationTime());
-        values.put(TIME_SENT_FIELD_NAME, contactLocationData.getOwnerLocationData().getTimeSent());
-        values.put(TIME_RECEIVED_FIELD_NAME, contactLocationData.getTimeReceived());
         values.put(ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getAccuracy());
         values.put(LATITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLatitude());
         values.put(LONGITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLongitude());
@@ -134,6 +127,11 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         contactLocationData.setOwnerLocationData(ownerLocationData);
         contactLocationData.setTimeReceived(timeReceived);
         return contactLocationData;
+    }
+    
+    @Override
+    protected final ContactLocationData createEntityInstance() {
+        return new ContactLocationData();
     }
         
     private ContactLocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {

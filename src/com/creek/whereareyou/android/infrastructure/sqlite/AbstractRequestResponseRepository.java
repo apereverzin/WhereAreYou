@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import java.util.List;
 
+import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
 
 import android.content.ContentValues;
@@ -12,63 +13,60 @@ import android.database.sqlite.SQLiteDatabase;
  * 
  * @author Andrey Pereverzin
  */
-public abstract class AbstractRequestResponseRepository <T extends GenericRequestResponse> extends AbstractIdentifiableRepository<T> {
-    static final String TIME_SENT_FIELD_NAME = "time_sent";
-    static final String TIME_RECEIVED_FIELD_NAME = "time_rcvd";
-    static final String TIME_CREATED_FIELD_NAME = "time_crtd";
+public abstract class AbstractRequestResponseRepository <T extends GenericRequestResponse> extends AbstractSQLiteRepository<T> {
     static final String CODE_FIELD_NAME = "code";
     static final String MESSAGE_FIELD_NAME = "message";
+    static final String TIME_CREATED_FIELD_NAME = "time_crtd";
+    static final String TIME_SENT_FIELD_NAME = "time_sent";
+    static final String TIME_RECEIVED_FIELD_NAME = "time_rcvd";
 
-    static final String TABLE_CREATE = 
-            "create table %s " 
-            + " (" + ID_FIELD_NAME + " integer primary key autoincrement, " 
-            + CONTACT_ID_FIELD_NAME + " text not null, "
-            + EMAIL_FIELD_NAME + " text not null, " 
-            + MESSAGE_FIELD_NAME + " text, " 
-            + CODE_FIELD_NAME + " integer not null, " 
-            + TIME_SENT_FIELD_NAME + " real not null, " 
-            + TIME_RECEIVED_FIELD_NAME + " real not null, "
-            + TIME_CREATED_FIELD_NAME + " real not null);";
 
     public AbstractRequestResponseRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
     }
-
+    
     @Override
-    protected final ContentValues getContentValues(T requestResponse) {
-        ContentValues values = new ContentValues();
-        values.put(CONTACT_ID_FIELD_NAME, requestResponse.getContactCompoundId().getContactId());
-        values.put(EMAIL_FIELD_NAME, requestResponse.getContactCompoundId().getContactEmail());
-        values.put(MESSAGE_FIELD_NAME, requestResponse.getMessage());
-        values.put(CODE_FIELD_NAME, requestResponse.getCode());
-        values.put(TIME_SENT_FIELD_NAME, requestResponse.getTimeSent());
-        values.put(TIME_RECEIVED_FIELD_NAME, requestResponse.getTimeReceived());
-        values.put(TIME_CREATED_FIELD_NAME, requestResponse.getTimeCreated());
+    protected ContentValues getContentValues(T t) {
+        ContentValues values = super.getContentValues(t);
+        values.put(CODE_FIELD_NAME, t.getCode());
+        values.put(MESSAGE_FIELD_NAME, t.getMessage());
+        values.put(TIME_CREATED_FIELD_NAME, t.getTimeCreated());
+        values.put(TIME_SENT_FIELD_NAME, t.getTimeSent());
+        values.put(TIME_RECEIVED_FIELD_NAME, t.getTimeReceived());
         return values;
     }
 
     @Override
-    protected final T createEntityFromCursor(Cursor cursor) {
+    protected T createEntityFromCursor(Cursor cursor) {
         T requestResponse = super.createEntityFromCursor(cursor);
-        requestResponse.setMessage(cursor.getString(3));
-        requestResponse.setCode(cursor.getInt(4));
-        requestResponse.setTimeSent(cursor.getLong(5));
-        requestResponse.setTimeReceived(cursor.getLong(6));
-        requestResponse.setTimeCreated(cursor.getLong(7));
+        requestResponse.setCode(cursor.getInt(3));
+        requestResponse.setMessage(cursor.getString(4));
+        requestResponse.setTimeCreated(cursor.getLong(5));
+        requestResponse.setTimeSent(cursor.getLong(6));
+        requestResponse.setTimeReceived(cursor.getLong(7));
         return requestResponse;
     }
     
     @Override
-    protected final String[] getFieldNames() {
-        return new String[] {ID_FIELD_NAME,
-                CONTACT_ID_FIELD_NAME,
-                EMAIL_FIELD_NAME,
-                MESSAGE_FIELD_NAME,
-                CODE_FIELD_NAME,
-                TIME_SENT_FIELD_NAME,
-                TIME_RECEIVED_FIELD_NAME,
-                TIME_CREATED_FIELD_NAME
-        };
+    protected String[] getFieldNames() {
+        return Util.concatArrays(super.getFieldNames(), new String[] {
+            CODE_FIELD_NAME,
+            MESSAGE_FIELD_NAME,
+            TIME_CREATED_FIELD_NAME,
+            TIME_SENT_FIELD_NAME,
+            TIME_RECEIVED_FIELD_NAME
+        });
+    }
+    
+    @Override
+    protected String[] getFieldTypes() {
+        return Util.concatArrays(super.getFieldTypes(), new String[] { 
+            "integer not null", 
+            "text", 
+            "real not null", 
+            "real not null", 
+            "real not null"
+        });
     }
     
     protected final List<T> getUnsent() {

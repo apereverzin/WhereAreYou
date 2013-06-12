@@ -2,12 +2,15 @@ package com.creek.whereareyou.android.services.email;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
+import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
+import com.creek.whereareyoumodel.message.GenericMessage;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
 import com.creek.whereareyoumodel.repository.IdentifiableRepository;
@@ -52,10 +55,15 @@ public class EmailSendingAndReceivingService extends Service {
                 ContactResponseRepository contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
                 
                 List<ContactRequest> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnsentContactRequests();
-                List<ContactResponse> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
+                List<ContactResponseEntity> unsentResponses = SQLiteRepositoryManager.getInstance().getContactResponseRepository().getUnsentContactResponses();
                 EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(account);
                 List<ContactRequest> failedRequests = sendGenericRequestsResponses(contactRequestRepository, emailSendingAndReceivingManager, unsentRequests, new RequestMessageFactory());
                 List<ContactResponse> failedResponses = sendGenericRequestsResponses(contactResponseRepository, emailSendingAndReceivingManager, unsentResponses, new ResponseMessageFactory());
+                
+                Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
+                for (GenericMessage message: receivedMessages) {
+                    
+                }
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
             }

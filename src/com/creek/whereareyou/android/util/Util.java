@@ -47,4 +47,16 @@ public class Util {
             return Double.toString(val);
         }
     }
+    
+    public static String[] concatArrays(String[] array1, String[] array2) {
+        String[] newArray = new String[array1.length + array2.length];
+        for (int i = 0; i < array1.length; i++) {
+            newArray[i] = array1[i];
+        }
+        int n = array1.length;
+        for (int i = n; i < n + array2.length; i++) {
+            newArray[i] = array2[i - n];
+        }
+        return newArray;
+    }
 }

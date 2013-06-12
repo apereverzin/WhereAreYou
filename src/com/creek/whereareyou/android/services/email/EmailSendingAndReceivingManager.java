@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.services.email;
 
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import android.accounts.Account;
 import android.util.Log;
@@ -10,6 +11,8 @@ import com.creek.accessemail.connector.mail.PredefinedMailProperties;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyoumodel.message.AbstractMessage;
+import com.creek.whereareyoumodel.message.GenericMessage;
+import com.creek.whereareyoumodel.message.TransformException;
 import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
 import com.creek.whereareyoumodel.service.MessagesService;
 import com.creek.whereareyoumodel.service.ServiceException;
@@ -44,5 +47,10 @@ public class EmailSendingAndReceivingManager {
         Log.d(TAG, "--------------sendMessage: " + data.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, data.getContactCompoundId().getContactEmail());
         Log.d(TAG, "--------------sendMessage: " + message.toJSON());
+    }
+    
+    public Set<GenericMessage> receiveMessages() throws ServiceException, TransformException {
+        Set<GenericMessage> messages = messagesService.receiveMessages();
+        return messages;
     }
 }

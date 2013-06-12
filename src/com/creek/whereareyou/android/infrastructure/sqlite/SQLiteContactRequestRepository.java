@@ -2,12 +2,14 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import java.util.List;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 
 /**
  * 
@@ -36,7 +38,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     @Override
     public final List<ContactRequest> getContactRequestsByContactId(String contactId) {
         Log.d(TAG, "getContactRequestsByContactId()");
-        return retrieveEntitiesByCriteria(CONTACT_ID_FIELD_NAME, contactId);
+        return retrieveEntitiesByCriteria(ANDR_CONT_ID_FIELD_NAME, contactId);
     }
 
     @Override
@@ -52,16 +54,24 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     }
     
     @Override
-    protected final String getTableName() {
-        return CONTACT_REQUEST_TABLE;
-    }
-    
-    @Override
     protected final ContactRequest createEntityInstance() {
         return new ContactRequest();
     }
     
-    static final String getCreateTableCommand() {
-        return String.format(TABLE_CREATE, CONTACT_REQUEST_TABLE);
+    @Override
+    protected final ContentValues getContentValues(ContactRequest contactRequest) {
+        ContentValues values = super.getContentValues(contactRequest);
+        return values;
+    }
+    
+    @Override
+    protected final ContactRequest createEntityFromCursor(Cursor cursor) {
+        ContactRequest contactRequest = super.createEntityFromCursor(cursor);
+        return contactRequest;
+    }
+    
+    @Override
+    protected final String getTableName() {
+        return CONTACT_REQUEST_TABLE;
     }
 }

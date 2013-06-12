@@ -41,14 +41,16 @@ public class SQLiteRepositoryManager {
     public void initialise(Context ctx) {
         if (!initialized) {
             whereAreYouDb = ctx.openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
-            //if (!databaseExists()) {
-                createDatabase();
-            //}
+
             contactDataRepository = new SQLiteContactDataRepository(whereAreYouDb);
             contactRequestRepository = new SQLiteContactRequestRepository(whereAreYouDb);
             contactResponseRepository = new SQLiteContactResponseRepository(whereAreYouDb);
             contactLocationRepository = new SQLiteContactLocationRepository(whereAreYouDb);
             
+            //if (!databaseExists()) {
+            createDatabase();
+            //}
+    
             initialized = true;
         }
     }
@@ -82,10 +84,10 @@ public class SQLiteRepositoryManager {
         dropTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
         dropTable(AbstractSQLiteRepository.CONTACT_RESPONSE_TABLE);
         dropTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
-        whereAreYouDb.execSQL(SQLiteContactDataRepository.getCreateTableCommand());
-        whereAreYouDb.execSQL(SQLiteContactRequestRepository.getCreateTableCommand());
-        whereAreYouDb.execSQL(SQLiteContactResponseRepository.getCreateTableCommand());
-        whereAreYouDb.execSQL(SQLiteContactLocationRepository.getCreateTableCommand());
+        whereAreYouDb.execSQL(((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
+        whereAreYouDb.execSQL(((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
+        whereAreYouDb.execSQL(((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
+        whereAreYouDb.execSQL(((SQLiteContactLocationRepository)contactLocationRepository).getCreateTableCommand());
     }
 
     private boolean databaseExists() {

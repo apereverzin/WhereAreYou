@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.repository.ContactDataRepository;
 
@@ -16,19 +17,11 @@ import com.creek.whereareyoumodel.repository.ContactDataRepository;
  * 
  * @author Andrey Pereverzin
  */
-public final class SQLiteContactDataRepository extends AbstractIdentifiableRepository<ContactData> implements ContactDataRepository {
+public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<ContactData> implements ContactDataRepository {
     private static final String TAG = SQLiteContactDataRepository.class.getSimpleName();
     
     static final String DISPLAY_NAME_FIELD_NAME = "display_name";
     static final String REQUEST_ALLOWED_FIELD_NAME = "allowed";
-
-    static final String CONTACT_DATA_TABLE_CREATE = 
-            "create table " + CONTACT_DATA_TABLE 
-            + " (" + ID_FIELD_NAME + " integer primary key autoincrement, " 
-            + CONTACT_ID_FIELD_NAME + " text not null, "
-            + EMAIL_FIELD_NAME + " text, " 
-            + DISPLAY_NAME_FIELD_NAME + " text not null, "
-            + REQUEST_ALLOWED_FIELD_NAME + " int not null);";
 
     public SQLiteContactDataRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
@@ -63,7 +56,7 @@ public final class SQLiteContactDataRepository extends AbstractIdentifiableRepos
     @Override
     public final ContactData getContactDataByContactId(String contactId) {
         Log.d(TAG, "getContactDataByContactId()");
-        return retrieveContactDataByCriteria(CONTACT_ID_FIELD_NAME, contactId);
+        return retrieveContactDataByCriteria(ANDR_CONT_ID_FIELD_NAME, contactId);
     }
 
     @Override
@@ -80,9 +73,7 @@ public final class SQLiteContactDataRepository extends AbstractIdentifiableRepos
     
     @Override
     protected final ContentValues getContentValues(ContactData contactData) {
-        ContentValues values = new ContentValues();
-        values.put(EMAIL_FIELD_NAME, contactData.getContactCompoundId().getContactEmail());
-        values.put(CONTACT_ID_FIELD_NAME, contactData.getContactCompoundId().getContactId());
+        ContentValues values = super.getContentValues(contactData);
         values.put(DISPLAY_NAME_FIELD_NAME, contactData.getDisplayName());
         values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? 1 : 0);
         return values;
@@ -101,18 +92,20 @@ public final class SQLiteContactDataRepository extends AbstractIdentifiableRepos
         return CONTACT_DATA_TABLE;
     }
     
-    static final String getCreateTableCommand() {
-        return CONTACT_DATA_TABLE_CREATE;
+    @Override
+    protected final String[] getFieldNames() {
+        return Util.concatArrays(super.getFieldNames(), new String[] {
+            DISPLAY_NAME_FIELD_NAME,
+            REQUEST_ALLOWED_FIELD_NAME
+        });
     }
     
     @Override
-    protected final String[] getFieldNames() {
-        return new String[] {ID_FIELD_NAME,
-                EMAIL_FIELD_NAME,
-                CONTACT_ID_FIELD_NAME,
-                DISPLAY_NAME_FIELD_NAME,
-                REQUEST_ALLOWED_FIELD_NAME
-        };
+    protected String[] getFieldTypes() {
+        return Util.concatArrays(super.getFieldTypes(), new String[] { 
+            "text not null", 
+            "int not null"
+        });
     }
     
     @Override

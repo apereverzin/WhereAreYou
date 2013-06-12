@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.creek.whereareyou.android.util.ActivityUtil;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.Identifiable;
 import com.creek.whereareyoumodel.repository.IdentifiableRepository;
 
@@ -21,14 +22,16 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     protected final SQLiteDatabase whereAreYouDb;
 
     static final String ID_FIELD_NAME = "_id";    
-    static final String CONTACT_ID_FIELD_NAME = "contact_id";
+    static final String ANDR_CONT_ID_FIELD_NAME = "andr_cont_id";
     static final String EMAIL_FIELD_NAME = "email";
-
+    
     static final String CONTACT_DATA_TABLE = "contact_data";
     static final String CONTACT_REQUEST_TABLE = "contact_request";
     static final String CONTACT_RESPONSE_TABLE = "contact_response";
     static final String CONTACT_LOCATION_TABLE = "contact_location";
     
+    static final String TABLE_CREATE = "create table %s (%s);";
+
     public AbstractSQLiteRepository(SQLiteDatabase whereAreYouDb) {
         this.whereAreYouDb = whereAreYouDb;
     }
@@ -48,16 +51,21 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
 
     @Override
     public boolean update(T entity) {
-        Log.d(TAG, "updateContactResponse: " + entity.getId());
+        Log.d(TAG, "update: " + entity.getId());
         ContentValues values = getContentValues(entity);
         return whereAreYouDb.update(getTableName(), values, createWhereCriteria(ID_FIELD_NAME, Integer.toString(entity.getId())), null) > 0;
     }
 
     @Override
     public boolean delete(int id) {
+        Log.d(TAG, "delete: " + id);
         return whereAreYouDb.delete(getTableName(), createWhereCriteria(ID_FIELD_NAME, Integer.toString(id)), null) > 0;
     }
 
+    public String getCreateTableCommand() {
+        String fields = buildFields();
+        return String.format(TABLE_CREATE, getTableName(), fields);
+    }
 
     protected List<T> retrieveEntitiesByCriteria(String fieldName, String fieldValue) {
         Cursor cursor = null;
@@ -111,11 +119,52 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         return entityList;
     }
     
+    protected T createEntityFromCursor(Cursor cursor) {
+        T t = createEntityInstance();
+        t.setId(cursor.getInt(0));
+        ContactCompoundId contactCompoundId = new ContactCompoundId(cursor.getString(1), cursor.getString(2));
+        t.setContactCompoundId(contactCompoundId);
+        return t;
+    }
+    
+    protected String[] getFieldNames() {
+        return new String[] {
+            ID_FIELD_NAME,
+            ANDR_CONT_ID_FIELD_NAME,
+            EMAIL_FIELD_NAME
+        };
+    }
+    
+    protected String[] getFieldTypes() {
+        return new String[] {
+            "integer primary key autoincrement",
+            "text",
+            "text"
+        };
+    }
+    
+    protected abstract T createEntityInstance();
+
     protected abstract String getTableName();
     
-    protected abstract String[] getFieldNames();
+    protected ContentValues getContentValues(T t) {
+        ContentValues values = new ContentValues();
+        values.put(ID_FIELD_NAME, t.getId());
+        values.put(ANDR_CONT_ID_FIELD_NAME, t.getContactCompoundId().getContactId());
+        values.put(EMAIL_FIELD_NAME, t.getContactCompoundId().getContactEmail());
+        return values;
+    }
     
-    protected abstract ContentValues getContentValues(T content);
-
-    protected abstract T createEntityFromCursor(Cursor cursor);
+    private String buildFields() {
+        StringBuilder sb = new StringBuilder();
+        String[] fieldNames = getFieldNames();
+        String[] fieldTypes = getFieldTypes();
+        for (int i = 0; i < fieldNames.length; i++) {
+            sb.append(fieldNames[i]).append(" ").append(fieldTypes[i]);
+            if (i < fieldNames.length - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
 }
