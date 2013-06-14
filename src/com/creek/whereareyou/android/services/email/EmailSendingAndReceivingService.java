@@ -14,6 +14,7 @@ import com.creek.whereareyoumodel.message.GenericMessage;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
 import com.creek.whereareyoumodel.repository.IdentifiableRepository;
+import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
@@ -61,8 +62,13 @@ public class EmailSendingAndReceivingService extends Service {
                 List<ContactResponse> failedResponses = sendGenericRequestsResponses(contactResponseRepository, emailSendingAndReceivingManager, unsentResponses, new ResponseMessageFactory());
                 
                 Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
-                for (GenericMessage message: receivedMessages) {
-                    
+                if (receivedMessages.size() > 0) {
+                    MessagePersistenceManager messagePersistenceManager = new MessagePersistenceManager();
+                    for (GenericMessage message : receivedMessages) {
+                        String contactEmail = message.getSenderEmail();
+                        ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
+                        messagePersistenceManager.persistReceivedMessage(contactData, message);
+                    }
                 }
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);

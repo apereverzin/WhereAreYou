@@ -23,6 +23,16 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     static final String DISPLAY_NAME_FIELD_NAME = "display_name";
     static final String REQUEST_ALLOWED_FIELD_NAME = "allowed";
 
+    private final String[] fieldNames = new String[] {
+            DISPLAY_NAME_FIELD_NAME,
+            REQUEST_ALLOWED_FIELD_NAME
+        };
+
+    private final String[] fieldTypes = new String[] {
+            "text not null", 
+            "integer not null"
+        };
+            
     public SQLiteContactDataRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
     }
@@ -75,15 +85,16 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     protected final ContentValues getContentValues(ContactData contactData) {
         ContentValues values = super.getContentValues(contactData);
         values.put(DISPLAY_NAME_FIELD_NAME, contactData.getDisplayName());
-        values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? 1 : 0);
+        values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? TRUE : FALSE);
         return values;
     }
     
     @Override
     protected final ContactData createEntityFromCursor(Cursor cursor) {
         ContactData contactData = super.createEntityFromCursor(cursor);
-        contactData.setDisplayName(cursor.getString(3));
-        contactData.setRequestAllowed(cursor.getInt(4) == 1);
+        int numberOfFields = super.getNumberOfFields();
+        contactData.setDisplayName(cursor.getString(numberOfFields + 1));
+        contactData.setRequestAllowed(cursor.getInt(numberOfFields + 2) == TRUE);
         return contactData;
     }
     
@@ -93,21 +104,20 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     }
     
     @Override
-    protected final String[] getFieldNames() {
-        return Util.concatArrays(super.getFieldNames(), new String[] {
-            DISPLAY_NAME_FIELD_NAME,
-            REQUEST_ALLOWED_FIELD_NAME
-        });
+    protected int getNumberOfFields() {
+        return super.getNumberOfFields() + fieldNames.length;
     }
-    
+
+    @Override
+    protected String[] getFieldNames() {
+        return Util.concatArrays(super.getFieldNames(), fieldNames);
+    }
+
     @Override
     protected String[] getFieldTypes() {
-        return Util.concatArrays(super.getFieldTypes(), new String[] { 
-            "text not null", 
-            "int not null"
-        });
+        return Util.concatArrays(super.getFieldTypes(), fieldTypes);
     }
-    
+
     @Override
     protected final ContactData createEntityInstance() {
         return new ContactData();

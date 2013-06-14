@@ -8,16 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.domain.LocationData;
-import com.creek.whereareyoumodel.repository.ContactLocationRepository;
-import com.creek.whereareyoumodel.domain.sendable.ContactLocationData;
-import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
-import com.creek.whereareyoumodel.valueobject.SendableLocationData;
+import com.creek.whereareyoumodel.repository.LocationRepository;
 
 /**
  * 
  * @author Andrey Pereverzin
  */
-public final class SQLiteContactLocationRepository extends AbstractSQLiteRepository<ContactLocationData> implements ContactLocationRepository {
+public final class SQLiteContactLocationRepository extends AbstractSQLiteRepository<LocationData> implements LocationRepository {
 
     static final String LOCATION_TIME_FIELD_NAME = "location_time";
     static final String ACCURACY_FIELD_NAME = "accuracy";
@@ -28,37 +25,59 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     static final String HAS_SPEED_FIELD_NAME = "has_speed";
     static final String CONTACT_ID_FIELD_NAME = "contact_id";
 
+    private final String[] fieldNames = new String[] {
+            LOCATION_TIME_FIELD_NAME,
+            ACCURACY_FIELD_NAME,
+            LATITUDE_FIELD_NAME,
+            LONGITUDE_FIELD_NAME,
+            SPEED_FIELD_NAME,
+            HAS_ACCURACY_FIELD_NAME,
+            HAS_SPEED_FIELD_NAME,
+            CONTACT_ID_FIELD_NAME
+        };
+
+    private final String[] fieldTypes = new String[] {
+            "real not null", 
+            "real not null", 
+            "real not null", 
+            "real not null", 
+            "real not null", 
+            "integer not null", 
+            "integer not null", 
+            "integer not null"
+        };
+
     public SQLiteContactLocationRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
     }
 
     @Override
-    public final List<ContactLocationData> getContactLocationDataByContactId(int email) {
+    public final List<LocationData> getContactLocationDataByContactId(int email) {
         return null;
     }
 
     @Override
-    public final List<ContactLocationData> getContactLocationDataByEmail(String email) {
+    public final List<LocationData> getContactLocationDataByEmail(String email) {
         return null;
     }
 
     @Override
-    public final List<ContactLocationData> getContactLocationDataByIdOfContact(String contactId) {
+    public final List<LocationData> getContactLocationDataByIdOfContact(String contactId) {
         return null;
     }
 
     @Override
-    public final ContactLocationData getLatestContactLocationDataByContactId(int contactId) {
+    public final LocationData getLatestContactLocationDataByContactId(int contactId) {
         return null;
     }
 
     @Override
-    public final ContactLocationData getLatestContactLocationDataByEmail(String contactId) {
+    public final LocationData getLatestContactLocationDataByEmail(String contactId) {
         return null;
     }
 
     @Override
-    public final ContactLocationData getLatestContactLocationDataByIdOfContact(String contactId) {
+    public final LocationData getLatestContactLocationDataByIdOfContact(String contactId) {
         return null;
     }
     
@@ -68,73 +87,54 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     }
     
     @Override
-    protected final String[] getFieldNames() {
-        return Util.concatArrays(super.getFieldNames(), new String[] {
-            LOCATION_TIME_FIELD_NAME,
-            ACCURACY_FIELD_NAME,
-            LATITUDE_FIELD_NAME,
-            LONGITUDE_FIELD_NAME,
-            SPEED_FIELD_NAME,
-            HAS_ACCURACY_FIELD_NAME,
-            HAS_SPEED_FIELD_NAME,
-            CONTACT_ID_FIELD_NAME
-        });
+    protected int getNumberOfFields() {
+        return super.getNumberOfFields() + fieldNames.length;
     }
-    
+
+    @Override
+    protected String[] getFieldNames() {
+        return Util.concatArrays(super.getFieldNames(), fieldNames);
+    }
+
     @Override
     protected String[] getFieldTypes() {
-        return Util.concatArrays(super.getFieldTypes(), new String[] { 
-            "real not null", 
-            "real not null", 
-            "real not null", 
-            "real not null", 
-            "real not null", 
-            "int not null", 
-            "int not null", 
-            "int not null"
-        });
+        return Util.concatArrays(super.getFieldTypes(), fieldTypes);
     }
     
     @Override
-    protected final ContentValues getContentValues(ContactLocationData contactLocationData) {
-        ContentValues values = super.getContentValues(contactLocationData);
-        values.put(LOCATION_TIME_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLocationTime());
-        values.put(ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getAccuracy());
-        values.put(LATITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLatitude());
-        values.put(LONGITUDE_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getLongitude());
-        values.put(SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().getSpeed());
-        values.put(HAS_ACCURACY_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasAccuracy() ? 1 : 0);
-        values.put(HAS_SPEED_FIELD_NAME, contactLocationData.getOwnerLocationData().getLocationData().hasSpeed() ? 1 : 0);
-        values.put(CONTACT_ID_FIELD_NAME, contactLocationData.getContactCompoundId().getContactId());
+    protected final ContentValues getContentValues(LocationData locationData) {
+        ContentValues values = super.getContentValues(locationData);
+        values.put(LOCATION_TIME_FIELD_NAME, locationData.getLocationTime());
+        values.put(ACCURACY_FIELD_NAME, locationData.getAccuracy());
+        values.put(LATITUDE_FIELD_NAME, locationData.getLatitude());
+        values.put(LONGITUDE_FIELD_NAME, locationData.getLongitude());
+        values.put(SPEED_FIELD_NAME, locationData.getSpeed());
+        values.put(HAS_ACCURACY_FIELD_NAME, locationData.hasAccuracy() ? TRUE : FALSE);
+        values.put(HAS_SPEED_FIELD_NAME, locationData.hasSpeed() ? TRUE : FALSE);
+        values.put(CONTACT_ID_FIELD_NAME, locationData.getContactCompoundId().getContactId());
         return values;
     }
     
     @Override
-    protected final ContactLocationData createEntityFromCursor(Cursor contactLocationDataCursor) {
-        ContactLocationData contactLocationData = new ContactLocationData();
-        contactLocationData.setId(contactLocationDataCursor.getInt(0));
-        String senderEmail = contactLocationDataCursor.getString(1);
-        long timeSent = contactLocationDataCursor.getLong(2);
-        long timeReceived = contactLocationDataCursor.getLong(3);
-        float accuracy = contactLocationDataCursor.getFloat(4);
-        double latitude = contactLocationDataCursor.getDouble(5);
-        double longitude = contactLocationDataCursor.getDouble(6);
-        float speed = contactLocationDataCursor.getFloat(7);
-        boolean hasAccuracy = contactLocationDataCursor.getInt(8) == 1;
-        boolean hasSpeed = contactLocationDataCursor.getInt(9) == 1;
-        LocationData locationData = new LocationData(accuracy, latitude, longitude, speed, hasAccuracy, hasSpeed);
-        SendableLocationData ownerLocationData = new SendableLocationData(timeSent, locationData);
-        contactLocationData.setOwnerLocationData(ownerLocationData);
-        contactLocationData.setTimeReceived(timeReceived);
-        return contactLocationData;
+    protected final LocationData createEntityFromCursor(Cursor cursor) {
+        LocationData locationData = new LocationData();
+        int numberOfFields = super.getNumberOfFields();
+        locationData.setLocationTime(cursor.getLong(numberOfFields + 1));
+        locationData.setAccuracy(cursor.getFloat(numberOfFields + 2));
+        locationData.setLatitude(cursor.getDouble(numberOfFields + 3));
+        locationData.setLongitude(cursor.getDouble(numberOfFields + 4));
+        locationData.setSpeed(cursor.getFloat(numberOfFields + 5));
+        locationData.setHasAccuracy(cursor.getInt(numberOfFields + 6) == TRUE);
+        locationData.setHasSpeed(cursor.getInt(numberOfFields + 7) == TRUE);
+        return locationData;
     }
     
     @Override
-    protected final ContactLocationData createEntityInstance() {
-        return new ContactLocationData();
+    protected final LocationData createEntityInstance() {
+        return new LocationData();
     }
         
-    private ContactLocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
+    private LocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
         if (contactLocationDataCursor != null && contactLocationDataCursor.getCount() > 0) {
             contactLocationDataCursor.moveToFirst();
             return createEntityFromCursor(contactLocationDataCursor);

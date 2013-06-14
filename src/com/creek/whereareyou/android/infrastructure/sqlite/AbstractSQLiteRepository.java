@@ -30,8 +30,25 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     static final String CONTACT_RESPONSE_TABLE = "contact_response";
     static final String CONTACT_LOCATION_TABLE = "contact_location";
     
+    static final int FALSE = 0;
+    static final int TRUE = 1;
+    public static final int UNDEFINED_INT = -1;
+    public static final long UNDEFINED_LONG = -1L;
+    
     static final String TABLE_CREATE = "create table %s (%s);";
 
+    private final String[] fieldNames = new String[] {
+            ID_FIELD_NAME,
+            ANDR_CONT_ID_FIELD_NAME,
+            EMAIL_FIELD_NAME
+        };
+
+    private final String[] fieldTypes = new String[] {
+            "integer primary key autoincrement",
+            "text",
+            "text"
+        };
+            
     public AbstractSQLiteRepository(SQLiteDatabase whereAreYouDb) {
         this.whereAreYouDb = whereAreYouDb;
     }
@@ -62,7 +79,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         return whereAreYouDb.delete(getTableName(), createWhereCriteria(ID_FIELD_NAME, Integer.toString(id)), null) > 0;
     }
 
-    public String getCreateTableCommand() {
+    protected String getCreateTableCommand() {
         String fields = buildFields();
         return String.format(TABLE_CREATE, getTableName(), fields);
     }
@@ -127,20 +144,16 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         return t;
     }
     
+    protected int getNumberOfFields() {
+        return fieldNames.length;
+    }
+    
     protected String[] getFieldNames() {
-        return new String[] {
-            ID_FIELD_NAME,
-            ANDR_CONT_ID_FIELD_NAME,
-            EMAIL_FIELD_NAME
-        };
+        return fieldNames;
     }
     
     protected String[] getFieldTypes() {
-        return new String[] {
-            "integer primary key autoincrement",
-            "text",
-            "text"
-        };
+        return fieldTypes;
     }
     
     protected abstract T createEntityInstance();

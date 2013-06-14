@@ -11,7 +11,6 @@ import android.util.Log;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
-import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 
 /**
@@ -24,27 +23,39 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     static final String TYPE_FIELD_NAME = "type";
     static final String REQUEST_ID_FIELD_NAME = "request_id";
     static final String LOCATION_ID_FIELD_NAME = "location_id";
+    
+    public static final int NORMAL_RESPONSE_TYPE = 0;
+    public static final int LOCATION_RESPONSE_TYPE = 1;
+
+    private final String[] fieldNames = new String[] {
+            TYPE_FIELD_NAME,
+            REQUEST_ID_FIELD_NAME,
+            LOCATION_ID_FIELD_NAME
+        };
+
+    private final String[] fieldTypes = new String[] {
+            "integer not null", 
+            "integer not null", 
+            "integer not null"
+        };
 
     public SQLiteContactResponseRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
     }
+       
+    @Override
+    protected int getNumberOfFields() {
+        return super.getNumberOfFields() + fieldNames.length;
+    }
     
     @Override
-    protected final String[] getFieldNames() {
-        return Util.concatArrays(super.getFieldNames(), new String[] {
-            TYPE_FIELD_NAME,
-            REQUEST_ID_FIELD_NAME,
-            LOCATION_ID_FIELD_NAME
-        });
+    protected String[] getFieldNames() {
+        return  Util.concatArrays(super.getFieldNames(), fieldNames);
     }
     
     @Override
     protected String[] getFieldTypes() {
-        return Util.concatArrays(super.getFieldTypes(), new String[] { 
-            "int not null", 
-            "int not null", 
-            "int not null"
-        });
+        return Util.concatArrays(super.getFieldTypes(), fieldTypes);
     }
 
     @Override
@@ -99,9 +110,10 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     @Override
     protected final ContactResponseEntity createEntityFromCursor(Cursor cursor) {
         ContactResponseEntity contactResponse = super.createEntityFromCursor(cursor);
-        contactResponse.setType(cursor.getInt(8));
-        contactResponse.setRequestId(cursor.getInt(9));
-        contactResponse.setLocationId(cursor.getInt(10));
+        int numberOfFields = super.getNumberOfFields();
+        contactResponse.setType(cursor.getInt(numberOfFields + 1));
+        contactResponse.setRequestId(cursor.getInt(numberOfFields + 2));
+        contactResponse.setLocationId(cursor.getInt(numberOfFields + 3));
         return contactResponse;
     }
     

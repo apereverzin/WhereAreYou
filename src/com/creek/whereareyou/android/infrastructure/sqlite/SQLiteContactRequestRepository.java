@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
-import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 
 /**
  * 

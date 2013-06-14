@@ -19,8 +19,25 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     static final String TIME_CREATED_FIELD_NAME = "time_crtd";
     static final String TIME_SENT_FIELD_NAME = "time_sent";
     static final String TIME_RECEIVED_FIELD_NAME = "time_rcvd";
+    static final String PROCESSED_FIELD_NAME = "processed";
 
+    private final String[] fieldNames = new String[] {
+            CODE_FIELD_NAME,
+            MESSAGE_FIELD_NAME,
+            TIME_CREATED_FIELD_NAME,
+            TIME_SENT_FIELD_NAME,
+            TIME_RECEIVED_FIELD_NAME
+        };
 
+    private final String[] fieldTypes = new String[] {
+            "integer not null", 
+            "text", 
+            "real not null", 
+            "real not null", 
+            "real not null",
+            "integer not null"
+        };
+            
     public AbstractRequestResponseRepository(SQLiteDatabase whereAreYouDb) {
         super(whereAreYouDb);
     }
@@ -33,40 +50,36 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
         values.put(TIME_CREATED_FIELD_NAME, t.getTimeCreated());
         values.put(TIME_SENT_FIELD_NAME, t.getTimeSent());
         values.put(TIME_RECEIVED_FIELD_NAME, t.getTimeReceived());
+        values.put(PROCESSED_FIELD_NAME, t.isProcessed() ? TRUE : FALSE);
         return values;
     }
 
     @Override
     protected T createEntityFromCursor(Cursor cursor) {
         T requestResponse = super.createEntityFromCursor(cursor);
-        requestResponse.setCode(cursor.getInt(3));
-        requestResponse.setMessage(cursor.getString(4));
-        requestResponse.setTimeCreated(cursor.getLong(5));
-        requestResponse.setTimeSent(cursor.getLong(6));
-        requestResponse.setTimeReceived(cursor.getLong(7));
+        int numberOfFields = super.getNumberOfFields();
+        requestResponse.setCode(cursor.getInt(numberOfFields + 1));
+        requestResponse.setMessage(cursor.getString(numberOfFields + 2));
+        requestResponse.setTimeCreated(cursor.getLong(numberOfFields + 3));
+        requestResponse.setTimeSent(cursor.getLong(numberOfFields + 4));
+        requestResponse.setTimeReceived(cursor.getLong(numberOfFields + 5));
+        requestResponse.setProcessed(cursor.getInt(numberOfFields + 6) == TRUE);
         return requestResponse;
     }
     
     @Override
+    protected int getNumberOfFields() {
+        return super.getNumberOfFields() + fieldNames.length;
+    }
+    
+    @Override
     protected String[] getFieldNames() {
-        return Util.concatArrays(super.getFieldNames(), new String[] {
-            CODE_FIELD_NAME,
-            MESSAGE_FIELD_NAME,
-            TIME_CREATED_FIELD_NAME,
-            TIME_SENT_FIELD_NAME,
-            TIME_RECEIVED_FIELD_NAME
-        });
+        return  Util.concatArrays(super.getFieldNames(), fieldNames);
     }
     
     @Override
     protected String[] getFieldTypes() {
-        return Util.concatArrays(super.getFieldTypes(), new String[] { 
-            "integer not null", 
-            "text", 
-            "real not null", 
-            "real not null", 
-            "real not null"
-        });
+        return Util.concatArrays(super.getFieldTypes(), fieldTypes);
     }
     
     protected final List<T> getUnsent() {

@@ -1,7 +1,7 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import com.creek.whereareyoumodel.repository.ContactDataRepository;
-import com.creek.whereareyoumodel.repository.ContactLocationRepository;
+import com.creek.whereareyoumodel.repository.LocationRepository;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
 
@@ -25,7 +25,7 @@ public class SQLiteRepositoryManager {
     private ContactDataRepository contactDataRepository;
     private ContactRequestRepository contactRequestRepository;
     private ContactResponseRepository contactResponseRepository;
-    private ContactLocationRepository contactLocationRepository;
+    private LocationRepository locationRepository;
 
     private static final String DATABASE_NAME = "whereareyou";
     private static final String DROP_TABLE = "drop table if exists ";
@@ -45,7 +45,7 @@ public class SQLiteRepositoryManager {
             contactDataRepository = new SQLiteContactDataRepository(whereAreYouDb);
             contactRequestRepository = new SQLiteContactRequestRepository(whereAreYouDb);
             contactResponseRepository = new SQLiteContactResponseRepository(whereAreYouDb);
-            contactLocationRepository = new SQLiteContactLocationRepository(whereAreYouDb);
+            locationRepository = new SQLiteContactLocationRepository(whereAreYouDb);
             
             //if (!databaseExists()) {
             createDatabase();
@@ -75,8 +75,8 @@ public class SQLiteRepositoryManager {
         return contactResponseRepository;
     }
 
-    public ContactLocationRepository getContactLocationRepository() {
-        return contactLocationRepository;
+    public LocationRepository getLocationRepository() {
+        return locationRepository;
     }
 
     private void createDatabase() {
@@ -87,7 +87,7 @@ public class SQLiteRepositoryManager {
         whereAreYouDb.execSQL(((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
-        whereAreYouDb.execSQL(((SQLiteContactLocationRepository)contactLocationRepository).getCreateTableCommand());
+        whereAreYouDb.execSQL(((SQLiteContactLocationRepository)locationRepository).getCreateTableCommand());
     }
 
     private boolean databaseExists() {
