@@ -42,21 +42,15 @@
         <activity android:name="com.creek.whereareyou.android.activity.map.MainMapActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.contacts.ViewContactActivity" />
         
-        <service android:name="com.creek.whereareyou.android.services.inform.InformService">
-            <intent-filter>
-                <action android:name="com.creek.whereareyou.android.services.inform.InformService" />
-            </intent-filter>
-        </service>
-        
-        <service android:name="com.creek.whereareyou.android.services.trace.TraceService">
-            <intent-filter>
-                <action android:name="com.creek.whereareyou.android.services.trace.TraceService" />
-            </intent-filter>
-        </service>
-        
         <service android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService">
             <intent-filter>
                 <action android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService" />
+            </intent-filter>
+        </service>
+        
+        <service android:name="com.creek.whereareyou.android.services.location.CurrentLocationService">
+            <intent-filter>
+                <action android:name="com.creek.whereareyou.android.services.location.CurrentLocationService" />
             </intent-filter>
         </service>
         

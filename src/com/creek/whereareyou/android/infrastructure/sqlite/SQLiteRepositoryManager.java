@@ -85,9 +85,13 @@ public class SQLiteRepositoryManager {
         dropTable(AbstractSQLiteRepository.CONTACT_RESPONSE_TABLE);
         dropTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
         whereAreYouDb.execSQL(((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
+        System.out.println("-----: " + ((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
+        System.out.println("-----: " + ((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
+        System.out.println("-----: " + ((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactLocationRepository)locationRepository).getCreateTableCommand());
+        System.out.println("-----: " + ((SQLiteContactLocationRepository)locationRepository).getCreateTableCommand());
     }
 
     private boolean databaseExists() {

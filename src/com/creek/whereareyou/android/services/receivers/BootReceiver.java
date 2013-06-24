@@ -2,7 +2,6 @@
 
 import com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService;
 import com.creek.whereareyou.android.services.inform.InformService;
-import com.creek.whereareyou.android.services.trace.TraceService;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
