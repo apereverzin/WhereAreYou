@@ -10,13 +10,16 @@ import android.util.Log;
 import com.creek.accessemail.connector.mail.PredefinedMailProperties;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.CryptoException;
-import com.creek.whereareyoumodel.message.AbstractMessage;
 import com.creek.whereareyoumodel.message.GenericMessage;
+import com.creek.whereareyoumodel.message.RequestMessage;
+import com.creek.whereareyoumodel.message.ResponseMessage;
 import com.creek.whereareyoumodel.message.TransformException;
-import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
+import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 import com.creek.whereareyoumodel.service.MessagesService;
 import com.creek.whereareyoumodel.service.ServiceException;
-import com.creek.whereareyoumodel.valueobject.OwnerRequestResponse;
+import com.creek.whereareyoumodel.valueobject.OwnerRequest;
+import com.creek.whereareyoumodel.valueobject.OwnerResponse;
 
 /**
  * 
@@ -39,13 +42,23 @@ public class EmailSendingAndReceivingManager {
         messagesService = new MessagesService(mailProps);
     }
 
-    public <T extends GenericRequestResponse> void sendMessage(T data, MessageFactory<OwnerRequestResponse> messageFactory) throws ServiceException {
-        data.setTimeSent(System.currentTimeMillis());
-        OwnerRequestResponse payload = new OwnerRequestResponse(data);
-        AbstractMessage message = messageFactory.createMessage(payload, account.name);
+    public void sendRequest(ContactRequest contactRequest) throws ServiceException {
+        contactRequest.setTimeSent(System.currentTimeMillis());
+        OwnerRequest payload = new OwnerRequest(contactRequest);
+        RequestMessage message = new RequestMessage(payload, account.name);
         Log.d(TAG, "--------------sendMessage: " + message.toJSON());
-        Log.d(TAG, "--------------sendMessage: " + data.getContactCompoundId().getContactEmail());
-        messagesService.sendMessage(message, data.getContactCompoundId().getContactEmail());
+        Log.d(TAG, "--------------sendMessage: " + contactRequest.getContactCompoundId().getContactEmail());
+        messagesService.sendMessage(message, contactRequest.getContactCompoundId().getContactEmail());
+        Log.d(TAG, "--------------sendMessage: " + message.toJSON());
+    }
+
+    public void sendResponse(ContactResponse contactResponse) throws ServiceException {
+        contactResponse.setTimeSent(System.currentTimeMillis());
+        OwnerResponse payload = new OwnerResponse(contactResponse);
+        ResponseMessage message = new ResponseMessage(payload, account.name);
+        Log.d(TAG, "--------------sendMessage: " + message.toJSON());
+        Log.d(TAG, "--------------sendMessage: " + contactResponse.getContactCompoundId().getContactEmail());
+        messagesService.sendMessage(message, contactResponse.getContactCompoundId().getContactEmail());
         Log.d(TAG, "--------------sendMessage: " + message.toJSON());
     }
     

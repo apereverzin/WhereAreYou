@@ -1,8 +1,8 @@
 package com.creek.whereareyou.android.contacts;
 
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
-import com.creek.whereareyoumodel.domain.sendable.AbstractRequestResponse;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.domain.sendable.RequestCode;
 
 /**
  * 
@@ -23,7 +23,7 @@ public final class RequestResponseFactory {
         ContactRequest contactRequest = new ContactRequest();
         ContactCompoundId contactCompoundId = new ContactCompoundId(contact.getId(), contact.getEmail());
         contactRequest.setContactCompoundId(contactCompoundId);
-        contactRequest.setCode(AbstractRequestResponse.LOCATION_REQUEST_CODE);
+        contactRequest.setRequestCode(RequestCode.LOCATION);
         contactRequest.setMessage("");
         contactRequest.setTimeCreated(System.currentTimeMillis());
         contactRequest.setTimeSent(0L);

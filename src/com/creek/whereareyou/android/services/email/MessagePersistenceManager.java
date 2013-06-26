@@ -3,18 +3,20 @@ package com.creek.whereareyou.android.services.email;
 import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLiteRepository.UNDEFINED_INT;
 import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactResponseRepository.LOCATION_RESPONSE_TYPE;
 import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactResponseRepository.NORMAL_RESPONSE_TYPE;
-import static com.creek.whereareyoumodel.domain.sendable.AbstractSendable.SUCCESS;
 
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.domain.sendable.RequestCode;
+import com.creek.whereareyoumodel.domain.sendable.ResponseCode;
 import com.creek.whereareyoumodel.message.GenericMessage;
 import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 import com.creek.whereareyoumodel.message.RequestMessage;
 import com.creek.whereareyoumodel.message.ResponseMessage;
-import com.creek.whereareyoumodel.valueobject.OwnerRequestResponse;
+import com.creek.whereareyoumodel.valueobject.OwnerRequest;
+import com.creek.whereareyoumodel.valueobject.OwnerResponse;
 import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 
 /**
@@ -35,13 +37,13 @@ public class MessagePersistenceManager {
     }
     
     private void persistContactRequest(ContactData contactData, RequestMessage message) {
-        OwnerRequestResponse ownerRequestResponse = message.getOwnerRequestResponse();
+        OwnerRequest ownerRequest = message.getOwnerRequest();
         ContactRequest contactRequest = new ContactRequest();
         contactRequest.setContactCompoundId(contactData.getContactCompoundId());
-        contactRequest.setTimeSent(ownerRequestResponse.getTimeSent());
+        contactRequest.setTimeSent(ownerRequest.getTimeSent());
         contactRequest.setTimeReceived(System.currentTimeMillis());
-        contactRequest.setCode(ownerRequestResponse.getCode());
-        contactRequest.setMessage(ownerRequestResponse.getMessage());
+        contactRequest.setRequestCode(RequestCode.getRequestCode(ownerRequest.getRequestCode()));
+        contactRequest.setMessage(ownerRequest.getMessage());
         contactRequest.setProcessed(false);
         SQLiteRepositoryManager.getInstance().getContactRequestRepository().create(contactRequest);
     }
@@ -55,7 +57,7 @@ public class MessagePersistenceManager {
         LocationData locationData = sendableLocationData.getLocationData();
         locationData.setContactCompoundId(contactData.getContactCompoundId());
         locationData = (LocationData)SQLiteRepositoryManager.getInstance().getLocationRepository().create(locationData);
-        persistContactResponseEntity(contactData, LOCATION_RESPONSE_TYPE, locationData.getId(), System.currentTimeMillis(), SUCCESS, "");
+        persistContactResponseEntity(contactData, LOCATION_RESPONSE_TYPE, locationData.getId(), System.currentTimeMillis(), ResponseCode.SUCCESS.getCode(), "");
     }
     
     private void persistContactResponse(ContactData contactData, ResponseMessage message, int responseType) {
@@ -63,8 +65,8 @@ public class MessagePersistenceManager {
     }
     
     private void persistContactResponse(ContactData contactData, ResponseMessage message, int responseType, int locationId) {
-        OwnerRequestResponse ownerRequestResponse = message.getOwnerRequestResponse();
-        persistContactResponseEntity(contactData, responseType, locationId, ownerRequestResponse.getTimeSent(), ownerRequestResponse.getCode(), ownerRequestResponse.getMessage());
+        OwnerResponse ownerResponse = message.getOwnerResponse();
+        persistContactResponseEntity(contactData, responseType, locationId, ownerResponse.getTimeSent(), ownerResponse.getResponseCode(), ownerResponse.getMessage());
     }
     
     private void persistContactResponseEntity(ContactData contactData, int responseType, int locationId, long timeSent, int code, String message) {
@@ -72,7 +74,7 @@ public class MessagePersistenceManager {
         contactResponseEntity.setContactCompoundId(contactData.getContactCompoundId());
         contactResponseEntity.setTimeSent(timeSent);
         contactResponseEntity.setTimeReceived(System.currentTimeMillis());
-        contactResponseEntity.setCode(code);
+        contactResponseEntity.setResponseCode(ResponseCode.getResponseCode(code));
         contactResponseEntity.setMessage(message);
         contactResponseEntity.setProcessed(false);
         contactResponseEntity.setType(responseType);

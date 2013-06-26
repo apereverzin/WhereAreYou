@@ -14,7 +14,6 @@ import android.database.sqlite.SQLiteDatabase;
  * @author Andrey Pereverzin
  */
 public abstract class AbstractRequestResponseRepository <T extends GenericRequestResponse> extends AbstractSQLiteRepository<T> {
-    static final String CODE_FIELD_NAME = "code";
     static final String MESSAGE_FIELD_NAME = "message";
     static final String TIME_CREATED_FIELD_NAME = "time_crtd";
     static final String TIME_SENT_FIELD_NAME = "time_sent";
@@ -22,7 +21,6 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     static final String PROCESSED_FIELD_NAME = "processed";
 
     private final String[] fieldNames = new String[] {
-            CODE_FIELD_NAME,
             MESSAGE_FIELD_NAME,
             TIME_CREATED_FIELD_NAME,
             TIME_SENT_FIELD_NAME,
@@ -30,7 +28,6 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
         };
 
     private final String[] fieldTypes = new String[] {
-            "integer not null", 
             "text", 
             "real not null", 
             "real not null", 
@@ -45,7 +42,6 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     @Override
     protected ContentValues getContentValues(T t) {
         ContentValues values = super.getContentValues(t);
-        values.put(CODE_FIELD_NAME, t.getCode());
         values.put(MESSAGE_FIELD_NAME, t.getMessage());
         values.put(TIME_CREATED_FIELD_NAME, t.getTimeCreated());
         values.put(TIME_SENT_FIELD_NAME, t.getTimeSent());
@@ -58,12 +54,11 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     protected T createEntityFromCursor(Cursor cursor) {
         T requestResponse = super.createEntityFromCursor(cursor);
         int numberOfFields = super.getNumberOfFields();
-        requestResponse.setCode(cursor.getInt(numberOfFields + 1));
-        requestResponse.setMessage(cursor.getString(numberOfFields + 2));
-        requestResponse.setTimeCreated(cursor.getLong(numberOfFields + 3));
-        requestResponse.setTimeSent(cursor.getLong(numberOfFields + 4));
-        requestResponse.setTimeReceived(cursor.getLong(numberOfFields + 5));
-        requestResponse.setProcessed(cursor.getInt(numberOfFields + 6) == TRUE);
+        requestResponse.setMessage(cursor.getString(numberOfFields + 1));
+        requestResponse.setTimeCreated(cursor.getLong(numberOfFields + 2));
+        requestResponse.setTimeSent(cursor.getLong(numberOfFields + 3));
+        requestResponse.setTimeReceived(cursor.getLong(numberOfFields + 4));
+        requestResponse.setProcessed(cursor.getInt(numberOfFields + 5) == TRUE);
         return requestResponse;
     }
     

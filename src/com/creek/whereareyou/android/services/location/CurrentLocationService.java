@@ -31,7 +31,7 @@ public class CurrentLocationService extends Service {
             Log.i(TAG, "===================InformService doing work");
             
             // TODO
-            //List<ContactRequest> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnrespondedContactRequests();
+            List<ContactRequest> unsentRequests = SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnrespondedLocationRequests();
 
             Location location = new LocationProvider().getLatestLocation(CurrentLocationService.this);
             //NetworkLocationProvider.onCellLocationChanged();
@@ -53,7 +53,7 @@ public class CurrentLocationService extends Service {
         contentResolver = getContentResolver();
 
         timer = new Timer("WhereAreYouInformTimer");
-        //timer.schedule(informTask, 1000L, 30 * 1000L);
+        timer.schedule(informTask, 1000L, 30 * 1000L);
     }
 
     @Override
