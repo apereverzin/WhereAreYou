@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyoumodel.repository.ContactDataRepository;
 import com.creek.whereareyoumodel.repository.LocationRepository;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;

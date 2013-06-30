@@ -78,7 +78,7 @@ public class MessagePersistenceManager {
         contactResponseEntity.setMessage(message);
         contactResponseEntity.setProcessed(false);
         contactResponseEntity.setType(responseType);
-        contactResponseEntity.setLocationId(locationId);
+        contactResponseEntity.setLocationDataId(locationId);
         contactResponseEntity.setRequestId(UNDEFINED_INT);
         SQLiteRepositoryManager.getInstance().getContactResponseRepository().create(contactResponseEntity);
     }

@@ -1,5 +1,8 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_KNOWN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.SENT_TIME_UNKNOWN;
+
 import java.util.List;
 
 import com.creek.whereareyou.android.util.Util;
@@ -24,7 +27,8 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
             MESSAGE_FIELD_NAME,
             TIME_CREATED_FIELD_NAME,
             TIME_SENT_FIELD_NAME,
-            TIME_RECEIVED_FIELD_NAME
+            TIME_RECEIVED_FIELD_NAME,
+            PROCESSED_FIELD_NAME
         };
 
     private final String[] fieldTypes = new String[] {
@@ -78,7 +82,7 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     }
     
     protected final List<T> getUnsent() {
-        String criteria = createWhereAndCriteria(new String[]{TIME_CREATED_FIELD_NAME + ">0", TIME_SENT_FIELD_NAME + "=0"});
+        String criteria = createWhereAndCriteria(new ComparisonClause[]{CREATION_TIME_KNOWN, SENT_TIME_UNKNOWN});
         Cursor cursor = createCursor(criteria, null, null);
         return createEntityListFromCursor(cursor);
     }

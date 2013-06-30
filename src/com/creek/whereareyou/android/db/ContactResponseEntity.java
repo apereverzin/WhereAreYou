@@ -31,7 +31,7 @@ public class ContactResponseEntity extends ContactResponse {
         return locationId;
     }
     
-    public void setLocationId(int locationId) {
+    public void setLocationDataId(int locationId) {
         this.locationId = locationId;
     }
 }

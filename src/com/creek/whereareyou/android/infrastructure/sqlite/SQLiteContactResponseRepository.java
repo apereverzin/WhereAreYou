@@ -120,7 +120,7 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
         contactResponse.setResponseCode(ResponseCode.getResponseCode(code));
         contactResponse.setType(cursor.getInt(numberOfFields + 2));
         contactResponse.setRequestId(cursor.getInt(numberOfFields + 3));
-        contactResponse.setLocationId(cursor.getInt(numberOfFields + 4));
+        contactResponse.setLocationDataId(cursor.getInt(numberOfFields + 4));
         return contactResponse;
     }
     

@@ -7,10 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.EQUALS;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_UNKNOWN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.RECEIVED_TIME_KNOWN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.PENDING;
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.RequestCode;
+import static com.creek.whereareyoumodel.domain.sendable.RequestCode.LOCATION;
 
 /**
  * 
@@ -20,7 +25,6 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     private static final String TAG = SQLiteContactRequestRepository.class.getSimpleName();
 
     static final String REQUEST_CODE_FIELD_NAME = "request_code";
-
 
     private final String[] fieldNames = new String[] {
             REQUEST_CODE_FIELD_NAME
@@ -47,6 +51,10 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         int numberOfFields = super.getNumberOfFields();
         int code = cursor.getInt(numberOfFields + 1);
         contactRequest.setRequestCode(RequestCode.getRequestCode(code));
+        int responseId = cursor.getInt(numberOfFields + 2);
+        if (responseId != UNDEFINED_INT) {
+            // TODO setResponse(...)
+        }
         return contactRequest;
     }
     
@@ -105,7 +113,9 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     @Override
     public final List<ContactRequest> getUnrespondedLocationRequests() {
         Log.d(TAG, "getUnrespondedLocationRequests()");
-        String criteria = createWhereAndCriteria(new String[]{TIME_CREATED_FIELD_NAME + "=0", TIME_RECEIVED_FIELD_NAME + ">0", REQUEST_CODE_FIELD_NAME + "=" + RequestCode.LOCATION.getCode(), RESPONSE_ID_FIELD_NAME + "=" + 0});
+        ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
+        String criteria = createWhereAndCriteria(
+                new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, PENDING});
         Cursor cursor = createCursor(criteria, null, null);
         return createEntityListFromCursor(cursor);
     }

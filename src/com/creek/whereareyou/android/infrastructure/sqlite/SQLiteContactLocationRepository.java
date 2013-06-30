@@ -1,10 +1,14 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.EQUALS;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.GREATER_THAN;
+
 import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.domain.LocationData;
@@ -15,6 +19,7 @@ import com.creek.whereareyoumodel.repository.LocationRepository;
  * @author Andrey Pereverzin
  */
 public final class SQLiteContactLocationRepository extends AbstractSQLiteRepository<LocationData> implements LocationRepository {
+    private static final String TAG = SQLiteContactLocationRepository.class.getSimpleName();
 
     static final String LOCATION_TIME_FIELD_NAME = "location_time";
     static final String ACCURACY_FIELD_NAME = "accuracy";
@@ -24,6 +29,8 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     static final String HAS_ACCURACY_FIELD_NAME = "has_accuracy";
     static final String HAS_SPEED_FIELD_NAME = "has_speed";
     static final String CONTACT_ID_FIELD_NAME = "contact_id";
+    
+    static final ComparisonClause CREATION_TIME_KNOWN = new ComparisonClause(CONTACT_ID_FIELD_NAME, EQUALS, UNDEFINED_INT);
 
     private final String[] fieldNames = new String[] {
             LOCATION_TIME_FIELD_NAME,
@@ -79,6 +86,17 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     @Override
     public final LocationData getLatestContactLocationDataByIdOfContact(String contactId) {
         return null;
+    }
+
+    @Override
+    public final LocationData getMyActualLocationData(int timeout) {
+        Log.d(TAG, "getActualMyLocationData()");
+        ComparisonClause myLocation = new ComparisonClause(CONTACT_ID_FIELD_NAME, EQUALS, UNDEFINED_INT);
+        long expirationTime = System.currentTimeMillis() - timeout;
+        ComparisonClause actualLocation = new ComparisonClause(LOCATION_TIME_FIELD_NAME, GREATER_THAN, expirationTime);
+        String criteria = createWhereAndCriteria(new ComparisonClause[]{myLocation, actualLocation});
+        Cursor cursor = createCursor(criteria, null, null);
+        return createEntityFromCursor(cursor);
     }
     
     @Override

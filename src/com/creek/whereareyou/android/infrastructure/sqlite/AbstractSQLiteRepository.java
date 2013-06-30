@@ -32,6 +32,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     
     static final int FALSE = 0;
     static final int TRUE = 1;
+    private static final String AND = " AND ";
     public static final int UNDEFINED_INT = -1;
     public static final long UNDEFINED_LONG = -1L;
     
@@ -70,13 +71,13 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     public boolean update(T entity) {
         Log.d(TAG, "update: " + entity.getId());
         ContentValues values = getContentValues(entity);
-        return whereAreYouDb.update(getTableName(), values, createWhereCriteria(ID_FIELD_NAME, Integer.toString(entity.getId())), null) > 0;
+        return whereAreYouDb.update(getTableName(), values, createWhereCriteria(ID_FIELD_NAME, entity.getId()), null) > 0;
     }
 
     @Override
     public boolean delete(int id) {
         Log.d(TAG, "delete: " + id);
-        return whereAreYouDb.delete(getTableName(), createWhereCriteria(ID_FIELD_NAME, Integer.toString(id)), null) > 0;
+        return whereAreYouDb.delete(getTableName(), createWhereCriteria(ID_FIELD_NAME, id), null) > 0;
     }
 
     protected String getCreateTableCommand() {
@@ -108,13 +109,17 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         return String.format("%s=%s", fieldName, fieldValue);
     }
     
-    protected String createWhereAndCriteria(String[] criteria) {
+    protected String createWhereCriteria(String fieldName, int fieldValue) {
+        return createWhereCriteria(fieldName, Integer.toString(fieldValue));
+    }
+    
+    protected String createWhereAndCriteria(ComparisonClause[] criteria) {
         StringBuilder sb = new StringBuilder();
         
         for (int i = 0; i < criteria.length; i++) {
-            sb.append(criteria[i]);
+            criteria[i].appendToStringBuilder(sb);
             if (i < criteria.length - 1) {
-                sb.append(" AND ");
+                sb.append(AND);
             }
         }
         
@@ -124,19 +129,26 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     protected List<T> createEntityListFromCursor(Cursor cursor) {
         List<T> entityList = new ArrayList<T>();
 
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            do {
-                T contactData = createEntityFromCursor(cursor);
-                Log.d(TAG, "contactData: " + contactData.getId());
-                entityList.add(contactData);
-            } while (cursor.moveToNext());
+        while (cursor.moveToNext()) {
+            T contactData = createEntity(cursor);
+            Log.d(TAG, "contactData: " + contactData.getId());
+            entityList.add(contactData);
         }
 
         return entityList;
     }
     
     protected T createEntityFromCursor(Cursor cursor) {
+        cursor.moveToFirst();
+        
+        if (cursor.isFirst()) {
+            return createEntity(cursor);
+        }
+        
+        return null;
+    }
+    
+    private T createEntity(Cursor cursor) {
         T t = createEntityInstance();
         t.setId(cursor.getInt(0));
         ContactCompoundId contactCompoundId = new ContactCompoundId(cursor.getString(1), cursor.getString(2));
