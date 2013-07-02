@@ -41,10 +41,8 @@ public class GoogleAccountProvider {
 
         Log.d(TAG, "======================================");
         for (Account account : accounts) {
-            Log.d(TAG, "-----------");
-            Log.d(TAG, account.name);
-            Log.d(TAG, account.type);
-            Log.d(TAG, account.toString());
+            System.out.println("-----------");
+            Log.d(TAG, account.name + ", " + account.type + ", " + account.toString());
             if (account.type.startsWith(GOOGLE_ACCOUNT_PREFIX)) {
                 return account;
             }

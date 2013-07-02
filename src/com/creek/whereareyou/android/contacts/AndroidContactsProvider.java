@@ -70,8 +70,7 @@ public class AndroidContactsProvider {
         while (emailsCursor.moveToNext()) {
             String emailIdOfContact = emailsCursor.getString(emailsCursor.getColumnIndex(Email.DATA));
             int emailType = emailsCursor.getInt(emailsCursor.getColumnIndex(Phone.TYPE));
-            Log.d(TAG, "-----emailIdOfContact: " + emailIdOfContact);
-            Log.d(TAG, "-----emailType: " + emailType);
+            Log.d(TAG, "emailIdOfContact: " + emailIdOfContact + ", emailType: " + emailType);
         }
         emailsCursor.close();
         return emails;

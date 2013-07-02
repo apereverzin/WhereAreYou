@@ -131,8 +131,11 @@ public class ContactsActivity extends ListActivity {
             return true;
         case REQUEST_CONTACT_LOCATION_MENU_ITEM:
             Log.d(TAG, "REQUEST_CONTACT_LOCATION_MENU_ITEM");
+            System.out.println("--------------creating contact location request");
             ContactRequest contactRequest = RequestResponseFactory.getInstance().createContactLocationRequest(contactSelected);
+            System.out.println("--------------created contact location request: " + contactRequest);
             SQLiteRepositoryManager.getInstance().getContactRequestRepository().create(contactRequest);
+            System.out.println("--------------persistedted contact location request: " + contactRequest.getId());
             return true;
         default:
             return super.onContextItemSelected(item);

@@ -116,7 +116,9 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, PENDING});
+        System.out.println("--------------getUnrespondedLocationRequests");
         Cursor cursor = createCursor(criteria, null, null);
+        System.out.println("--------------getUnrespondedLocationRequests: " + cursor.getCount());
         return createEntityListFromCursor(cursor);
     }
 

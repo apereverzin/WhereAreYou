@@ -95,7 +95,9 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         long expirationTime = System.currentTimeMillis() - timeout;
         ComparisonClause actualLocation = new ComparisonClause(LOCATION_TIME_FIELD_NAME, GREATER_THAN, expirationTime);
         String criteria = createWhereAndCriteria(new ComparisonClause[]{myLocation, actualLocation});
+        System.out.println("--------------getMyActualLocationData");
         Cursor cursor = createCursor(criteria, null, null);
+        System.out.println("--------------getMyActualLocationData: " + cursor.getCount());
         return createEntityFromCursor(cursor);
     }
     

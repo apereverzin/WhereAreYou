@@ -67,7 +67,7 @@ public class EmailAccountEditActivity extends Activity {
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 try {
-                    Log.d(TAG, "-----testButton clicked");
+                    Log.d(TAG, "testButton clicked");
                     Properties fullProps = getPredefinedProperties(googleAccount.name);
                     if (fullProps != null) {
                         fullProps.setProperty(MAIL_USERNAME_PROPERTY, extractUserNameFromEmailAddress(googleAccount.name));

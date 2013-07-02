@@ -37,6 +37,7 @@ public class  LocationProvider {
     }
     
     public Location getLatestLocation(final Context context) {
+        Log.d(TAG, "getLatestLocation()");
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         String bestProvider = defineBestProvider(context);
         System.out.println("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-bestProvider: " + bestProvider);

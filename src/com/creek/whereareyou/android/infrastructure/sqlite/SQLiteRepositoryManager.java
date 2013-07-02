@@ -25,7 +25,7 @@ public class SQLiteRepositoryManager {
     
     private ContactDataRepository contactDataRepository;
     private ContactRequestRepository contactRequestRepository;
-    private ContactResponseRepository contactResponseRepository;
+    private ContactResponseRepository<ContactResponseEntity> contactResponseRepository;
     private LocationRepository locationRepository;
 
     private static final String DATABASE_NAME = "whereareyou";
@@ -72,7 +72,7 @@ public class SQLiteRepositoryManager {
         return contactRequestRepository;
     }
 
-    public ContactResponseRepository getContactResponseRepository() {
+    public ContactResponseRepository<ContactResponseEntity> getContactResponseRepository() {
         return contactResponseRepository;
     }
 

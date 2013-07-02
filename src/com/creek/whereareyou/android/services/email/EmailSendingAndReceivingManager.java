@@ -43,27 +43,32 @@ public class EmailSendingAndReceivingManager {
     }
 
     public void sendRequest(ContactRequest contactRequest) throws ServiceException {
+        Log.d(TAG, "sendRequest()");
         contactRequest.setTimeSent(System.currentTimeMillis());
         OwnerRequest payload = new OwnerRequest(contactRequest);
         RequestMessage message = new RequestMessage(payload, account.name);
-        Log.d(TAG, "--------------sendMessage: " + message.toJSON());
-        Log.d(TAG, "--------------sendMessage: " + contactRequest.getContactCompoundId().getContactEmail());
+        System.out.println("--------------sendRequest: " + message.toJSON());
+        System.out.println("--------------sendRequest: " + contactRequest.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactRequest.getContactCompoundId().getContactEmail());
-        Log.d(TAG, "--------------sendMessage: " + message.toJSON());
+        System.out.println("--------------sendRequest: " + message.toJSON());
     }
 
     public void sendResponse(ContactResponse contactResponse) throws ServiceException {
+        Log.d(TAG, "sendResponse()");
         contactResponse.setTimeSent(System.currentTimeMillis());
         OwnerResponse payload = new OwnerResponse(contactResponse);
         ResponseMessage message = new ResponseMessage(payload, account.name);
-        Log.d(TAG, "--------------sendMessage: " + message.toJSON());
-        Log.d(TAG, "--------------sendMessage: " + contactResponse.getContactCompoundId().getContactEmail());
+        System.out.println("--------------sendResponse: " + message.toJSON());
+        System.out.println("--------------sendResponse: " + contactResponse.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactResponse.getContactCompoundId().getContactEmail());
-        Log.d(TAG, "--------------sendMessage: " + message.toJSON());
+        System.out.println("--------------sendResponse: " + message.toJSON());
     }
     
     public Set<GenericMessage> receiveMessages() throws ServiceException, TransformException {
+        Log.d(TAG, "receiveMessages()");
+        System.out.println("--------------receiveMessages");
         Set<GenericMessage> messages = messagesService.receiveMessages();
+        System.out.println("--------------receiveMessages: " + messages.size());
         return messages;
     }
 }

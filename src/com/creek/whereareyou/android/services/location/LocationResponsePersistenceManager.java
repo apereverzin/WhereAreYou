@@ -5,6 +5,7 @@ import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLite
 import static com.creek.whereareyoumodel.domain.sendable.ResponseCode.SUCCESS;
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
@@ -18,7 +19,11 @@ import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
  * @author Andrey Pereverzin
  */
 public class LocationResponsePersistenceManager {
+    private static final String TAG = LocationResponsePersistenceManager.class.getSimpleName();
+
     LocationData getAndPersistMyCurrentLocation(Context context) {
+        Log.d(TAG, "getAndPersistMyCurrentLocation()");
+        System.out.println("--------------getAndPersistMyCurrentLocation");
         Location location = new LocationProvider().getLatestLocation(context);
         LocationData locationData = new LocationData();
         locationData.setLocationTime(location.getTime());
@@ -29,12 +34,14 @@ public class LocationResponsePersistenceManager {
         locationData.setHasAccuracy(location.hasAccuracy());
         locationData.setHasSpeed(location.hasSpeed());
         
+        System.out.println("--------------getAndPersistMyCurrentLocation: " + locationData);
         SQLiteRepositoryManager.getInstance().getLocationRepository().create(locationData);
 
         return locationData;
     }
     
     ContactResponse persistLocationResponse(ContactRequest request, LocationData locationData) {
+        Log.d(TAG, "persistLocationResponse()");
         ContactResponseEntity response = new ContactResponseEntity();
         response.setContactCompoundId(request.getContactCompoundId());
         response.setTimeCreated(System.currentTimeMillis());
@@ -49,6 +56,7 @@ public class LocationResponsePersistenceManager {
         response.setLocationData(locationData);
         response.setLocationDataId(locationData.getId());
         SQLiteRepositoryManager.getInstance().getContactResponseRepository().create(response);
+        System.out.println("--------------persistLocationResponse: " + response);
         return response;
     }
 }

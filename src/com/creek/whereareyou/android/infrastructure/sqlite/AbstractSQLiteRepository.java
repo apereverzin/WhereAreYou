@@ -21,45 +21,38 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     private static final String TAG = AbstractSQLiteRepository.class.getSimpleName();
     protected final SQLiteDatabase whereAreYouDb;
 
-    static final String ID_FIELD_NAME = "_id";    
+    static final String ID_FIELD_NAME = "_id";
     static final String ANDR_CONT_ID_FIELD_NAME = "andr_cont_id";
     static final String EMAIL_FIELD_NAME = "email";
-    
+
     static final String CONTACT_DATA_TABLE = "contact_data";
     static final String CONTACT_REQUEST_TABLE = "contact_request";
     static final String CONTACT_RESPONSE_TABLE = "contact_response";
     static final String CONTACT_LOCATION_TABLE = "contact_location";
-    
+
     static final int FALSE = 0;
     static final int TRUE = 1;
     private static final String AND = " AND ";
     public static final int UNDEFINED_INT = -1;
     public static final long UNDEFINED_LONG = -1L;
-    
+
     static final String TABLE_CREATE = "create table %s (%s);";
 
-    private final String[] fieldNames = new String[] {
-            ID_FIELD_NAME,
-            ANDR_CONT_ID_FIELD_NAME,
-            EMAIL_FIELD_NAME
-        };
+    private final String[] fieldNames = new String[] { ID_FIELD_NAME, ANDR_CONT_ID_FIELD_NAME, EMAIL_FIELD_NAME };
 
-    private final String[] fieldTypes = new String[] {
-            "integer primary key autoincrement",
-            "text",
-            "text"
-        };
-            
+    private final String[] fieldTypes = new String[] { "integer primary key autoincrement", "text", "text" };
+
     public AbstractSQLiteRepository(SQLiteDatabase whereAreYouDb) {
         this.whereAreYouDb = whereAreYouDb;
     }
-    
+
     @Override
     public T create(T entity) {
         ContentValues values = getContentValues(entity);
         try {
+            System.out.println("--------------create: " + entity);
             long id = whereAreYouDb.insert(getTableName(), null, values);
-            entity.setId((int) id);
+            entity.setId(id);
             Log.d(TAG, "Created: " + entity.getId());
         } catch (Throwable ex) {
             ActivityUtil.printStackTrace(TAG, ex);
@@ -99,33 +92,33 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         Log.d(TAG, "createCursor()");
         return createCursor(createWhereCriteria(fieldName, fieldValue), selectionArgs, orderBy);
     }
-    
+
     protected Cursor createCursor(String criteria, String[] selectionArgs, String orderBy) {
         Log.d(TAG, "createCursor()");
         return whereAreYouDb.query(getTableName(), getFieldNames(), criteria, selectionArgs, null, null, orderBy);
     }
-    
+
     protected String createWhereCriteria(String fieldName, String fieldValue) {
         return String.format("%s=%s", fieldName, fieldValue);
     }
-    
-    protected String createWhereCriteria(String fieldName, int fieldValue) {
-        return createWhereCriteria(fieldName, Integer.toString(fieldValue));
+
+    protected String createWhereCriteria(String fieldName, long fieldValue) {
+        return createWhereCriteria(fieldName, Long.toString(fieldValue));
     }
-    
+
     protected String createWhereAndCriteria(ComparisonClause[] criteria) {
         StringBuilder sb = new StringBuilder();
-        
+
         for (int i = 0; i < criteria.length; i++) {
             criteria[i].appendToStringBuilder(sb);
             if (i < criteria.length - 1) {
                 sb.append(AND);
             }
         }
-        
+
         return sb.toString();
     }
-    
+
     protected List<T> createEntityListFromCursor(Cursor cursor) {
         List<T> entityList = new ArrayList<T>();
 
@@ -137,17 +130,17 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
 
         return entityList;
     }
-    
+
     protected T createEntityFromCursor(Cursor cursor) {
         cursor.moveToFirst();
-        
+
         if (cursor.isFirst()) {
             return createEntity(cursor);
         }
-        
+
         return null;
     }
-    
+
     private T createEntity(Cursor cursor) {
         T t = createEntityInstance();
         t.setId(cursor.getInt(0));
@@ -155,23 +148,23 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         t.setContactCompoundId(contactCompoundId);
         return t;
     }
-    
+
     protected int getNumberOfFields() {
         return fieldNames.length;
     }
-    
+
     protected String[] getFieldNames() {
         return fieldNames;
     }
-    
+
     protected String[] getFieldTypes() {
         return fieldTypes;
     }
-    
+
     protected abstract T createEntityInstance();
 
     protected abstract String getTableName();
-    
+
     protected ContentValues getContentValues(T t) {
         ContentValues values = new ContentValues();
         values.put(ID_FIELD_NAME, t.getId());
@@ -179,7 +172,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         values.put(EMAIL_FIELD_NAME, t.getContactCompoundId().getContactEmail());
         return values;
     }
-    
+
     private String buildFields() {
         StringBuilder sb = new StringBuilder();
         String[] fieldNames = getFieldNames();

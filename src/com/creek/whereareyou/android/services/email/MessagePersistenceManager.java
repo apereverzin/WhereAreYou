@@ -4,6 +4,8 @@ import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLite
 import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactResponseRepository.LOCATION_RESPONSE_TYPE;
 import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactResponseRepository.NORMAL_RESPONSE_TYPE;
 
+import android.util.Log;
+
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyoumodel.domain.ContactData;
@@ -24,15 +26,23 @@ import com.creek.whereareyoumodel.valueobject.SendableLocationData;
  * @author Andrey Pereverzin
  */
 public class MessagePersistenceManager {
+    private static final String TAG = MessagePersistenceManager.class.getSimpleName();
+
     public void persistReceivedMessage(ContactData contactData, GenericMessage message) {
+        Log.d(TAG, "persistReceivedMessage()");
+
         if (contactData != null) {
             if (message instanceof RequestMessage) {
+                System.out.println("--------------persisting RequestMessage: " + contactData + ", " + message);
                 persistContactRequest(contactData, (RequestMessage) message);
             } else if (message instanceof ResponseMessage) {
+                System.out.println("--------------persisting ResponseMessage: " + contactData + ", " + message);
                 persistNormalContactResponse(contactData, (ResponseMessage) message);
             } else if (message instanceof OwnerLocationDataMessage) {
+                System.out.println("--------------persisting OwnerLocationDataMessage: " + contactData + ", " + message);
                 persistLocationData(contactData, (OwnerLocationDataMessage) message);
             }
+            System.out.println("--------------message persisted");
         }
     }
     
@@ -69,7 +79,7 @@ public class MessagePersistenceManager {
         persistContactResponseEntity(contactData, responseType, locationId, ownerResponse.getTimeSent(), ownerResponse.getResponseCode(), ownerResponse.getMessage());
     }
     
-    private void persistContactResponseEntity(ContactData contactData, int responseType, int locationId, long timeSent, int code, String message) {
+    private void persistContactResponseEntity(ContactData contactData, int responseType, long locationId, long timeSent, int code, String message) {
         ContactResponseEntity contactResponseEntity = new ContactResponseEntity();
         contactResponseEntity.setContactCompoundId(contactData.getContactCompoundId());
         contactResponseEntity.setTimeSent(timeSent);

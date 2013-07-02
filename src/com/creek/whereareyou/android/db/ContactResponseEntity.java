@@ -8,8 +8,8 @@ import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
  */
 public class ContactResponseEntity extends ContactResponse {
     private int type;
-    private int requestId;
-    private int locationId;
+    private long requestId;
+    private long locationId;
     
     public int getType() {
         return type;
@@ -19,19 +19,19 @@ public class ContactResponseEntity extends ContactResponse {
         this.type = type;
     }
     
-    public int getRequestId() {
+    public long getRequestId() {
         return requestId;
     }
     
-    public void setRequestId(int requestId) {
+    public void setRequestId(long requestId) {
         this.requestId = requestId;
     }
     
-    public int getLocationId() {
+    public long getLocationId() {
         return locationId;
     }
     
-    public void setLocationDataId(int locationId) {
+    public void setLocationDataId(long locationId) {
         this.locationId = locationId;
     }
 }
