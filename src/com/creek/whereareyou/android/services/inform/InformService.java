@@ -22,6 +22,29 @@ public class InformService extends Service {
     private Timer timer;
     protected ContentResolver contentResolver;
     
+    private static final String TIMER_NAME = "WhereAreYouInformTimer";
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        contentResolver = getContentResolver();
+
+        timer = new Timer(TIMER_NAME);
+        //timer.schedule(informTask, 1000L, 30 * 1000L);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+        timer = null;
+    }
+    
     private TimerTask informTask = new TimerTask() {
         @Override
         public void run() {
@@ -34,25 +57,4 @@ public class InformService extends Service {
 //            }
         }
     };
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        contentResolver = getContentResolver();
-
-        timer = new Timer("WhereAreYouInformTimer");
-        //timer.schedule(informTask, 1000L, 30 * 1000L);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        timer.cancel();
-        timer = null;
-    }
 }

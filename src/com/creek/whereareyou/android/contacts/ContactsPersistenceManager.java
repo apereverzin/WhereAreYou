@@ -32,6 +32,10 @@ public class ContactsPersistenceManager {
         SQLiteRepositoryManager.getInstance().initialise(ctx);
     }
 
+    public void close() {
+        SQLiteRepositoryManager.getInstance().closeDatabase();
+    }
+
     public void persistContacts(Map<String, AndroidContact> androidContacts) throws IOException {
         for (String contactId: androidContacts.keySet()) {
             ContactData contact = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByContactId(contactId);

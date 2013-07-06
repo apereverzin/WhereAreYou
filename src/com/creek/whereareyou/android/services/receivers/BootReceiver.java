@@ -2,6 +2,7 @@
 
 import com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService;
 import com.creek.whereareyou.android.services.inform.InformService;
+import com.creek.whereareyou.android.services.location.CurrentLocationService;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -21,6 +22,7 @@ public class BootReceiver extends android.content.BroadcastReceiver {
 //        startService(context, TraceService.class);
 //        startService(context, InformService.class);
         startService(context, EmailSendingAndReceivingService.class);
+        startService(context, CurrentLocationService.class);
 //        Intent activeIntent = new Intent(context, LocationChangedReceiver.class);
 //        PendingIntent locationListenerPendingIntent = PendingIntent.getBroadcast(context, 0, activeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 //        LocationManager locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);

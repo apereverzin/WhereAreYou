@@ -37,10 +37,10 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
         };
 
     private final String[] fieldTypes = new String[] {
-            "integer not null", 
-            "integer not null", 
-            "integer not null", 
-            "integer not null"
+            "int not null", 
+            "int not null", 
+            "int not null", 
+            "int not null"
         };
 
     public SQLiteContactResponseRepository(SQLiteDatabase whereAreYouDb) {
@@ -104,6 +104,8 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     
     @Override
     protected final ContentValues getContentValues(ContactResponseEntity contactResponse) {
+        Log.d(TAG, "getContentValues()");
+        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(contactResponse);
         values.put(RESPONSE_CODE_FIELD_NAME, contactResponse.getResponseCode().getCode());
         values.put(TYPE_FIELD_NAME, contactResponse.getType());
@@ -113,14 +115,16 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     }
     
     @Override
-    protected final ContactResponseEntity createEntityFromCursor(Cursor cursor) {
-        ContactResponseEntity contactResponse = super.createEntityFromCursor(cursor);
+    protected final ContactResponseEntity createEntity(Cursor cursor) {
+        Log.d(TAG, "createEntity()");
+        Log.d(TAG, "--------------createEntity()");
+        ContactResponseEntity contactResponse = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        int code = cursor.getInt(numberOfFields + 1);
+        int code = cursor.getInt(numberOfFields);
         contactResponse.setResponseCode(ResponseCode.getResponseCode(code));
-        contactResponse.setType(cursor.getInt(numberOfFields + 2));
-        contactResponse.setRequestId(cursor.getInt(numberOfFields + 3));
-        contactResponse.setLocationDataId(cursor.getInt(numberOfFields + 4));
+        contactResponse.setType(cursor.getInt(numberOfFields++));
+        contactResponse.setRequestId(cursor.getInt(numberOfFields++));
+        contactResponse.setLocationDataId(cursor.getInt(numberOfFields));
         return contactResponse;
     }
     

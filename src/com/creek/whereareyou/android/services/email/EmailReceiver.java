@@ -3,6 +3,7 @@ package com.creek.whereareyou.android.services.email;
 import java.io.IOException;
 import java.util.Set;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
@@ -24,17 +25,24 @@ public class EmailReceiver {
         this.emailSendingAndReceivingManager = emailSendingAndReceivingManager;
     }
     
-    public void receiveRequestsAndResponses() throws TransformException, ServiceException {
+    public void receiveRequestsAndResponses(Context ctx) throws TransformException, ServiceException {
         Log.d(TAG, "receiveRequestsAndResponses()");
         Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
-        System.out.println("--------------receiveRequestsAndResponses: " + receivedMessages.size());
+        Log.d(TAG, "--------------receiveRequestsAndResponses: " + receivedMessages.size());
         if (receivedMessages.size() > 0) {
-            MessagePersistenceManager messagePersistenceManager = new MessagePersistenceManager();
-            for (GenericMessage message : receivedMessages) {
-                String contactEmail = message.getSenderEmail();
-                ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
-                System.out.println("--------------contactData: " + contactData);
-                messagePersistenceManager.persistReceivedMessage(contactData, message);
+            try {
+                SQLiteRepositoryManager.getInstance().initialise(ctx);
+                MessagePersistenceManager messagePersistenceManager = new MessagePersistenceManager();
+                for (GenericMessage message : receivedMessages) {
+                    String contactEmail = message.getSenderEmail();
+                    ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
+                    Log.d(TAG, "--------------contactData: " + contactData);
+                    if (contactData != null && contactData.isRequestAllowed()) {
+                        messagePersistenceManager.persistReceivedMessage(contactData, message);
+                    }
+                }
+            } finally {
+                SQLiteRepositoryManager.getInstance().closeDatabase();
             }
         }
     }

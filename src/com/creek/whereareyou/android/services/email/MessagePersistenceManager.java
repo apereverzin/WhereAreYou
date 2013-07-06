@@ -33,16 +33,16 @@ public class MessagePersistenceManager {
 
         if (contactData != null) {
             if (message instanceof RequestMessage) {
-                System.out.println("--------------persisting RequestMessage: " + contactData + ", " + message);
+                Log.d(TAG, "--------------persisting RequestMessage: " + contactData + ", " + message);
                 persistContactRequest(contactData, (RequestMessage) message);
             } else if (message instanceof ResponseMessage) {
-                System.out.println("--------------persisting ResponseMessage: " + contactData + ", " + message);
+                Log.d(TAG, "--------------persisting ResponseMessage: " + contactData + ", " + message);
                 persistNormalContactResponse(contactData, (ResponseMessage) message);
             } else if (message instanceof OwnerLocationDataMessage) {
-                System.out.println("--------------persisting OwnerLocationDataMessage: " + contactData + ", " + message);
+                Log.d(TAG, "--------------persisting OwnerLocationDataMessage: " + contactData + ", " + message);
                 persistLocationData(contactData, (OwnerLocationDataMessage) message);
             }
-            System.out.println("--------------message persisted");
+            Log.d(TAG, "--------------message persisted");
         }
     }
     

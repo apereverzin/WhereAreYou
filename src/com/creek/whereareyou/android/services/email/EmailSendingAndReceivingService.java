@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
-import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.accounts.Account;
@@ -20,34 +19,16 @@ import android.util.Log;
  */
 public class EmailSendingAndReceivingService extends Service {
     private static final String TAG = EmailSendingAndReceivingService.class.getSimpleName();
-    
-    private static final String TIMER_NAME = "WhereAreYouEmailReceivingTimer";
 
     private Timer timer;
     protected ContentResolver contentResolver;
     
-    private TimerTask emailSendingAndReceivingTask = new TimerTask() {
-        @Override
-        public void run() {
-            Log.i(TAG, "===================EmailSendingAndReceivingService doing work");
-            Account account = GoogleAccountProvider.getInstance().getEmailAccount(EmailSendingAndReceivingService.this);
-            Log.d(TAG, "===================: " + account.toString());
-            SQLiteRepositoryManager.getInstance().initialise(EmailSendingAndReceivingService.this);
-            Log.d(TAG, "===================SQLiteRepositoryManager initialized");
-            
-            try {
-                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(account);
-                
-                EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);
-                emailSender.sendRequestsAndResponses();
-                
-                EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
-                emailReceiver.receiveRequestsAndResponses();
-            } catch(Throwable ex) {
-                ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
-            }
-        }
-    };
+    private static final int MILLISECONDS_IN_MINUTE = 60 * 1000;
+    // TODO make configurable
+    private int timeoutInMinutes = 1;
+    private int timeoutMs = timeoutInMinutes * MILLISECONDS_IN_MINUTE;
+
+    private static final String TIMER_NAME = "WhereAreYouEmailReceivingTimer";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,7 +41,7 @@ public class EmailSendingAndReceivingService extends Service {
         contentResolver = getContentResolver();
 
         timer = new Timer(TIMER_NAME);
-        timer.schedule(emailSendingAndReceivingTask, 1000L, 30 * 1000L);
+        timer.schedule(emailSendingAndReceivingTask, 1000L, timeoutMs);
     }
 
     @Override
@@ -69,4 +50,27 @@ public class EmailSendingAndReceivingService extends Service {
         timer.cancel();
         timer = null;
     }
+    
+    private TimerTask emailSendingAndReceivingTask = new TimerTask() {
+        @Override
+        public void run() {
+            Log.i(TAG, "===================EmailSendingAndReceivingService doing work");
+            Account account = GoogleAccountProvider.getInstance().getEmailAccount(EmailSendingAndReceivingService.this);
+            Log.d(TAG, "===================: " + account.toString());
+            
+            try {
+                Log.d(TAG, "===================SQLiteRepositoryManager initialized");
+
+                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(account);
+                
+                EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);
+                emailSender.sendRequestsAndResponses(EmailSendingAndReceivingService.this);
+                
+                EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
+                emailReceiver.receiveRequestsAndResponses(EmailSendingAndReceivingService.this);
+            } catch(Throwable ex) {
+                ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
+            }
+        }
+    };
 }

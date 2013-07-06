@@ -49,9 +49,9 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
             "real not null", 
             "real not null", 
             "real not null", 
-            "integer not null", 
-            "integer not null", 
-            "integer not null"
+            "int not null", 
+            "int not null", 
+            "int not null"
         };
 
     public SQLiteContactLocationRepository(SQLiteDatabase whereAreYouDb) {
@@ -95,9 +95,9 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         long expirationTime = System.currentTimeMillis() - timeout;
         ComparisonClause actualLocation = new ComparisonClause(LOCATION_TIME_FIELD_NAME, GREATER_THAN, expirationTime);
         String criteria = createWhereAndCriteria(new ComparisonClause[]{myLocation, actualLocation});
-        System.out.println("--------------getMyActualLocationData");
+        Log.d(TAG, "--------------getMyActualLocationData");
         Cursor cursor = createCursor(criteria, null, null);
-        System.out.println("--------------getMyActualLocationData: " + cursor.getCount());
+        Log.d(TAG, "--------------getMyActualLocationData: " + cursor.getCount());
         return createEntityFromCursor(cursor);
     }
     
@@ -123,6 +123,8 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     
     @Override
     protected final ContentValues getContentValues(LocationData locationData) {
+        Log.d(TAG, "getContentValues()");
+        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(locationData);
         values.put(LOCATION_TIME_FIELD_NAME, locationData.getLocationTime());
         values.put(ACCURACY_FIELD_NAME, locationData.getAccuracy());
@@ -136,16 +138,18 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     }
     
     @Override
-    protected final LocationData createEntityFromCursor(Cursor cursor) {
-        LocationData locationData = new LocationData();
+    protected final LocationData createEntity(Cursor cursor) {
+        Log.d(TAG, "createEntity()");
+        Log.d(TAG, "--------------createEntity()");
+        LocationData locationData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        locationData.setLocationTime(cursor.getLong(numberOfFields + 1));
-        locationData.setAccuracy(cursor.getFloat(numberOfFields + 2));
-        locationData.setLatitude(cursor.getDouble(numberOfFields + 3));
-        locationData.setLongitude(cursor.getDouble(numberOfFields + 4));
-        locationData.setSpeed(cursor.getFloat(numberOfFields + 5));
-        locationData.setHasAccuracy(cursor.getInt(numberOfFields + 6) == TRUE);
-        locationData.setHasSpeed(cursor.getInt(numberOfFields + 7) == TRUE);
+        locationData.setLocationTime(cursor.getLong(numberOfFields++));
+        locationData.setAccuracy(cursor.getFloat(numberOfFields++));
+        locationData.setLatitude(cursor.getDouble(numberOfFields++));
+        locationData.setLongitude(cursor.getDouble(numberOfFields++));
+        locationData.setSpeed(cursor.getFloat(numberOfFields++));
+        locationData.setHasAccuracy(cursor.getInt(numberOfFields++) == TRUE);
+        locationData.setHasSpeed(cursor.getInt(numberOfFields) == TRUE);
         return locationData;
     }
     

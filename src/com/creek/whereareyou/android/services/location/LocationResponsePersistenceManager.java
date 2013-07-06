@@ -23,7 +23,7 @@ public class LocationResponsePersistenceManager {
 
     LocationData getAndPersistMyCurrentLocation(Context context) {
         Log.d(TAG, "getAndPersistMyCurrentLocation()");
-        System.out.println("--------------getAndPersistMyCurrentLocation");
+        Log.d(TAG, "--------------getAndPersistMyCurrentLocation");
         Location location = new LocationProvider().getLatestLocation(context);
         LocationData locationData = new LocationData();
         locationData.setLocationTime(location.getTime());
@@ -34,7 +34,7 @@ public class LocationResponsePersistenceManager {
         locationData.setHasAccuracy(location.hasAccuracy());
         locationData.setHasSpeed(location.hasSpeed());
         
-        System.out.println("--------------getAndPersistMyCurrentLocation: " + locationData);
+        Log.d(TAG, "--------------getAndPersistMyCurrentLocation: " + locationData);
         SQLiteRepositoryManager.getInstance().getLocationRepository().create(locationData);
 
         return locationData;
@@ -56,7 +56,7 @@ public class LocationResponsePersistenceManager {
         response.setLocationData(locationData);
         response.setLocationDataId(locationData.getId());
         SQLiteRepositoryManager.getInstance().getContactResponseRepository().create(response);
-        System.out.println("--------------persistLocationResponse: " + response);
+        Log.d(TAG, "--------------persistLocationResponse: " + response);
         return response;
     }
 }

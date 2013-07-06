@@ -1,6 +1,8 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import com.creek.whereareyou.android.db.ContactResponseEntity;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
+import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.repository.ContactDataRepository;
 import com.creek.whereareyoumodel.repository.LocationRepository;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
@@ -20,7 +22,6 @@ public class SQLiteRepositoryManager {
     private static final String TAG = SQLiteRepositoryManager.class.getSimpleName();
     
     private static final SQLiteRepositoryManager instance = new SQLiteRepositoryManager();
-    private boolean initialized = false;
     private SQLiteDatabase whereAreYouDb;
     
     private ContactDataRepository contactDataRepository;
@@ -40,23 +41,23 @@ public class SQLiteRepositoryManager {
     }
 
     public void initialise(Context ctx) {
-        if (!initialized) {
-            whereAreYouDb = ctx.openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
+        whereAreYouDb = ctx.openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
 
-            contactDataRepository = new SQLiteContactDataRepository(whereAreYouDb);
-            contactRequestRepository = new SQLiteContactRequestRepository(whereAreYouDb);
-            contactResponseRepository = new SQLiteContactResponseRepository(whereAreYouDb);
-            locationRepository = new SQLiteContactLocationRepository(whereAreYouDb);
-            
-            //if (!databaseExists()) {
+        contactDataRepository = new SQLiteContactDataRepository(whereAreYouDb);
+        contactRequestRepository = new SQLiteContactRequestRepository(whereAreYouDb);
+        contactResponseRepository = new SQLiteContactResponseRepository(whereAreYouDb);
+        locationRepository = new SQLiteContactLocationRepository(whereAreYouDb);
+
+        if (!databaseExists()) {
             createDatabase();
-            //}
-    
-            initialized = true;
+            Log.d(TAG, "===================Database created");
         }
+        
+        // TODO remove this call
+        createContactData();
     }
 
-    public void close() {
+    public void closeDatabase() {
         whereAreYouDb.close();
     }
 
@@ -86,13 +87,13 @@ public class SQLiteRepositoryManager {
         dropTable(AbstractSQLiteRepository.CONTACT_RESPONSE_TABLE);
         dropTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
         whereAreYouDb.execSQL(((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
-        System.out.println("-----: " + ((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
+        Log.d(TAG, "-----: " + ((SQLiteContactDataRepository)contactDataRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
-        System.out.println("-----: " + ((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
+        Log.d(TAG, "-----: " + ((SQLiteContactRequestRepository)contactRequestRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
-        System.out.println("-----: " + ((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
+        Log.d(TAG, "-----: " + ((SQLiteContactResponseRepository)contactResponseRepository).getCreateTableCommand());
         whereAreYouDb.execSQL(((SQLiteContactLocationRepository)locationRepository).getCreateTableCommand());
-        System.out.println("-----: " + ((SQLiteContactLocationRepository)locationRepository).getCreateTableCommand());
+        Log.d(TAG, "-----: " + ((SQLiteContactLocationRepository)locationRepository).getCreateTableCommand());
     }
 
     private boolean databaseExists() {
@@ -101,10 +102,10 @@ public class SQLiteRepositoryManager {
             queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
             queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
             queryTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
-            Log.d(TAG, "db exists");
+            Log.d(TAG, "------------db exists");
             return true;
         } catch (SQLiteException ex) {
-            Log.d(TAG, "db does not exist");
+            Log.d(TAG, "------------db does not exist");
             return false;
         }
     }
@@ -115,5 +116,19 @@ public class SQLiteRepositoryManager {
     
     private void queryTable(String tableName) {
         whereAreYouDb.query(tableName, new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
+    }
+    
+    // TODO remove this method
+    private void createContactData() {
+        String email = "andrey.pereverzin@gmail.com";
+        ContactData contactData = contactDataRepository.getContactDataByEmail(email);
+        if (contactData == null) {
+            contactData = new ContactData();
+            ContactCompoundId contactCompoundId = new ContactCompoundId("18", email);
+            contactData.setContactCompoundId(contactCompoundId);
+            contactData.setDisplayName("Adam Leaf");
+            contactData.setRequestAllowed(true);
+            contactDataRepository.create(contactData);
+        }
     }
 }

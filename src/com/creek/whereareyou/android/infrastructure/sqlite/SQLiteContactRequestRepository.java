@@ -31,7 +31,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         };
 
     private final String[] fieldTypes = new String[] {
-            "integer not null"
+            "int not null"
         };
 
     public SQLiteContactRequestRepository(SQLiteDatabase whereAreYouDb) {
@@ -40,21 +40,26 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     
     @Override
     protected ContentValues getContentValues(ContactRequest contactRequest) {
+        Log.d(TAG, "getContentValues()");
+        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(contactRequest);
         values.put(REQUEST_CODE_FIELD_NAME, contactRequest.getRequestCode().getCode());
         return values;
     }
 
     @Override
-    protected ContactRequest createEntityFromCursor(Cursor cursor) {
-        ContactRequest contactRequest = super.createEntityFromCursor(cursor);
+    protected ContactRequest createEntity(Cursor cursor) {
+        Log.d(TAG, "createEntity()");
+        Log.d(TAG, "--------------createEntity()");
+        ContactRequest contactRequest = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        int code = cursor.getInt(numberOfFields + 1);
+        Log.d(TAG, "--------------numberOfFields: " + numberOfFields);
+        int code = cursor.getInt(numberOfFields);
         contactRequest.setRequestCode(RequestCode.getRequestCode(code));
-        int responseId = cursor.getInt(numberOfFields + 2);
-        if (responseId != UNDEFINED_INT) {
-            // TODO setResponse(...)
-        }
+//        int responseId = cursor.getInt(numberOfFields + 1);
+//        if (responseId != UNDEFINED_INT) {
+//            // TODO setResponse(...)
+//        }
         return contactRequest;
     }
     
@@ -116,9 +121,9 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, PENDING});
-        System.out.println("--------------getUnrespondedLocationRequests");
+        Log.d(TAG, "--------------getUnrespondedLocationRequests");
         Cursor cursor = createCursor(criteria, null, null);
-        System.out.println("--------------getUnrespondedLocationRequests: " + cursor.getCount());
+        Log.d(TAG, "--------------getUnrespondedLocationRequests: " + cursor.getCount());
         return createEntityListFromCursor(cursor);
     }
 

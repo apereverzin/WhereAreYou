@@ -47,10 +47,10 @@ public class EmailSendingAndReceivingManager {
         contactRequest.setTimeSent(System.currentTimeMillis());
         OwnerRequest payload = new OwnerRequest(contactRequest);
         RequestMessage message = new RequestMessage(payload, account.name);
-        System.out.println("--------------sendRequest: " + message.toJSON());
-        System.out.println("--------------sendRequest: " + contactRequest.getContactCompoundId().getContactEmail());
+        Log.d(TAG, "--------------sendRequest: " + message.toJSON());
+        Log.d(TAG, "--------------sendRequest: " + contactRequest.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactRequest.getContactCompoundId().getContactEmail());
-        System.out.println("--------------sendRequest: " + message.toJSON());
+        Log.d(TAG, "--------------sendRequest: " + message.toJSON());
     }
 
     public void sendResponse(ContactResponse contactResponse) throws ServiceException {
@@ -58,17 +58,17 @@ public class EmailSendingAndReceivingManager {
         contactResponse.setTimeSent(System.currentTimeMillis());
         OwnerResponse payload = new OwnerResponse(contactResponse);
         ResponseMessage message = new ResponseMessage(payload, account.name);
-        System.out.println("--------------sendResponse: " + message.toJSON());
-        System.out.println("--------------sendResponse: " + contactResponse.getContactCompoundId().getContactEmail());
+        Log.d(TAG, "--------------sendResponse: " + message.toJSON());
+        Log.d(TAG, "--------------sendResponse: " + contactResponse.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactResponse.getContactCompoundId().getContactEmail());
-        System.out.println("--------------sendResponse: " + message.toJSON());
+        Log.d(TAG, "--------------sendResponse: " + message.toJSON());
     }
     
     public Set<GenericMessage> receiveMessages() throws ServiceException, TransformException {
         Log.d(TAG, "receiveMessages()");
-        System.out.println("--------------receiveMessages");
+        Log.d(TAG, "--------------receiveMessages");
         Set<GenericMessage> messages = messagesService.receiveMessages();
-        System.out.println("--------------receiveMessages: " + messages.size());
+        Log.d(TAG, "--------------receiveMessages: " + messages.size());
         return messages;
     }
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.creek.whereareyou.android.db.ContactResponseEntity;
@@ -22,60 +23,71 @@ import com.creek.whereareyoumodel.service.ServiceException;
 public class EmailSender {
     private static final String TAG = EmailSender.class.getSimpleName();
     private final EmailSendingAndReceivingManager emailSendingAndReceivingManager;
-    
+
     public EmailSender(EmailSendingAndReceivingManager emailSendingAndReceivingManager) throws IOException, CryptoException {
         this.emailSendingAndReceivingManager = emailSendingAndReceivingManager;
     }
-    
-    public void sendRequestsAndResponses() {
+
+    public void sendRequestsAndResponses(Context ctx) {
         Log.d(TAG, "sendRequestsAndResponses()");
-        List<ContactRequest> failedRequests = sendRequests();
-        List<ContactResponse> failedResponses = sendResponses();
+        List<ContactRequest> failedRequests = sendRequests(ctx);
+        List<ContactResponse> failedResponses = sendResponses(ctx);
         // TODO do something with unsent data
     }
 
-    private List<ContactRequest> sendRequests() {
+    private List<ContactRequest> sendRequests(Context ctx) {
         Log.d(TAG, "sendRequests()");
-        ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
-        
-        List<ContactRequest> unsentRequests = contactRequestRepository.getUnsentContactRequests();
         List<ContactRequest> unsentDataList = new ArrayList<ContactRequest>();
-        System.out.println("--------------sendRequests: " + unsentRequests.size());
-        for (int i = 0; i < unsentRequests.size(); i++) {
-            ContactRequest data = unsentRequests.get(i);
-            try {
-                System.out.println("--------------sending request: " + data);
-                emailSendingAndReceivingManager.sendRequest(data);
-                contactRequestRepository.update(data);
-                System.out.println("--------------request sent: " + data);
-            } catch(ServiceException ex) {
-                unsentDataList.add(data);
+        try {
+            SQLiteRepositoryManager.getInstance().initialise(ctx);
+            ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
+
+            List<ContactRequest> unsentRequests = contactRequestRepository.getUnsentContactRequests();
+            Log.d(TAG, "--------------sendRequests: " + unsentRequests.size());
+            for (int i = 0; i < unsentRequests.size(); i++) {
+                ContactRequest data = unsentRequests.get(i);
+                try {
+                    Log.d(TAG, "--------------sending request: " + data);
+                    emailSendingAndReceivingManager.sendRequest(data);
+                    contactRequestRepository.update(data);
+                    Log.d(TAG, "--------------request sent: " + data);
+                } catch (ServiceException ex) {
+                    unsentDataList.add(data);
+                }
             }
+            unsentRequests.removeAll(unsentDataList);
+        } finally {
+            SQLiteRepositoryManager.getInstance().closeDatabase();
         }
-        unsentRequests.removeAll(unsentDataList);
         return unsentDataList;
     }
 
-    private List<ContactResponse> sendResponses() {
+    private List<ContactResponse> sendResponses(Context ctx) {
         Log.d(TAG, "sendResponses()");
-        ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
-        
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        List<ContactResponseEntity> unsentResponses = (List)contactResponseRepository.getUnsentContactResponses();
         List<ContactResponse> unsentDataList = new ArrayList<ContactResponse>();
-        System.out.println("--------------sendResponses: " + unsentResponses.size());
-        for (int i = 0; i < unsentResponses.size(); i++) {
-            ContactResponseEntity data = unsentResponses.get(i);
-            try {
-                System.out.println("--------------sending response : " + data);
-                emailSendingAndReceivingManager.sendResponse(data);
-                contactResponseRepository.update(data);
-                System.out.println("--------------response sent: " + data);
-            } catch(ServiceException ex) {
-                unsentDataList.add(data);
+
+        try {
+            SQLiteRepositoryManager.getInstance().initialise(ctx);
+            ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            List<ContactResponseEntity> unsentResponses = (List) contactResponseRepository.getUnsentContactResponses();
+            Log.d(TAG, "--------------sendResponses: " + unsentResponses.size());
+            for (int i = 0; i < unsentResponses.size(); i++) {
+                ContactResponseEntity data = unsentResponses.get(i);
+                try {
+                    Log.d(TAG, "--------------sending response : " + data);
+                    emailSendingAndReceivingManager.sendResponse(data);
+                    contactResponseRepository.update(data);
+                    Log.d(TAG, "--------------response sent: " + data);
+                } catch (ServiceException ex) {
+                    unsentDataList.add(data);
+                }
             }
+            unsentResponses.removeAll(unsentDataList);
+        } finally {
+            SQLiteRepositoryManager.getInstance().closeDatabase();
         }
-        unsentResponses.removeAll(unsentDataList);
         return unsentDataList;
     }
 }

@@ -50,7 +50,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     public T create(T entity) {
         ContentValues values = getContentValues(entity);
         try {
-            System.out.println("--------------create: " + entity);
+            Log.d(TAG, "--------------create: " + entity);
             long id = whereAreYouDb.insert(getTableName(), null, values);
             entity.setId(id);
             Log.d(TAG, "Created: " + entity.getId());
@@ -94,16 +94,9 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected Cursor createCursor(String criteria, String[] selectionArgs, String orderBy) {
-        Log.d(TAG, "createCursor()");
+        Log.d(TAG, "createCursor(): " + criteria);
+        Log.d(TAG, "------------createCursor(): " + criteria);
         return whereAreYouDb.query(getTableName(), getFieldNames(), criteria, selectionArgs, null, null, orderBy);
-    }
-
-    protected String createWhereCriteria(String fieldName, String fieldValue) {
-        return String.format("%s=%s", fieldName, fieldValue);
-    }
-
-    protected String createWhereCriteria(String fieldName, long fieldValue) {
-        return createWhereCriteria(fieldName, Long.toString(fieldValue));
     }
 
     protected String createWhereAndCriteria(ComparisonClause[] criteria) {
@@ -120,18 +113,22 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected List<T> createEntityListFromCursor(Cursor cursor) {
+        Log.d(TAG, "createEntityListFromCursor()");
+        Log.d(TAG, "--------------createEntityListFromCursor()");
         List<T> entityList = new ArrayList<T>();
 
         while (cursor.moveToNext()) {
-            T contactData = createEntity(cursor);
-            Log.d(TAG, "contactData: " + contactData.getId());
-            entityList.add(contactData);
+            T data = createEntity(cursor);
+            Log.d(TAG, "data: " + data.getId());
+            entityList.add(data);
         }
 
         return entityList;
     }
 
     protected T createEntityFromCursor(Cursor cursor) {
+        Log.d(TAG, "createEntityFromCursor()");
+        Log.d(TAG, "--------------createEntityFromCursor()");
         cursor.moveToFirst();
 
         if (cursor.isFirst()) {
@@ -141,7 +138,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
         return null;
     }
 
-    private T createEntity(Cursor cursor) {
+    protected T createEntity(Cursor cursor) {
         T t = createEntityInstance();
         t.setId(cursor.getInt(0));
         ContactCompoundId contactCompoundId = new ContactCompoundId(cursor.getString(1), cursor.getString(2));
@@ -166,11 +163,21 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     protected abstract String getTableName();
 
     protected ContentValues getContentValues(T t) {
+        Log.d(TAG, "getContentValues()");
+        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = new ContentValues();
         values.put(ID_FIELD_NAME, t.getId());
         values.put(ANDR_CONT_ID_FIELD_NAME, t.getContactCompoundId().getContactId());
         values.put(EMAIL_FIELD_NAME, t.getContactCompoundId().getContactEmail());
         return values;
+    }
+
+    private String createWhereCriteria(String fieldName, String fieldValue) {
+        return String.format("%s='%s'", fieldName, fieldValue);
+    }
+
+    private String createWhereCriteria(String fieldName, long fieldValue) {
+        return String.format("%s=%s", fieldName, fieldValue);
     }
 
     private String buildFields() {

@@ -30,7 +30,7 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
 
     private final String[] fieldTypes = new String[] {
             "text not null", 
-            "integer not null"
+            "int not null"
         };
             
     public SQLiteContactDataRepository(SQLiteDatabase whereAreYouDb) {
@@ -83,6 +83,8 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     
     @Override
     protected final ContentValues getContentValues(ContactData contactData) {
+        Log.d(TAG, "getContentValues()");
+        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(contactData);
         values.put(DISPLAY_NAME_FIELD_NAME, contactData.getDisplayName());
         values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? TRUE : FALSE);
@@ -90,11 +92,13 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     }
     
     @Override
-    protected final ContactData createEntityFromCursor(Cursor cursor) {
-        ContactData contactData = super.createEntityFromCursor(cursor);
+    protected final ContactData createEntity(Cursor cursor) {
+        Log.d(TAG, "createEntity()");
+        Log.d(TAG, "--------------createEntity()");
+        ContactData contactData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        contactData.setDisplayName(cursor.getString(numberOfFields + 1));
-        contactData.setRequestAllowed(cursor.getInt(numberOfFields + 2) == TRUE);
+        contactData.setDisplayName(cursor.getString(numberOfFields++));
+        contactData.setRequestAllowed(cursor.getInt(numberOfFields) == TRUE);
         return contactData;
     }
     
