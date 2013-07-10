@@ -41,35 +41,29 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
             "real not null",
             "int not null"
         };
-            
-    public AbstractRequestResponseRepository(SQLiteDatabase whereAreYouDb) {
-        super(whereAreYouDb);
-    }
     
     @Override
     protected ContentValues getContentValues(T t) {
         Log.d(TAG, "getContentValues()");
-        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(t);
         values.put(MESSAGE_FIELD_NAME, t.getMessage());
         values.put(TIME_CREATED_FIELD_NAME, t.getTimeCreated());
         values.put(TIME_SENT_FIELD_NAME, t.getTimeSent());
         values.put(TIME_RECEIVED_FIELD_NAME, t.getTimeReceived());
-        values.put(PROCESSED_FIELD_NAME, t.isProcessed() ? TRUE : FALSE);
+        values.put(PROCESSED_FIELD_NAME, t.isProcessed() ? INT_TRUE : INT_FALSE);
         return values;
     }
 
     @Override
     protected T createEntity(Cursor cursor) {
         Log.d(TAG, "createEntity()");
-        Log.d(TAG, "--------------createEntity()");
         T requestResponse = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         requestResponse.setMessage(cursor.getString(numberOfFields++));
         requestResponse.setTimeCreated(cursor.getLong(numberOfFields++));
         requestResponse.setTimeSent(cursor.getLong(numberOfFields++));
         requestResponse.setTimeReceived(cursor.getLong(numberOfFields++));
-        requestResponse.setProcessed(cursor.getInt(numberOfFields) == TRUE);
+        requestResponse.setProcessed(cursor.getInt(numberOfFields) == INT_TRUE);
         return requestResponse;
     }
     

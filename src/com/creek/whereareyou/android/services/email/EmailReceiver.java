@@ -1,6 +1,8 @@
 package com.creek.whereareyou.android.services.email;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import android.content.Context;
@@ -8,6 +10,7 @@ import android.util.Log;
 
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.CryptoException;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.message.GenericMessage;
 import com.creek.whereareyoumodel.message.TransformException;
@@ -30,20 +33,31 @@ public class EmailReceiver {
         Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
         Log.d(TAG, "--------------receiveRequestsAndResponses: " + receivedMessages.size());
         if (receivedMessages.size() > 0) {
-            try {
-                SQLiteRepositoryManager.getInstance().initialise(ctx);
+            List<GenericMessage> messagesToPersist = new ArrayList<GenericMessage>();
+            List<ContactCompoundId> contactCompoundIdsToPersist = new ArrayList<ContactCompoundId>();
+            retrieveContactDataForMessages(ctx, receivedMessages, messagesToPersist, contactCompoundIdsToPersist);
+            
+            if (messagesToPersist.size() > 0) {
                 MessagePersistenceManager messagePersistenceManager = new MessagePersistenceManager();
-                for (GenericMessage message : receivedMessages) {
-                    String contactEmail = message.getSenderEmail();
-                    ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
-                    Log.d(TAG, "--------------contactData: " + contactData);
-                    if (contactData != null && contactData.isRequestAllowed()) {
-                        messagePersistenceManager.persistReceivedMessage(contactData, message);
-                    }
-                }
-            } finally {
-                SQLiteRepositoryManager.getInstance().closeDatabase();
+                messagePersistenceManager.persistReceivedMessages(ctx, messagesToPersist, contactCompoundIdsToPersist);
             }
+        }
+    }
+
+    private void retrieveContactDataForMessages(Context ctx, Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactCompoundIdsToPersist) {
+        try {
+            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            for (GenericMessage message : receivedMessages) {
+                String contactEmail = message.getSenderEmail();
+                ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
+                Log.d(TAG, "--------------contactData: " + contactData);
+                if (contactData != null && contactData.isRequestAllowed()) {
+                    messagesToPersist.add(message);
+                    contactCompoundIdsToPersist.add(contactData.getContactCompoundId());
+                }
+            }
+        } finally {
+            SQLiteRepositoryManager.getInstance().closeDatabase();
         }
     }
 }

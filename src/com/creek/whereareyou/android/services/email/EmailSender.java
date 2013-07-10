@@ -38,56 +38,79 @@ public class EmailSender {
     private List<ContactRequest> sendRequests(Context ctx) {
         Log.d(TAG, "sendRequests()");
         List<ContactRequest> unsentDataList = new ArrayList<ContactRequest>();
-        try {
-            SQLiteRepositoryManager.getInstance().initialise(ctx);
-            ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
+        ContactRequestRepository contactRequestRepository;
+        List<ContactRequest> unsentRequests;
 
-            List<ContactRequest> unsentRequests = contactRequestRepository.getUnsentContactRequests();
-            Log.d(TAG, "--------------sendRequests: " + unsentRequests.size());
-            for (int i = 0; i < unsentRequests.size(); i++) {
-                ContactRequest data = unsentRequests.get(i);
-                try {
-                    Log.d(TAG, "--------------sending request: " + data);
-                    emailSendingAndReceivingManager.sendRequest(data);
-                    contactRequestRepository.update(data);
-                    Log.d(TAG, "--------------request sent: " + data);
-                } catch (ServiceException ex) {
-                    unsentDataList.add(data);
-                }
-            }
-            unsentRequests.removeAll(unsentDataList);
+        try {
+            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
+
+            unsentRequests = contactRequestRepository.getUnsentContactRequests();
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
         }
+
+        Log.d(TAG, "--------------sendRequests: " + unsentRequests.size());
+        for (int i = 0; i < unsentRequests.size(); i++) {
+            ContactRequest data = unsentRequests.get(i);
+            try {
+                Log.d(TAG, "--------------sending request: " + data);
+                emailSendingAndReceivingManager.sendRequest(data);
+
+                try {
+                    SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+                    contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
+
+                    contactRequestRepository.update(data);
+                    Log.d(TAG, "--------------request sent: " + data);
+                } finally {
+                    SQLiteRepositoryManager.getInstance().closeDatabase();
+                }
+            } catch (ServiceException ex) {
+                unsentDataList.add(data);
+            }
+        }
+        unsentRequests.removeAll(unsentDataList);
         return unsentDataList;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private List<ContactResponse> sendResponses(Context ctx) {
         Log.d(TAG, "sendResponses()");
         List<ContactResponse> unsentDataList = new ArrayList<ContactResponse>();
+        ContactResponseRepository<ContactResponseEntity> contactResponseRepository;
+        List<ContactResponseEntity> unsentResponses;
 
         try {
-            SQLiteRepositoryManager.getInstance().initialise(ctx);
-            ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
 
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            List<ContactResponseEntity> unsentResponses = (List) contactResponseRepository.getUnsentContactResponses();
-            Log.d(TAG, "--------------sendResponses: " + unsentResponses.size());
-            for (int i = 0; i < unsentResponses.size(); i++) {
-                ContactResponseEntity data = unsentResponses.get(i);
-                try {
-                    Log.d(TAG, "--------------sending response : " + data);
-                    emailSendingAndReceivingManager.sendResponse(data);
-                    contactResponseRepository.update(data);
-                    Log.d(TAG, "--------------response sent: " + data);
-                } catch (ServiceException ex) {
-                    unsentDataList.add(data);
-                }
-            }
-            unsentResponses.removeAll(unsentDataList);
+            unsentResponses = (List) contactResponseRepository.getUnsentContactResponses();
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
         }
+
+        Log.d(TAG, "--------------sendResponses: " + unsentResponses.size());
+        for (int i = 0; i < unsentResponses.size(); i++) {
+            ContactResponseEntity data = unsentResponses.get(i);
+            try {
+                Log.d(TAG, "--------------sending response : " + data);
+                emailSendingAndReceivingManager.sendResponse(data);
+
+                try {
+                    SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+                    contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+                    
+                    contactResponseRepository.update(data);
+                    Log.d(TAG, "--------------response sent: " + data);
+                } finally {
+                    SQLiteRepositoryManager.getInstance().closeDatabase();
+                }
+            } catch (ServiceException ex) {
+                unsentDataList.add(data);
+            }
+        }
+        unsentResponses.removeAll(unsentDataList);
         return unsentDataList;
     }
 }

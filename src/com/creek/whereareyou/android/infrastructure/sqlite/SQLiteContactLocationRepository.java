@@ -54,10 +54,6 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
             "int not null"
         };
 
-    public SQLiteContactLocationRepository(SQLiteDatabase whereAreYouDb) {
-        super(whereAreYouDb);
-    }
-
     @Override
     public final List<LocationData> getContactLocationDataByContactId(int email) {
         return null;
@@ -124,15 +120,14 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     @Override
     protected final ContentValues getContentValues(LocationData locationData) {
         Log.d(TAG, "getContentValues()");
-        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(locationData);
         values.put(LOCATION_TIME_FIELD_NAME, locationData.getLocationTime());
         values.put(ACCURACY_FIELD_NAME, locationData.getAccuracy());
         values.put(LATITUDE_FIELD_NAME, locationData.getLatitude());
         values.put(LONGITUDE_FIELD_NAME, locationData.getLongitude());
         values.put(SPEED_FIELD_NAME, locationData.getSpeed());
-        values.put(HAS_ACCURACY_FIELD_NAME, locationData.hasAccuracy() ? TRUE : FALSE);
-        values.put(HAS_SPEED_FIELD_NAME, locationData.hasSpeed() ? TRUE : FALSE);
+        values.put(HAS_ACCURACY_FIELD_NAME, locationData.hasAccuracy() ? INT_TRUE : INT_FALSE);
+        values.put(HAS_SPEED_FIELD_NAME, locationData.hasSpeed() ? INT_TRUE : INT_FALSE);
         values.put(CONTACT_ID_FIELD_NAME, locationData.getContactCompoundId().getContactId());
         return values;
     }
@@ -140,7 +135,6 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     @Override
     protected final LocationData createEntity(Cursor cursor) {
         Log.d(TAG, "createEntity()");
-        Log.d(TAG, "--------------createEntity()");
         LocationData locationData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         locationData.setLocationTime(cursor.getLong(numberOfFields++));
@@ -148,8 +142,8 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         locationData.setLatitude(cursor.getDouble(numberOfFields++));
         locationData.setLongitude(cursor.getDouble(numberOfFields++));
         locationData.setSpeed(cursor.getFloat(numberOfFields++));
-        locationData.setHasAccuracy(cursor.getInt(numberOfFields++) == TRUE);
-        locationData.setHasSpeed(cursor.getInt(numberOfFields) == TRUE);
+        locationData.setHasAccuracy(cursor.getInt(numberOfFields++) == INT_TRUE);
+        locationData.setHasSpeed(cursor.getInt(numberOfFields) == INT_TRUE);
         return locationData;
     }
     

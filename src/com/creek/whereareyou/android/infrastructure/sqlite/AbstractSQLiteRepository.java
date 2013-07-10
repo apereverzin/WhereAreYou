@@ -19,7 +19,7 @@ import android.util.Log;
  */
 public abstract class AbstractSQLiteRepository<T extends Identifiable> implements IdentifiableRepository<T> {
     private static final String TAG = AbstractSQLiteRepository.class.getSimpleName();
-    protected final SQLiteDatabase whereAreYouDb;
+    protected SQLiteDatabase whereAreYouDb;
 
     static final String ID_FIELD_NAME = "_id";
     static final String ANDR_CONT_ID_FIELD_NAME = "andr_cont_id";
@@ -30,30 +30,39 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     static final String CONTACT_RESPONSE_TABLE = "contact_response";
     static final String CONTACT_LOCATION_TABLE = "contact_location";
 
-    static final int FALSE = 0;
-    static final int TRUE = 1;
+    static final int INT_FALSE = 0;
+    static final int INT_TRUE = 1;
     private static final String AND = " AND ";
     public static final int UNDEFINED_INT = -1;
     public static final long UNDEFINED_LONG = -1L;
 
     static final String TABLE_CREATE = "create table %s (%s);";
 
-    private final String[] fieldNames = new String[] { ID_FIELD_NAME, ANDR_CONT_ID_FIELD_NAME, EMAIL_FIELD_NAME };
+    private final String[] fieldNames = new String[] { 
+            ID_FIELD_NAME, 
+            ANDR_CONT_ID_FIELD_NAME, 
+            EMAIL_FIELD_NAME 
+        };
 
-    private final String[] fieldTypes = new String[] { "integer primary key autoincrement", "text", "text" };
+    private final String[] fieldTypes = new String[] { 
+            "integer primary key autoincrement", 
+            "text", 
+            "text" 
+        };
 
-    public AbstractSQLiteRepository(SQLiteDatabase whereAreYouDb) {
-        this.whereAreYouDb = whereAreYouDb;
+    public void setDatabase(SQLiteDatabase _whereAreYouDb) {
+        this.whereAreYouDb = _whereAreYouDb;
     }
 
     @Override
     public T create(T entity) {
-        ContentValues values = getContentValues(entity);
         try {
+            ContentValues values = getContentValues(entity);
             Log.d(TAG, "--------------create: " + entity);
             long id = whereAreYouDb.insert(getTableName(), null, values);
             entity.setId(id);
             Log.d(TAG, "Created: " + entity.getId());
+            Log.d(TAG, "--------------Created: " + entity.getId());
         } catch (Throwable ex) {
             ActivityUtil.printStackTrace(TAG, ex);
         }
@@ -96,7 +105,20 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     protected Cursor createCursor(String criteria, String[] selectionArgs, String orderBy) {
         Log.d(TAG, "createCursor(): " + criteria);
         Log.d(TAG, "------------createCursor(): " + criteria);
-        return whereAreYouDb.query(getTableName(), getFieldNames(), criteria, selectionArgs, null, null, orderBy);
+        Log.d(TAG, "------------createCursor(): " + getTableName());
+        Log.d(TAG, "------------createCursor() selectionArgs: " + selectionArgs);
+        Log.d(TAG, "------------createCursor() orderBy: " + orderBy);
+        try {
+            Log.d(TAG, "------------createCursor: 1");
+            Log.d(TAG, "------------isOpen: " + whereAreYouDb.isOpen());
+            Cursor c = whereAreYouDb.query(getTableName(), getFieldNames(), criteria, selectionArgs, null, null, orderBy);
+            Log.d(TAG, "------------createCursor count: " + c.getCount());
+            return c;
+        } catch (Throwable t) {
+            t.printStackTrace();
+            Log.d(TAG, "------------createCursor: 2");
+            return null;
+        }
     }
 
     protected String createWhereAndCriteria(ComparisonClause[] criteria) {
@@ -164,9 +186,8 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
 
     protected ContentValues getContentValues(T t) {
         Log.d(TAG, "getContentValues()");
-        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = new ContentValues();
-        values.put(ID_FIELD_NAME, t.getId());
+        //values.put(ID_FIELD_NAME, t.getId());
         values.put(ANDR_CONT_ID_FIELD_NAME, t.getContactCompoundId().getContactId());
         values.put(EMAIL_FIELD_NAME, t.getContactCompoundId().getContactEmail());
         return values;

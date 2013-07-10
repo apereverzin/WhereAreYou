@@ -32,10 +32,6 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
             "text not null", 
             "int not null"
         };
-            
-    public SQLiteContactDataRepository(SQLiteDatabase whereAreYouDb) {
-        super(whereAreYouDb);
-    }
 
     @Override
     public final List<ContactData> getAllContactData() {
@@ -84,21 +80,19 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     @Override
     protected final ContentValues getContentValues(ContactData contactData) {
         Log.d(TAG, "getContentValues()");
-        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(contactData);
         values.put(DISPLAY_NAME_FIELD_NAME, contactData.getDisplayName());
-        values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? TRUE : FALSE);
+        values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? INT_TRUE : INT_FALSE);
         return values;
     }
     
     @Override
     protected final ContactData createEntity(Cursor cursor) {
         Log.d(TAG, "createEntity()");
-        Log.d(TAG, "--------------createEntity()");
         ContactData contactData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         contactData.setDisplayName(cursor.getString(numberOfFields++));
-        contactData.setRequestAllowed(cursor.getInt(numberOfFields) == TRUE);
+        contactData.setRequestAllowed(cursor.getInt(numberOfFields) == INT_TRUE);
         return contactData;
     }
     

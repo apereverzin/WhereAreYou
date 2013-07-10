@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 
@@ -56,28 +55,21 @@ public class CurrentLocationService extends Service {
         @Override
         public void run() {
             Log.i(TAG, "===================CurrentLocationService doing work");
+            LocationPersistenceManager locationPersistenceManager = new LocationPersistenceManager();
             
-            List<ContactRequest> unrespondedLocationRequests = 
-                    SQLiteRepositoryManager.getInstance().getContactRequestRepository().getUnrespondedLocationRequests();
-            Log.d(TAG, "--------------CurrentLocationService: " + unrespondedLocationRequests.size());
-
+            List<ContactRequest> unrespondedLocationRequests = locationPersistenceManager.getUnrespondedContactLocationRequests(CurrentLocationService.this);
+            
             if (unrespondedLocationRequests.size() > 0) {
-                LocationResponsePersistenceManager locationResponsePersistenceManager = new LocationResponsePersistenceManager();
-
-                LocationData locationData = 
-                        SQLiteRepositoryManager.getInstance().getLocationRepository().getMyActualLocationData(locationExpirationTimeoutMs);
+                LocationData locationData = locationPersistenceManager.getMyActualLocationData(CurrentLocationService.this, locationExpirationTimeoutMs);
                 Log.d(TAG, "--------------CurrentLocationService: " + locationData);
                 if (locationData == null) {
                     // Durable operation
                     Log.d(TAG, "--------------CurrentLocationService locationData==null");
-                    locationData = locationResponsePersistenceManager.getAndPersistMyCurrentLocation(CurrentLocationService.this);
+                    locationData = locationPersistenceManager.getAndPersistMyCurrentLocation(CurrentLocationService.this);
                     Log.d(TAG, "--------------CurrentLocationService: " + locationData);
                 }
-                
-                for (int i = 0; i < unrespondedLocationRequests.size(); i++) {
-                    ContactRequest request = unrespondedLocationRequests.get(i);
-                    locationResponsePersistenceManager.persistLocationResponse(request, locationData);
-                }
+
+                locationPersistenceManager.persistLocationResponses(CurrentLocationService.this, unrespondedLocationRequests, locationData);
             }
 
             //NetworkLocationProvider.onCellLocationChanged();

@@ -14,6 +14,7 @@ import com.creek.whereareyou.android.contacts.RequestResponseFactory;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -51,53 +52,47 @@ public class ContactsActivity extends ListActivity {
         Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
         
-        try {
-            ContactsPersistenceManager.getInstance().initialise(this);
+        ActivityUtil.setActivityTitle(this, R.string.app_name, R.string.contacts, R.string.allowed_location_requests);
 
-            ActivityUtil.setActivityTitle(this, R.string.app_name, R.string.contacts, R.string.allowed_location_requests);
+        contactsDataList = getContactsList();
 
-            contactsDataList = getContactsList();
+        setContentView(R.layout.contacts_list);
 
-            setContentView(R.layout.contacts_list);
+        // final List<Map<String, Object>> contactsList =
+        // createContactsList(contactsDataList);
+        // SimpleAdapter contactsListAdapter =
+        // new SimpleAdapter(getApplicationContext(), contactsList,
+        // R.layout.contact_row, new String[] { CONTACT_NAME }, new int[] {
+        // R.id.contact_name });
+        // setListAdapter(contactsListAdapter);
 
-            // final List<Map<String, Object>> contactsList =
-            // createContactsList(contactsDataList);
-            // SimpleAdapter contactsListAdapter =
-            // new SimpleAdapter(getApplicationContext(), contactsList,
-            // R.layout.contact_row, new String[] { CONTACT_NAME }, new int[] {
-            // R.id.contact_name });
-            // setListAdapter(contactsListAdapter);
+        /*----------*/
+        final List<CheckBoxContact> contactsList = new ArrayList<CheckBoxContact>();
+        final List<CheckBoxContact> uncheckedContactsList = new ArrayList<CheckBoxContact>();
 
-            /*----------*/
-            final List<CheckBoxContact> contactsList = new ArrayList<CheckBoxContact>();
-            final List<CheckBoxContact> uncheckedContactsList = new ArrayList<CheckBoxContact>();
-
-            for (AndroidContact contact : contactsDataList) {
-                CheckBoxContact checkBoxContact = new CheckBoxContact(contact);
-                if (checkBoxContact.isSelected()) {
-                    contactsList.add(checkBoxContact);
-                } else {
-                    uncheckedContactsList.add(checkBoxContact);
-                }
+        for (AndroidContact contact : contactsDataList) {
+            CheckBoxContact checkBoxContact = new CheckBoxContact(contact);
+            if (checkBoxContact.isSelected()) {
+                contactsList.add(checkBoxContact);
+            } else {
+                uncheckedContactsList.add(checkBoxContact);
             }
-            contactsList.addAll(uncheckedContactsList);
-
-            ContactListCheckBoxAdapter contactsListAdapter = new ContactListCheckBoxAdapter(this, contactsList);
-
-            ListView lv = (ListView) findViewById(android.R.id.list);
-            final Button saveButton = new Button(this);
-            saveButton.setText(getString(R.string.save));
-            lv.addFooterView(saveButton);
-
-            saveButton.setOnClickListener(new SaveButtonListener(this, contactsList));
-
-            setListAdapter(contactsListAdapter);
-            /*----------*/
-
-            registerForContextMenu(getListView());
-        } finally {
-            ContactsPersistenceManager.getInstance().close();
         }
+        contactsList.addAll(uncheckedContactsList);
+
+        ContactListCheckBoxAdapter contactsListAdapter = new ContactListCheckBoxAdapter(this, contactsList);
+
+        ListView lv = (ListView) findViewById(android.R.id.list);
+        final Button saveButton = new Button(this);
+        saveButton.setText(getString(R.string.save));
+        lv.addFooterView(saveButton);
+
+        saveButton.setOnClickListener(new SaveButtonListener(this, contactsList));
+
+        setListAdapter(contactsListAdapter);
+        /*----------*/
+
+        registerForContextMenu(getListView());
 
         Log.d(TAG, "onCreate() finished");
     }
@@ -144,7 +139,7 @@ public class ContactsActivity extends ListActivity {
             }
         case VIEW_CONTACT_LAST_LOCATION_MENU_ITEM:
             try {
-                SQLiteRepositoryManager.getInstance().initialise(this);
+                SQLiteRepositoryManager.getInstance().openDatabase(this);
                 Log.d(TAG, "VIEW_CONTACT_LAST_LOCATION_MENU_ITEM");
                 return true;
             } finally {
@@ -153,10 +148,13 @@ public class ContactsActivity extends ListActivity {
         case REQUEST_CONTACT_LOCATION_MENU_ITEM:
             Log.d(TAG, "REQUEST_CONTACT_LOCATION_MENU_ITEM");
             try {
-                SQLiteRepositoryManager.getInstance().initialise(this);
                 ContactRequest contactRequest = RequestResponseFactory.getInstance().createContactLocationRequest(contactSelected);
+
+                SQLiteRepositoryManager.getInstance().openDatabase(this);
+                ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
+                
                 Log.d(TAG, "--------------created contact location request: " + contactRequest);
-                SQLiteRepositoryManager.getInstance().getContactRequestRepository().create(contactRequest);
+                contactRequestRepository.create(contactRequest);
                 Log.d(TAG, "--------------persisted contact location request: " + contactRequest);
                 return true;
             } finally {

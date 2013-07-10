@@ -4,7 +4,7 @@ import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractReques
 import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractRequestResponseRepository.TIME_RECEIVED_FIELD_NAME;
 import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractRequestResponseRepository.TIME_SENT_FIELD_NAME;
 import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractRequestResponseRepository.PROCESSED_FIELD_NAME;
-import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractRequestResponseRepository.FALSE;
+import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractRequestResponseRepository.INT_FALSE;
 
 /**
  * 
@@ -23,7 +23,7 @@ class ComparisonClause {
     static final ComparisonClause SENT_TIME_UNKNOWN = new ComparisonClause(TIME_SENT_FIELD_NAME, Comparison.EQUALS, ZERO);
     static final ComparisonClause RECEIVED_TIME_KNOWN = new ComparisonClause(TIME_RECEIVED_FIELD_NAME, Comparison.GREATER_THAN, ZERO);
     static final ComparisonClause RECEIVED_TIME_UNKNOWN = new ComparisonClause(TIME_RECEIVED_FIELD_NAME, Comparison.EQUALS, ZERO);
-    static final ComparisonClause PENDING = new ComparisonClause(PROCESSED_FIELD_NAME, Comparison.EQUALS, FALSE);
+    static final ComparisonClause NOT_PROCESSED = new ComparisonClause(PROCESSED_FIELD_NAME, Comparison.EQUALS, INT_FALSE);
 
     public ComparisonClause(String fieldName, Comparison comparison, String value) {
         this.fieldName = fieldName;

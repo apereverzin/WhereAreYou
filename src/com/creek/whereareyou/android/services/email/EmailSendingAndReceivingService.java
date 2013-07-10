@@ -59,13 +59,13 @@ public class EmailSendingAndReceivingService extends Service {
             Log.d(TAG, "===================: " + account.toString());
             
             try {
-                Log.d(TAG, "===================SQLiteRepositoryManager initialized");
-
                 EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(account);
                 
+                Log.d(TAG, "===================EmailSendingAndReceivingService sending");
                 EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);
                 emailSender.sendRequestsAndResponses(EmailSendingAndReceivingService.this);
                 
+                Log.d(TAG, "===================EmailSendingAndReceivingService receiving");
                 EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
                 emailReceiver.receiveRequestsAndResponses(EmailSendingAndReceivingService.this);
             } catch(Throwable ex) {

@@ -10,7 +10,7 @@ import android.util.Log;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.EQUALS;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_UNKNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.RECEIVED_TIME_KNOWN;
-import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.PENDING;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.NOT_PROCESSED;
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
@@ -33,15 +33,10 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     private final String[] fieldTypes = new String[] {
             "int not null"
         };
-
-    public SQLiteContactRequestRepository(SQLiteDatabase whereAreYouDb) {
-        super(whereAreYouDb);
-    }
     
     @Override
     protected ContentValues getContentValues(ContactRequest contactRequest) {
         Log.d(TAG, "getContentValues()");
-        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(contactRequest);
         values.put(REQUEST_CODE_FIELD_NAME, contactRequest.getRequestCode().getCode());
         return values;
@@ -50,10 +45,8 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     @Override
     protected ContactRequest createEntity(Cursor cursor) {
         Log.d(TAG, "createEntity()");
-        Log.d(TAG, "--------------createEntity()");
         ContactRequest contactRequest = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        Log.d(TAG, "--------------numberOfFields: " + numberOfFields);
         int code = cursor.getInt(numberOfFields);
         contactRequest.setRequestCode(RequestCode.getRequestCode(code));
 //        int responseId = cursor.getInt(numberOfFields + 1);
@@ -120,7 +113,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         Log.d(TAG, "getUnrespondedLocationRequests()");
         ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
         String criteria = createWhereAndCriteria(
-                new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, PENDING});
+                new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, NOT_PROCESSED});
         Log.d(TAG, "--------------getUnrespondedLocationRequests");
         Cursor cursor = createCursor(criteria, null, null);
         Log.d(TAG, "--------------getUnrespondedLocationRequests: " + cursor.getCount());

@@ -35,7 +35,7 @@ public class SaveButtonListener implements View.OnClickListener {
         }
         
         try {
-            ContactsPersistenceManager.getInstance().persistContacts(contacts);
+            ContactsPersistenceManager.getInstance().persistContacts(activity, contacts);
         } catch (IOException ex) {
             ActivityUtil.showException(activity, ex);
         }

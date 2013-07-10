@@ -42,10 +42,6 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
             "int not null", 
             "int not null"
         };
-
-    public SQLiteContactResponseRepository(SQLiteDatabase whereAreYouDb) {
-        super(whereAreYouDb);
-    }
        
     @Override
     protected int getNumberOfFields() {
@@ -105,7 +101,6 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     @Override
     protected final ContentValues getContentValues(ContactResponseEntity contactResponse) {
         Log.d(TAG, "getContentValues()");
-        Log.d(TAG, "--------------getContentValues()");
         ContentValues values = super.getContentValues(contactResponse);
         values.put(RESPONSE_CODE_FIELD_NAME, contactResponse.getResponseCode().getCode());
         values.put(TYPE_FIELD_NAME, contactResponse.getType());
@@ -117,7 +112,6 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     @Override
     protected final ContactResponseEntity createEntity(Cursor cursor) {
         Log.d(TAG, "createEntity()");
-        Log.d(TAG, "--------------createEntity()");
         ContactResponseEntity contactResponse = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         int code = cursor.getInt(numberOfFields);

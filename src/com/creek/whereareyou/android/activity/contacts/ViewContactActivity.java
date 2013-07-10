@@ -52,7 +52,7 @@ public class ViewContactActivity extends Activity {
         Bundle extras = getIntent().getExtras();
 
         final AndroidContact contact = (AndroidContact) extras.get(ContactsActivity.CONTACT_SELECTED);
-        ContactData contactData = ContactsPersistenceManager.getInstance().retrieveContactDataByContactId(contact.getId());
+        ContactData contactData = ContactsPersistenceManager.getInstance().retrieveContactDataByContactId(this, contact.getId());
         
         Log.d(TAG, "onCreate() " + contact);
 
