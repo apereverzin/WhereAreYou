@@ -110,13 +110,12 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     
     @Override
     public final List<ContactRequest> getUnrespondedLocationRequests() {
-        Log.d(TAG, "getUnrespondedLocationRequests()");
+        Log.d(TAG, "getUnrespondedLocationRequests() " + Thread.currentThread().getId());
         ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, NOT_PROCESSED});
-        Log.d(TAG, "--------------getUnrespondedLocationRequests");
         Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------getUnrespondedLocationRequests: " + cursor.getCount());
+        Log.d(TAG, "--------------+++++++++++getUnrespondedLocationRequests: " + Thread.currentThread().getId() + " " + cursor.getCount());
         return createEntityListFromCursor(cursor);
     }
 

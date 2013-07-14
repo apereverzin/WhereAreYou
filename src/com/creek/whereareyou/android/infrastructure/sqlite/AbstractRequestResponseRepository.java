@@ -10,7 +10,6 @@ import com.creek.whereareyoumodel.domain.sendable.GenericRequestResponse;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**

@@ -7,7 +7,6 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.creek.whereareyou.android.util.Util;
@@ -28,10 +27,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     static final String SPEED_FIELD_NAME = "speed";
     static final String HAS_ACCURACY_FIELD_NAME = "has_accuracy";
     static final String HAS_SPEED_FIELD_NAME = "has_speed";
-    static final String CONTACT_ID_FIELD_NAME = "contact_id";
     
-    static final ComparisonClause CREATION_TIME_KNOWN = new ComparisonClause(CONTACT_ID_FIELD_NAME, EQUALS, UNDEFINED_INT);
-
     private final String[] fieldNames = new String[] {
             LOCATION_TIME_FIELD_NAME,
             ACCURACY_FIELD_NAME,
@@ -39,8 +35,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
             LONGITUDE_FIELD_NAME,
             SPEED_FIELD_NAME,
             HAS_ACCURACY_FIELD_NAME,
-            HAS_SPEED_FIELD_NAME,
-            CONTACT_ID_FIELD_NAME
+            HAS_SPEED_FIELD_NAME
         };
 
     private final String[] fieldTypes = new String[] {
@@ -49,7 +44,6 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
             "real not null", 
             "real not null", 
             "real not null", 
-            "int not null", 
             "int not null", 
             "int not null"
         };
@@ -86,14 +80,13 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
 
     @Override
     public final LocationData getMyActualLocationData(int timeout) {
-        Log.d(TAG, "getActualMyLocationData()");
-        ComparisonClause myLocation = new ComparisonClause(CONTACT_ID_FIELD_NAME, EQUALS, UNDEFINED_INT);
+        Log.d(TAG, "getActualMyLocationData() " + Thread.currentThread().getId());
+        ComparisonClause myLocation = new ComparisonClause(ANDR_CONT_ID_FIELD_NAME, EQUALS, UNDEFINED_INT);
         long expirationTime = System.currentTimeMillis() - timeout;
         ComparisonClause actualLocation = new ComparisonClause(LOCATION_TIME_FIELD_NAME, GREATER_THAN, expirationTime);
         String criteria = createWhereAndCriteria(new ComparisonClause[]{myLocation, actualLocation});
-        Log.d(TAG, "--------------getMyActualLocationData");
         Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------getMyActualLocationData: " + cursor.getCount());
+        Log.d(TAG, "--------------getMyActualLocationData: " + Thread.currentThread().getId() + " " + cursor.getCount());
         return createEntityFromCursor(cursor);
     }
     
@@ -128,7 +121,6 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         values.put(SPEED_FIELD_NAME, locationData.getSpeed());
         values.put(HAS_ACCURACY_FIELD_NAME, locationData.hasAccuracy() ? INT_TRUE : INT_FALSE);
         values.put(HAS_SPEED_FIELD_NAME, locationData.hasSpeed() ? INT_TRUE : INT_FALSE);
-        values.put(CONTACT_ID_FIELD_NAME, locationData.getContactCompoundId().getContactId());
         return values;
     }
     

@@ -13,6 +13,7 @@ import android.util.Log;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
@@ -27,14 +28,14 @@ import com.creek.whereareyoumodel.repository.LocationRepository;
 public class LocationPersistenceManager {
     private static final String TAG = LocationPersistenceManager.class.getSimpleName();
 
-    List<ContactRequest> getUnrespondedContactLocationRequests(Context ctx) {
-        Log.d(TAG, "getUnrespondedContactLocationRequests()");
+    List<ContactRequest> getUnrespondedContactLocationRequests() {
+        Log.d(TAG, "getUnrespondedContactLocationRequests() " + Thread.currentThread().getId() );
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
             
             List<ContactRequest> unrespondedLocationRequests = contactRequestRepository.getUnrespondedLocationRequests();
-            Log.d(TAG, "--------------LocationRequestManager: " + unrespondedLocationRequests.size());
+            Log.d(TAG, "--------------LocationRequestManager: " + Thread.currentThread().getId() + " " + unrespondedLocationRequests.size());
             
             return unrespondedLocationRequests;
         } finally {
@@ -42,10 +43,10 @@ public class LocationPersistenceManager {
         }
     }
 
-    LocationData getMyActualLocationData(Context ctx, int locationExpirationTimeoutMs) {
+    LocationData getMyActualLocationData(int locationExpirationTimeoutMs) {
         Log.d(TAG, "getMyActualLocationData()");
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             LocationRepository locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
             
             return locationRepository.getMyActualLocationData(locationExpirationTimeoutMs);
@@ -55,10 +56,10 @@ public class LocationPersistenceManager {
     }
 
     LocationData getAndPersistMyCurrentLocation(Context ctx) {
-        Log.d(TAG, "getAndPersistMyCurrentLocation()");
-        Log.d(TAG, "--------------getAndPersistMyCurrentLocation");
+        Log.d(TAG, "getAndPersistMyCurrentLocation() " + Thread.currentThread().getId());
         Location location = new LocationProvider().getLatestLocation(ctx);
         LocationData locationData = new LocationData();
+        locationData.setContactCompoundId(new ContactCompoundId(null, null));
         locationData.setLocationTime(location.getTime());
         locationData.setAccuracy(location.getAccuracy());
         locationData.setLatitude(location.getLatitude());
@@ -68,23 +69,26 @@ public class LocationPersistenceManager {
         locationData.setHasSpeed(location.hasSpeed());
         
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             LocationRepository locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
 
-            Log.d(TAG, "--------------getAndPersistMyCurrentLocation: " + locationData);
+            Log.d(TAG, "--------------getAndPersistMyCurrentLocation: " + Thread.currentThread().getId() + " " + locationData);
             locationData = (LocationData) locationRepository.create(locationData);
 
             return locationData;
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
+            throw ex;
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
         }
     }
     
-    void persistLocationResponses(Context ctx, List<ContactRequest> unrespondedLocationRequests, LocationData locationData) {
-        Log.d(TAG, "persistLocationResponses()");
-        Log.d(TAG, "--------------persistLocationResponses");
+    void persistLocationResponses(List<ContactRequest> unrespondedLocationRequests, LocationData locationData) {
+        Log.d(TAG, "persistLocationResponses() " + Thread.currentThread().getId());
+        Log.d(TAG, "--------------persistLocationResponses() " + Thread.currentThread().getId());
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
             
             for (int i = 0; i < unrespondedLocationRequests.size(); i++) {
@@ -98,8 +102,7 @@ public class LocationPersistenceManager {
     
     private ContactResponse persistLocationResponse(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, 
             ContactRequest request, LocationData locationData) {
-        Log.d(TAG, "persistLocationResponse()");
-        Log.d(TAG, "--------------persistLocationResponse");
+        Log.d(TAG, "persistLocationResponse() " + Thread.currentThread().getId());
         ContactResponseEntity response = new ContactResponseEntity();
         response.setContactCompoundId(request.getContactCompoundId());
         response.setTimeCreated(System.currentTimeMillis());
@@ -114,7 +117,7 @@ public class LocationPersistenceManager {
         response.setLocationData(locationData);
         response.setLocationDataId(locationData.getId());
         contactResponseRepository.create(response);
-        Log.d(TAG, "--------------persistLocationResponse: " + response);
+        Log.d(TAG, "--------------persistLocationResponse: " + Thread.currentThread().getId() + " " + response);
         return response;
     }
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
@@ -28,29 +27,29 @@ public class EmailReceiver {
         this.emailSendingAndReceivingManager = emailSendingAndReceivingManager;
     }
     
-    public void receiveRequestsAndResponses(Context ctx) throws TransformException, ServiceException {
-        Log.d(TAG, "receiveRequestsAndResponses()");
+    public void receiveRequestsAndResponses() throws TransformException, ServiceException {
+        Log.d(TAG, "receiveRequestsAndResponses() " + Thread.currentThread().getId());
         Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
-        Log.d(TAG, "--------------receiveRequestsAndResponses: " + receivedMessages.size());
+        Log.d(TAG, "--------------receiveRequestsAndResponses: " + Thread.currentThread().getId() + " " + receivedMessages.size());
         if (receivedMessages.size() > 0) {
             List<GenericMessage> messagesToPersist = new ArrayList<GenericMessage>();
             List<ContactCompoundId> contactCompoundIdsToPersist = new ArrayList<ContactCompoundId>();
-            retrieveContactDataForMessages(ctx, receivedMessages, messagesToPersist, contactCompoundIdsToPersist);
+            retrieveContactDataForMessages(receivedMessages, messagesToPersist, contactCompoundIdsToPersist);
             
             if (messagesToPersist.size() > 0) {
                 MessagePersistenceManager messagePersistenceManager = new MessagePersistenceManager();
-                messagePersistenceManager.persistReceivedMessages(ctx, messagesToPersist, contactCompoundIdsToPersist);
+                messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist);
             }
         }
     }
 
-    private void retrieveContactDataForMessages(Context ctx, Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactCompoundIdsToPersist) {
+    private void retrieveContactDataForMessages(Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactCompoundIdsToPersist) {
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             for (GenericMessage message : receivedMessages) {
                 String contactEmail = message.getSenderEmail();
                 ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
-                Log.d(TAG, "--------------contactData: " + contactData);
+                Log.d(TAG, "--------------contactData: " + Thread.currentThread().getId() + " " + contactData);
                 if (contactData != null && contactData.isRequestAllowed()) {
                     messagesToPersist.add(message);
                     contactCompoundIdsToPersist.add(contactData.getContactCompoundId());

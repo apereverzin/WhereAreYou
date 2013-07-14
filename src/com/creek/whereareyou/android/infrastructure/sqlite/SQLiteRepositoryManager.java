@@ -1,5 +1,8 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import java.io.File;
+
+import com.creek.whereareyou.WhereAreYouApplication;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
@@ -8,7 +11,6 @@ import com.creek.whereareyoumodel.repository.LocationRepository;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
@@ -29,7 +31,8 @@ public class SQLiteRepositoryManager {
     private SQLiteContactResponseRepository contactResponseRepository;
     private SQLiteContactLocationRepository locationRepository;
 
-    private static final String DATABASE_NAME = "whereareyou";
+    private static final String DATABASE_PATH = "/data/data/com.creek.whereareyou/databases/";
+    private static final String DATABASE_NAME = "whereareyou.db";
     private static final String DROP_TABLE = "drop table if exists %s";
 
     private SQLiteRepositoryManager() {
@@ -40,15 +43,14 @@ public class SQLiteRepositoryManager {
         return instance;
     }
 
-    public void openDatabase(Context ctx) {
-        Log.d(TAG, "------------openDatabase");
-        whereAreYouDb = ctx.openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.OPEN_READWRITE, null);
-        Log.d(TAG, "------------isOpen: " + whereAreYouDb.isOpen());
+    public void openDatabase() {
+        Log.d(TAG, "++++++++++++openDatabase " + Thread.currentThread().getId());
+        whereAreYouDb = WhereAreYouApplication.getDatabase();
+        Log.d(TAG, "------------isOpen: " + Thread.currentThread().getId() + " " + whereAreYouDb.isOpen());
     }
 
     public void closeDatabase() {
-        Log.d(TAG, "------------closeDatabase");
-        whereAreYouDb.close();
+        Log.d(TAG, "++++++++++++closeDatabase " + Thread.currentThread().getId());
     }
 
     public SQLiteDatabase getDatabase() {
@@ -60,16 +62,17 @@ public class SQLiteRepositoryManager {
             contactDataRepository = new SQLiteContactDataRepository();
         }
 
+        Log.d(TAG, "------------getContactDataRepository isOpen: " + Thread.currentThread().getId() + " " + whereAreYouDb.isOpen());
         contactDataRepository.setDatabase(whereAreYouDb);
         return contactDataRepository;
     }
 
     public ContactRequestRepository getContactRequestRepository() {
         if (contactRequestRepository == null) {
-            Log.d(TAG, "------------getContactRequestRepository isOpen: " + whereAreYouDb.isOpen());
             contactRequestRepository = new SQLiteContactRequestRepository();
         }
 
+        Log.d(TAG, "------------getContactRequestRepository isOpen: " + Thread.currentThread().getId() + " " + whereAreYouDb.isOpen());
         contactRequestRepository.setDatabase(whereAreYouDb);
         return contactRequestRepository;
     }
@@ -79,6 +82,7 @@ public class SQLiteRepositoryManager {
             contactResponseRepository = new SQLiteContactResponseRepository();
         }
         
+        Log.d(TAG, "------------getContactResponseRepository isOpen: " + Thread.currentThread().getId() + " " + whereAreYouDb.isOpen());
         contactResponseRepository.setDatabase(whereAreYouDb);
         return contactResponseRepository;
     }
@@ -88,15 +92,27 @@ public class SQLiteRepositoryManager {
             locationRepository = new SQLiteContactLocationRepository();
         }
         
+        Log.d(TAG, "------------getLocationRepository isOpen: " + Thread.currentThread().getId() + " " + whereAreYouDb.isOpen());
         locationRepository.setDatabase(whereAreYouDb);
         return locationRepository;
     }
 
-    public void createDatabaseIfDoesNotExist(Context ctx) {
-        Log.d(TAG, "------------createDatabaseIfDoesNotExist");
-        whereAreYouDb = ctx.openOrCreateDatabase(DATABASE_NAME, SQLiteDatabase.CREATE_IF_NECESSARY, null);
+    public SQLiteDatabase createDatabaseIfDoesNotExist() {
+        Log.d(TAG, "createDatabaseIfDoesNotExist");
+        File f4 = new File(DATABASE_PATH);
+        Log.d(TAG, "------------4 " + f4.exists());
+        if (f4.exists()) {
+            f4.delete();
+        }
+        Log.d(TAG, "------------4 " + f4.exists());
+        if (!f4.exists()) {
+            f4.mkdirs();
+        }
+        Log.d(TAG, "------------4 dir " + f4.isDirectory());
+        Log.d(TAG, "------------4 exists " + f4.exists());
+        whereAreYouDb = SQLiteDatabase.openDatabase(DATABASE_PATH + DATABASE_NAME, null, SQLiteDatabase.OPEN_READWRITE + SQLiteDatabase.CREATE_IF_NECESSARY);
 
-        if (!databaseExists()) {
+        if (!databaseTablesExist()) {
             contactDataRepository = new SQLiteContactDataRepository();
             contactRequestRepository = new SQLiteContactRequestRepository();
             contactResponseRepository = new SQLiteContactResponseRepository();
@@ -116,10 +132,11 @@ public class SQLiteRepositoryManager {
             createContactData();
         }
         
-        closeDatabase();
+        //closeDatabase();
+        return whereAreYouDb;
     }
 
-    private boolean databaseExists() {
+    private boolean databaseTablesExist() {
         try {
             queryTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
             queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);

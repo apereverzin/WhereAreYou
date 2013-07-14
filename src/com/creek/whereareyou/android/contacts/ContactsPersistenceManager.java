@@ -32,11 +32,11 @@ public class ContactsPersistenceManager {
         return instance;
     }
 
-    public void persistContacts(Context ctx, Map<String, AndroidContact> androidContacts) throws IOException {
+    public void persistContacts(Map<String, AndroidContact> androidContacts) throws IOException {
         Log.d(TAG, "persistContacts()");
         
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
 
             for (String contactId : androidContacts.keySet()) {
@@ -54,11 +54,11 @@ public class ContactsPersistenceManager {
         }
     }
 
-    public ContactData retrieveContactDataByContactId(Context ctx, String contactId) {
+    public ContactData retrieveContactDataByContactId(String contactId) {
         Log.d(TAG, "retrieveContactDataByContactId(): " + contactId);
         
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
 
             return contactDataRepository.getContactDataByContactId(contactId);
@@ -70,15 +70,15 @@ public class ContactsPersistenceManager {
     public List<AndroidContact> retrieveContacts(Context ctx) throws IOException {
         Log.d(TAG, "retrieveContacts()");
         
-        Map<String, AndroidContact> existingContacts = retrievePersistedContacts(ctx);
+        Map<String, AndroidContact> existingContacts = retrievePersistedContacts();
         return combineContactsLists(ctx, existingContacts);
     }
 
-    private Map<String, AndroidContact> retrievePersistedContacts(Context ctx) throws IOException {
+    private Map<String, AndroidContact> retrievePersistedContacts() throws IOException {
         Log.d(TAG, "retrievePersistedContacts()");
         
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
 
             List<ContactData> contacts = contactDataRepository.getAllContactData();

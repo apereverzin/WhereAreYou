@@ -43,32 +43,31 @@ public class EmailSendingAndReceivingManager {
     }
 
     public void sendRequest(ContactRequest contactRequest) throws ServiceException {
-        Log.d(TAG, "sendRequest()");
+        Log.d(TAG, "sendRequest() " + Thread.currentThread().getId());
         contactRequest.setTimeSent(System.currentTimeMillis());
         OwnerRequest payload = new OwnerRequest(contactRequest);
         RequestMessage message = new RequestMessage(payload, account.name);
-        Log.d(TAG, "--------------sendRequest: " + message.toJSON());
-        Log.d(TAG, "--------------sendRequest: " + contactRequest.getContactCompoundId().getContactEmail());
+        Log.d(TAG, "--------------sendRequest: " + Thread.currentThread().getId() + " " + message.toJSON());
+        Log.d(TAG, "--------------sendRequest: " + Thread.currentThread().getId() + " " + contactRequest.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactRequest.getContactCompoundId().getContactEmail());
-        Log.d(TAG, "--------------sendRequest: " + message.toJSON());
+        Log.d(TAG, "--------------sendRequest: " + Thread.currentThread().getId() + " " + message.toJSON());
     }
 
     public void sendResponse(ContactResponse contactResponse) throws ServiceException {
-        Log.d(TAG, "sendResponse()");
+        Log.d(TAG, "sendResponse() " + Thread.currentThread().getId());
         contactResponse.setTimeSent(System.currentTimeMillis());
         OwnerResponse payload = new OwnerResponse(contactResponse);
         ResponseMessage message = new ResponseMessage(payload, account.name);
-        Log.d(TAG, "--------------sendResponse: " + message.toJSON());
-        Log.d(TAG, "--------------sendResponse: " + contactResponse.getContactCompoundId().getContactEmail());
+        Log.d(TAG, "--------------sendResponse: " + Thread.currentThread().getId() + " " + message.toJSON());
+        Log.d(TAG, "--------------sendResponse: " + Thread.currentThread().getId() + " " + contactResponse.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactResponse.getContactCompoundId().getContactEmail());
-        Log.d(TAG, "--------------sendResponse: " + message.toJSON());
+        Log.d(TAG, "--------------sendResponse: " + Thread.currentThread().getId() + " " + message.toJSON());
     }
     
     public Set<GenericMessage> receiveMessages() throws ServiceException, TransformException {
-        Log.d(TAG, "receiveMessages()");
-        Log.d(TAG, "--------------receiveMessages");
+        Log.d(TAG, "receiveMessages() " + Thread.currentThread().getId());
         Set<GenericMessage> messages = messagesService.receiveMessages();
-        Log.d(TAG, "--------------receiveMessages: " + messages.size());
+        Log.d(TAG, "--------------receiveMessages: " + Thread.currentThread().getId() + " " + messages.size());
         return messages;
     }
 }

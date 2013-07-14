@@ -54,22 +54,23 @@ public class CurrentLocationService extends Service {
     private TimerTask currentLocationTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "===================CurrentLocationService doing work");
+            Log.i(TAG, "===================CurrentLocationService doing work " + Thread.currentThread().getId());
             LocationPersistenceManager locationPersistenceManager = new LocationPersistenceManager();
             
-            List<ContactRequest> unrespondedLocationRequests = locationPersistenceManager.getUnrespondedContactLocationRequests(CurrentLocationService.this);
+            List<ContactRequest> unrespondedLocationRequests = locationPersistenceManager.getUnrespondedContactLocationRequests();
+            Log.d(TAG, "--------------unrespondedLocationRequests: " + Thread.currentThread().getId() + " " + unrespondedLocationRequests.size());
             
             if (unrespondedLocationRequests.size() > 0) {
-                LocationData locationData = locationPersistenceManager.getMyActualLocationData(CurrentLocationService.this, locationExpirationTimeoutMs);
-                Log.d(TAG, "--------------CurrentLocationService: " + locationData);
+                LocationData locationData = locationPersistenceManager.getMyActualLocationData(locationExpirationTimeoutMs);
+                Log.d(TAG, "--------------CurrentLocationService: " + Thread.currentThread().getId() + " " + locationData);
                 if (locationData == null) {
                     // Durable operation
-                    Log.d(TAG, "--------------CurrentLocationService locationData==null");
+                    Log.d(TAG, "--------------CurrentLocationService locationData==null " + Thread.currentThread().getId());
                     locationData = locationPersistenceManager.getAndPersistMyCurrentLocation(CurrentLocationService.this);
                     Log.d(TAG, "--------------CurrentLocationService: " + locationData);
                 }
 
-                locationPersistenceManager.persistLocationResponses(CurrentLocationService.this, unrespondedLocationRequests, locationData);
+                locationPersistenceManager.persistLocationResponses(unrespondedLocationRequests, locationData);
             }
 
             //NetworkLocationProvider.onCellLocationChanged();

@@ -54,20 +54,20 @@ public class EmailSendingAndReceivingService extends Service {
     private TimerTask emailSendingAndReceivingTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "===================EmailSendingAndReceivingService doing work");
+            Log.i(TAG, "===================EmailSendingAndReceivingService doing work " + Thread.currentThread().getId());
             Account account = GoogleAccountProvider.getInstance().getEmailAccount(EmailSendingAndReceivingService.this);
             Log.d(TAG, "===================: " + account.toString());
             
             try {
                 EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(account);
                 
-                Log.d(TAG, "===================EmailSendingAndReceivingService sending");
+                Log.d(TAG, "===================EmailSendingAndReceivingService sending " + Thread.currentThread().getId());
                 EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);
-                emailSender.sendRequestsAndResponses(EmailSendingAndReceivingService.this);
+                emailSender.sendRequestsAndResponses();
                 
-                Log.d(TAG, "===================EmailSendingAndReceivingService receiving");
+                Log.d(TAG, "===================EmailSendingAndReceivingService receiving " + Thread.currentThread().getId());
                 EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
-                emailReceiver.receiveRequestsAndResponses(EmailSendingAndReceivingService.this);
+                emailReceiver.receiveRequestsAndResponses();
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
             }

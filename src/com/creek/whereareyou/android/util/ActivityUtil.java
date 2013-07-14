@@ -58,7 +58,9 @@ public class ActivityUtil {
     
     public static void printStackTrace(String TAG, Throwable ex) {
         StackTraceElement[] sta = ex.getStackTrace();
-        Log.e(TAG, ex.getMessage());
+        if (ex.getMessage() != null) {
+            Log.e(TAG, ex.getMessage());
+        }
         Log.e(TAG, ex.getClass().getName());
         for(StackTraceElement st: sta) {
             Log.e(TAG, "   " + st.getFileName() + "." + st.getMethodName() + ": " + st.getLineNumber());

@@ -6,7 +6,6 @@ import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteContactR
 
 import java.util.List;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.creek.whereareyou.android.db.ContactResponseEntity;
@@ -34,12 +33,11 @@ import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 public class MessagePersistenceManager {
     private static final String TAG = MessagePersistenceManager.class.getSimpleName();
 
-    public void persistReceivedMessages(Context ctx, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactDataToPersist) {
-        Log.d(TAG, "persistReceivedMessages()");
-        Log.d(TAG, "--------------persistReceivedMessages");
+    public void persistReceivedMessages(List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactDataToPersist) {
+        Log.d(TAG, "persistReceivedMessages() " + Thread.currentThread().getId());
 
         try {
-            SQLiteRepositoryManager.getInstance().openDatabase(ctx);
+            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
             ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
             LocationRepository locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
@@ -54,7 +52,7 @@ public class MessagePersistenceManager {
                 } else if (message instanceof OwnerLocationDataMessage) {
                     persistLocationData(locationRepository, contactResponseRepository, contactCompoundId, (OwnerLocationDataMessage) message);
                 }
-                Log.d(TAG, "--------------message persisted");
+                Log.d(TAG, "--------------message persisted " + Thread.currentThread().getId());
             }
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
@@ -62,8 +60,7 @@ public class MessagePersistenceManager {
     }
     
     private void persistContactRequest(ContactRequestRepository contactRequestRepository, ContactCompoundId contactCompoundId, RequestMessage message) {
-        Log.d(TAG, "persistContactRequest: " + contactCompoundId + ", " + message);
-        Log.d(TAG, "--------------persistContactRequest: " + contactCompoundId + ", " + message);
+        Log.d(TAG, "persistContactRequest: " + Thread.currentThread().getId() + " " + contactCompoundId + ", " + message);
         OwnerRequest ownerRequest = message.getOwnerRequest();
         ContactRequest contactRequest = new ContactRequest();
         contactRequest.setContactCompoundId(contactCompoundId);
@@ -76,15 +73,15 @@ public class MessagePersistenceManager {
     }
     
     private void persistNormalContactResponse(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactCompoundId contactCompoundId, ResponseMessage message) {
-        Log.d(TAG, "persistNormalContactResponse: " + contactCompoundId + ", " + message);
-        Log.d(TAG, "--------------persistNormalContactResponse: " + contactCompoundId + ", " + message);
+        Log.d(TAG, "persistNormalContactResponse: " + Thread.currentThread().getId() + " " + contactCompoundId + ", " + message);
+        Log.d(TAG, "--------------persistNormalContactResponse: " + Thread.currentThread().getId() + " " + contactCompoundId + ", " + message);
         OwnerResponse ownerResponse = message.getOwnerResponse();
         persistContactResponseEntity(contactResponseRepository, contactCompoundId, NORMAL_RESPONSE_TYPE, -1, ownerResponse.getTimeSent(), ownerResponse.getResponseCode(), ownerResponse.getMessage());
     }
 
     private void persistLocationData(LocationRepository locationRepository, ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactCompoundId contactCompoundId, OwnerLocationDataMessage message) {
-        Log.d(TAG, "persistLocationData: " + contactCompoundId + ", " + message);
-        Log.d(TAG, "--------------persistLocationData: " + contactCompoundId + ", " + message);
+        Log.d(TAG, "persistLocationData: " + Thread.currentThread().getId() + " " + contactCompoundId + ", " + message);
+        Log.d(TAG, "--------------persistLocationData: " + Thread.currentThread().getId() + " " + contactCompoundId + ", " + message);
         SendableLocationData sendableLocationData = message.getOwnerLocationData();
         LocationData locationData = sendableLocationData.getLocationData();
         locationData.setContactCompoundId(contactCompoundId);
@@ -93,8 +90,8 @@ public class MessagePersistenceManager {
     }
     
     private void persistContactResponseEntity(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactCompoundId contactCompoundId, int responseType, long locationId, long timeSent, int code, String message) {
-        Log.d(TAG, "persistContactResponseEntity: " + contactCompoundId);
-        Log.d(TAG, "--------------persistContactResponseEntity: " + contactCompoundId);
+        Log.d(TAG, "persistContactResponseEntity: " + Thread.currentThread().getId() + " " + contactCompoundId);
+        Log.d(TAG, "--------------persistContactResponseEntity: " + Thread.currentThread().getId() + " " + contactCompoundId);
         ContactResponseEntity contactResponseEntity = new ContactResponseEntity();
         contactResponseEntity.setContactCompoundId(contactCompoundId);
         contactResponseEntity.setTimeSent(timeSent);

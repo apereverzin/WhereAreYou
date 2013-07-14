@@ -139,7 +139,7 @@ public class ContactsActivity extends ListActivity {
             }
         case VIEW_CONTACT_LAST_LOCATION_MENU_ITEM:
             try {
-                SQLiteRepositoryManager.getInstance().openDatabase(this);
+                SQLiteRepositoryManager.getInstance().openDatabase();
                 Log.d(TAG, "VIEW_CONTACT_LAST_LOCATION_MENU_ITEM");
                 return true;
             } finally {
@@ -150,7 +150,7 @@ public class ContactsActivity extends ListActivity {
             try {
                 ContactRequest contactRequest = RequestResponseFactory.getInstance().createContactLocationRequest(contactSelected);
 
-                SQLiteRepositoryManager.getInstance().openDatabase(this);
+                SQLiteRepositoryManager.getInstance().openDatabase();
                 ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
                 
                 Log.d(TAG, "--------------created contact location request: " + contactRequest);
