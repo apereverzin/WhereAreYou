@@ -44,7 +44,6 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
 
     @Override
     protected ContactRequest createEntity(Cursor cursor) {
-        Log.d(TAG, "createEntity()");
         ContactRequest contactRequest = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         int code = cursor.getInt(numberOfFields);
@@ -53,6 +52,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
 //        if (responseId != UNDEFINED_INT) {
 //            // TODO setResponse(...)
 //        }
+        Log.d(TAG, "createEntity(): " + contactRequest);
         return contactRequest;
     }
     
@@ -110,12 +110,12 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     
     @Override
     public final List<ContactRequest> getUnrespondedLocationRequests() {
-        Log.d(TAG, "getUnrespondedLocationRequests() " + Thread.currentThread().getId());
+        Log.d(TAG, "getUnrespondedLocationRequests()");
         ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, NOT_PROCESSED});
         Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------+++++++++++getUnrespondedLocationRequests: " + Thread.currentThread().getId() + " " + cursor.getCount());
+        Log.d(TAG, "--------------+++++++++++getUnrespondedLocationRequests: " + cursor.getCount());
         return createEntityListFromCursor(cursor);
     }
 

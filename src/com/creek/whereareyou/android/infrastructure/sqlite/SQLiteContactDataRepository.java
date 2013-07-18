@@ -88,11 +88,11 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     
     @Override
     protected final ContactData createEntity(Cursor cursor) {
-        Log.d(TAG, "createEntity()");
         ContactData contactData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         contactData.setDisplayName(cursor.getString(numberOfFields++));
         contactData.setRequestAllowed(cursor.getInt(numberOfFields) == INT_TRUE);
+        Log.d(TAG, "createEntity(): " + contactData);
         return contactData;
     }
     

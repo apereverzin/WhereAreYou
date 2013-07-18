@@ -28,16 +28,16 @@ public class EmailReceiver {
     }
     
     public void receiveRequestsAndResponses() throws TransformException, ServiceException {
-        Log.d(TAG, "receiveRequestsAndResponses() " + Thread.currentThread().getId());
+        Log.d(TAG, "receiveRequestsAndResponses()");
         Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
-        Log.d(TAG, "--------------receiveRequestsAndResponses: " + Thread.currentThread().getId() + " " + receivedMessages.size());
+        Log.d(TAG, "--------------receiveRequestsAndResponses: " + receivedMessages.size());
         if (receivedMessages.size() > 0) {
             List<GenericMessage> messagesToPersist = new ArrayList<GenericMessage>();
             List<ContactCompoundId> contactCompoundIdsToPersist = new ArrayList<ContactCompoundId>();
             retrieveContactDataForMessages(receivedMessages, messagesToPersist, contactCompoundIdsToPersist);
             
             if (messagesToPersist.size() > 0) {
-                MessagePersistenceManager messagePersistenceManager = new MessagePersistenceManager();
+                ReceivedMessagesPersistenceManager messagePersistenceManager = new ReceivedMessagesPersistenceManager();
                 messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist);
             }
         }
@@ -49,7 +49,7 @@ public class EmailReceiver {
             for (GenericMessage message : receivedMessages) {
                 String contactEmail = message.getSenderEmail();
                 ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
-                Log.d(TAG, "--------------contactData: " + Thread.currentThread().getId() + " " + contactData);
+                Log.d(TAG, "--------------contactData: " + contactData);
                 if (contactData != null && contactData.isRequestAllowed()) {
                     messagesToPersist.add(message);
                     contactCompoundIdsToPersist.add(contactData.getContactCompoundId());

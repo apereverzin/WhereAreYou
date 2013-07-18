@@ -34,4 +34,12 @@ public class ContactResponseEntity extends ContactResponse {
     public void setLocationDataId(long locationId) {
         this.locationId = locationId;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("ContactResponseEntity [").append(super.toString()).append(", message=").append(getMessage()).append(", locationData=").append(getLocationData()).append(", type=")
+                .append(getType()).append(", requestId=").append(getRequestId()).append(", locationId=").append(getLocationId()).append("]");
+        return builder.toString();
+    }
 }

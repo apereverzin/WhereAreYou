@@ -110,14 +110,14 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
     
     @Override
     protected final ContactResponseEntity createEntity(Cursor cursor) {
-        Log.d(TAG, "createEntity()");
         ContactResponseEntity contactResponse = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        int code = cursor.getInt(numberOfFields);
+        int code = cursor.getInt(numberOfFields++);
         contactResponse.setResponseCode(ResponseCode.getResponseCode(code));
         contactResponse.setType(cursor.getInt(numberOfFields++));
         contactResponse.setRequestId(cursor.getInt(numberOfFields++));
         contactResponse.setLocationDataId(cursor.getInt(numberOfFields));
+        Log.d(TAG, "createEntity(): " + contactResponse);
         return contactResponse;
     }
     

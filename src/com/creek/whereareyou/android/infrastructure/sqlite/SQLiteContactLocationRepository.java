@@ -80,16 +80,22 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
 
     @Override
     public final LocationData getMyActualLocationData(int timeout) {
-        Log.d(TAG, "getActualMyLocationData() " + Thread.currentThread().getId());
+        Log.d(TAG, "getMyActualLocationData()");
         ComparisonClause myLocation = new ComparisonClause(ANDR_CONT_ID_FIELD_NAME, EQUALS, UNDEFINED_INT);
         long expirationTime = System.currentTimeMillis() - timeout;
         ComparisonClause actualLocation = new ComparisonClause(LOCATION_TIME_FIELD_NAME, GREATER_THAN, expirationTime);
         String criteria = createWhereAndCriteria(new ComparisonClause[]{myLocation, actualLocation});
         Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------getMyActualLocationData: " + Thread.currentThread().getId() + " " + cursor.getCount());
+        Log.d(TAG, "--------------getMyActualLocationData: " + cursor.getCount());
         return createEntityFromCursor(cursor);
     }
     
+    @Override
+    public LocationData getLocationDataById(long id) {
+        Log.d(TAG, "getLocationDataById(): " + id);
+        return retrieveEntityById(id);
+    }
+        
     @Override
     protected final String getTableName() {
         return CONTACT_LOCATION_TABLE;
@@ -126,7 +132,6 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     
     @Override
     protected final LocationData createEntity(Cursor cursor) {
-        Log.d(TAG, "createEntity()");
         LocationData locationData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
         locationData.setLocationTime(cursor.getLong(numberOfFields++));
@@ -136,6 +141,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         locationData.setSpeed(cursor.getFloat(numberOfFields++));
         locationData.setHasAccuracy(cursor.getInt(numberOfFields++) == INT_TRUE);
         locationData.setHasSpeed(cursor.getInt(numberOfFields) == INT_TRUE);
+        Log.d(TAG, "createEntity(): " + locationData);
         return locationData;
     }
     
@@ -143,7 +149,7 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     protected final LocationData createEntityInstance() {
         return new LocationData();
     }
-        
+    
     private LocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
         if (contactLocationDataCursor != null && contactLocationDataCursor.getCount() > 0) {
             contactLocationDataCursor.moveToFirst();

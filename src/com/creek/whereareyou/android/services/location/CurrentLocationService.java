@@ -54,18 +54,18 @@ public class CurrentLocationService extends Service {
     private TimerTask currentLocationTask = new TimerTask() {
         @Override
         public void run() {
-            Log.i(TAG, "===================CurrentLocationService doing work " + Thread.currentThread().getId());
+            Log.i(TAG, "===================CurrentLocationService doing work");
             LocationPersistenceManager locationPersistenceManager = new LocationPersistenceManager();
             
             List<ContactRequest> unrespondedLocationRequests = locationPersistenceManager.getUnrespondedContactLocationRequests();
-            Log.d(TAG, "--------------unrespondedLocationRequests: " + Thread.currentThread().getId() + " " + unrespondedLocationRequests.size());
+            Log.d(TAG, "--------------unrespondedLocationRequests: " + unrespondedLocationRequests.size());
             
             if (unrespondedLocationRequests.size() > 0) {
                 LocationData locationData = locationPersistenceManager.getMyActualLocationData(locationExpirationTimeoutMs);
-                Log.d(TAG, "--------------CurrentLocationService: " + Thread.currentThread().getId() + " " + locationData);
+                Log.d(TAG, "--------------CurrentLocationService: " + locationData);
                 if (locationData == null) {
                     // Durable operation
-                    Log.d(TAG, "--------------CurrentLocationService locationData==null " + Thread.currentThread().getId());
+                    Log.d(TAG, "--------------CurrentLocationService locationData==null");
                     locationData = locationPersistenceManager.getAndPersistMyCurrentLocation(CurrentLocationService.this);
                     Log.d(TAG, "--------------CurrentLocationService: " + locationData);
                 }

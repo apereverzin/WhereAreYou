@@ -7,12 +7,15 @@ import java.util.List;
 import android.util.Log;
 
 import com.creek.whereareyou.android.db.ContactResponseEntity;
+import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLiteRepository.UNDEFINED_LONG;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.CryptoException;
+import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
+import com.creek.whereareyoumodel.repository.LocationRepository;
 import com.creek.whereareyoumodel.service.ServiceException;
 
 /**
@@ -49,11 +52,11 @@ public class EmailSender {
             SQLiteRepositoryManager.getInstance().closeDatabase();
         }
 
-        Log.d(TAG, "--------------sendRequests: " + Thread.currentThread().getId() + " " + unsentRequests.size());
+        Log.d(TAG, "--------------sendRequests: " + unsentRequests.size());
         for (int i = 0; i < unsentRequests.size(); i++) {
             ContactRequest data = unsentRequests.get(i);
             try {
-                Log.d(TAG, "--------------sending request: " + Thread.currentThread().getId() + " " + data);
+                Log.d(TAG, "--------------sending request: " + data);
                 emailSendingAndReceivingManager.sendRequest(data);
 
                 try {
@@ -61,7 +64,7 @@ public class EmailSender {
                     contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
 
                     contactRequestRepository.update(data);
-                    Log.d(TAG, "--------------request sent: " + Thread.currentThread().getId() + " " + data);
+                    Log.d(TAG, "--------------request sent: " + data);
                 } finally {
                     SQLiteRepositoryManager.getInstance().closeDatabase();
                 }
@@ -75,25 +78,36 @@ public class EmailSender {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private List<ContactResponse> sendResponses() {
-        Log.d(TAG, "sendResponses() " + Thread.currentThread().getId());
+        Log.d(TAG, "sendResponses()");
         List<ContactResponse> unsentDataList = new ArrayList<ContactResponse>();
         ContactResponseRepository<ContactResponseEntity> contactResponseRepository;
+        LocationRepository locationRepository;
         List<ContactResponseEntity> unsentResponses;
 
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
             contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+            locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
 
             unsentResponses = (List) contactResponseRepository.getUnsentContactResponses();
+            
+            // TODO use JOIN in the repository instead of this
+            for (int i = 0; i < unsentResponses.size(); i++) {
+                ContactResponseEntity data = unsentResponses.get(i);
+                if (data.getLocationId() != UNDEFINED_LONG) {
+                    LocationData locationData = locationRepository.getLocationDataById(data.getLocationId());
+                    data.setLocationData(locationData);
+                }
+            }
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
         }
 
-        Log.d(TAG, "--------------sendResponses: " + Thread.currentThread().getId() + " " + unsentResponses.size());
+        Log.d(TAG, "--------------sendResponses: " + unsentResponses.size());
         for (int i = 0; i < unsentResponses.size(); i++) {
             ContactResponseEntity data = unsentResponses.get(i);
             try {
-                Log.d(TAG, "--------------sending response : " + Thread.currentThread().getId() + " " + data);
+                Log.d(TAG, "--------------sending response : " + data);
                 emailSendingAndReceivingManager.sendResponse(data);
 
                 try {
@@ -101,7 +115,7 @@ public class EmailSender {
                     contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
                     
                     contactResponseRepository.update(data);
-                    Log.d(TAG, "--------------response sent: " + Thread.currentThread().getId() + " " + data);
+                    Log.d(TAG, "--------------response sent: " + data);
                 } finally {
                     SQLiteRepositoryManager.getInstance().closeDatabase();
                 }

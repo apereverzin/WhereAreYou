@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.contacts;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLiteRepository.UNDEFINED_LONG;
+
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.RequestCode;
@@ -26,8 +28,8 @@ public final class RequestResponseFactory {
         contactRequest.setRequestCode(RequestCode.LOCATION);
         contactRequest.setMessage("");
         contactRequest.setTimeCreated(System.currentTimeMillis());
-        contactRequest.setTimeSent(0L);
-        contactRequest.setTimeReceived(0L);
+        contactRequest.setTimeSent(UNDEFINED_LONG);
+        contactRequest.setTimeReceived(UNDEFINED_LONG);
         return contactRequest;
     }
 }

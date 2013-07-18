@@ -29,13 +29,13 @@ public class LocationPersistenceManager {
     private static final String TAG = LocationPersistenceManager.class.getSimpleName();
 
     List<ContactRequest> getUnrespondedContactLocationRequests() {
-        Log.d(TAG, "getUnrespondedContactLocationRequests() " + Thread.currentThread().getId() );
+        Log.d(TAG, "getUnrespondedContactLocationRequests()");
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
             ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
             
             List<ContactRequest> unrespondedLocationRequests = contactRequestRepository.getUnrespondedLocationRequests();
-            Log.d(TAG, "--------------LocationRequestManager: " + Thread.currentThread().getId() + " " + unrespondedLocationRequests.size());
+            Log.d(TAG, "--------------LocationRequestManager: " + unrespondedLocationRequests.size());
             
             return unrespondedLocationRequests;
         } finally {
@@ -56,7 +56,7 @@ public class LocationPersistenceManager {
     }
 
     LocationData getAndPersistMyCurrentLocation(Context ctx) {
-        Log.d(TAG, "getAndPersistMyCurrentLocation() " + Thread.currentThread().getId());
+        Log.d(TAG, "getAndPersistMyCurrentLocation()");
         Location location = new LocationProvider().getLatestLocation(ctx);
         LocationData locationData = new LocationData();
         locationData.setContactCompoundId(new ContactCompoundId(null, null));
@@ -72,7 +72,7 @@ public class LocationPersistenceManager {
             SQLiteRepositoryManager.getInstance().openDatabase();
             LocationRepository locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
 
-            Log.d(TAG, "--------------getAndPersistMyCurrentLocation: " + Thread.currentThread().getId() + " " + locationData);
+            Log.d(TAG, "--------------getAndPersistMyCurrentLocation: " + locationData);
             locationData = (LocationData) locationRepository.create(locationData);
 
             return locationData;
@@ -85,8 +85,8 @@ public class LocationPersistenceManager {
     }
     
     void persistLocationResponses(List<ContactRequest> unrespondedLocationRequests, LocationData locationData) {
-        Log.d(TAG, "persistLocationResponses() " + Thread.currentThread().getId());
-        Log.d(TAG, "--------------persistLocationResponses() " + Thread.currentThread().getId());
+        Log.d(TAG, "persistLocationResponses()");
+        Log.d(TAG, "--------------persistLocationResponses()");
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
             ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
@@ -102,7 +102,7 @@ public class LocationPersistenceManager {
     
     private ContactResponse persistLocationResponse(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, 
             ContactRequest request, LocationData locationData) {
-        Log.d(TAG, "persistLocationResponse() " + Thread.currentThread().getId());
+        Log.d(TAG, "persistLocationResponse()");
         ContactResponseEntity response = new ContactResponseEntity();
         response.setContactCompoundId(request.getContactCompoundId());
         response.setTimeCreated(System.currentTimeMillis());
@@ -117,7 +117,7 @@ public class LocationPersistenceManager {
         response.setLocationData(locationData);
         response.setLocationDataId(locationData.getId());
         contactResponseRepository.create(response);
-        Log.d(TAG, "--------------persistLocationResponse: " + Thread.currentThread().getId() + " " + response);
+        Log.d(TAG, "--------------persistLocationResponse: " + response);
         return response;
     }
 }

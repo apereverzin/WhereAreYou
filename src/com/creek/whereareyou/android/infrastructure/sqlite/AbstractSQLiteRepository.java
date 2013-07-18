@@ -58,11 +58,11 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     public T create(T entity) {
         try {
             ContentValues values = getContentValues(entity);
-            Log.d(TAG, "--------------create: " + Thread.currentThread().getId() + " " + entity);
+            Log.d(TAG, "--------------create: " + entity);
             long id = whereAreYouDb.insert(getTableName(), null, values);
             entity.setId(id);
-            Log.d(TAG, "Created: " + Thread.currentThread().getId() + " " + entity.getId());
-            Log.d(TAG, "--------------Created: " + Thread.currentThread().getId() + " " + entity.getId());
+            Log.d(TAG, "Created: " + entity.getId());
+            Log.d(TAG, "--------------Created: " + entity.getId());
         } catch (Throwable ex) {
             ex.printStackTrace();
             ActivityUtil.printStackTrace(TAG, ex);
@@ -89,10 +89,22 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected List<T> retrieveEntitiesByCriteria(String fieldName, String fieldValue) {
+        Log.d(TAG, "retrieveEntitiesByCriteria()");
         Cursor cursor = null;
         try {
             cursor = createCursor(fieldName, fieldValue, null, null);
             return createEntityListFromCursor(cursor);
+        } finally {
+            SQLiteUtils.closeCursor(cursor);
+        }
+    }
+
+    protected T retrieveEntityById(long id) {
+        Log.d(TAG, "retrieveEntityById(): " + id);
+        Cursor cursor = null;
+        try {
+            cursor = whereAreYouDb.query(getTableName(), getFieldNames(), createWhereCriteria(ID_FIELD_NAME, id), null, null, null, null);
+            return createEntityFromCursor(cursor);
         } finally {
             SQLiteUtils.closeCursor(cursor);
         }
@@ -104,15 +116,11 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected Cursor createCursor(String criteria, String[] selectionArgs, String orderBy) {
-        Log.d(TAG, "createCursor(): " + Thread.currentThread().getId() + " " + criteria);
-        Log.d(TAG, "------------createCursor(): " + Thread.currentThread().getId() + " " + criteria);
-        Log.d(TAG, "------------createCursor(): " + Thread.currentThread().getId() + " " + getTableName());
-        Log.d(TAG, "------------createCursor() selectionArgs: " + Thread.currentThread().getId() + " " + selectionArgs);
-        Log.d(TAG, "------------createCursor() orderBy: " + Thread.currentThread().getId() + " " + orderBy);
+        Log.d(TAG, "createCursor(): " + getTableName() + ", " + criteria);
+        Log.d(TAG, "------------createCursor(): " + getTableName() + ", " + criteria);
         try {
-            Log.d(TAG, "------------isOpen: " + Thread.currentThread().getId() + " " + whereAreYouDb.isOpen());
             Cursor c = whereAreYouDb.query(getTableName(), getFieldNames(), criteria, selectionArgs, null, null, orderBy);
-            Log.d(TAG, "------------createCursor count: " + Thread.currentThread().getId() + " " + c.getCount());
+            Log.d(TAG, "------------createCursor count: " + c.getCount());
             return c;
         } catch (Throwable t) {
             t.printStackTrace();
@@ -121,6 +129,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected String createWhereAndCriteria(ComparisonClause[] criteria) {
+        Log.d(TAG, "createWhereAndCriteria()");
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < criteria.length; i++) {
@@ -134,7 +143,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected List<T> createEntityListFromCursor(Cursor cursor) {
-        Log.d(TAG, "createEntityListFromCursor() " + Thread.currentThread().getId());
+        Log.d(TAG, "createEntityListFromCursor()");
         List<T> entityList = new ArrayList<T>();
 
         while (cursor.moveToNext()) {
@@ -147,7 +156,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     protected T createEntityFromCursor(Cursor cursor) {
-        Log.d(TAG, "createEntityFromCursor() " + Thread.currentThread().getId() );
+        Log.d(TAG, "createEntityFromCursor(): " + cursor.getCount());
         cursor.moveToFirst();
 
         if (cursor.isFirst()) {
