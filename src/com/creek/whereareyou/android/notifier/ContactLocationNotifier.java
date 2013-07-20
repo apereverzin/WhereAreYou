@@ -1,10 +1,8 @@
-package com.creek.whereareyou.android.services.email;
-
-import java.util.List;
+package com.creek.whereareyou.android.notifier;
 
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
-import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
+import com.creek.whereareyou.android.activity.map.MainMapActivity;
+import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,24 +27,24 @@ public class ContactLocationNotifier {
         this.ctx = _ctx;
     }
 
-    public void notifyUser(List<OwnerLocationDataMessage> messages) {
-        Log.d(TAG, "notifyUser: " + messages.size());
-        Log.d(TAG, "------notifyUser: " + messages.size());
+    public void notifyUser(ReceivedMessages messageCounts) {
+        Log.d(TAG, "notifyUser: " + messageCounts.getLocationResponsesCount());
+        Log.d(TAG, "------notifyUser: " + messageCounts.getLocationResponsesCount());
 
-        if(messages.size() > 0) {
-            displayNotification(messages);
+        if (messageCounts.hasMessages()) {
+            displayNotification(messageCounts);
         }
     }
 
-    private void displayNotification(List<OwnerLocationDataMessage> messages) {
+    private void displayNotification(ReceivedMessages receivedMessages) {
         NotificationManager notificationManager = (NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
         
         Notification notification = getNotification();
         
         CharSequence contentTitle = ctx.getString(R.string.notifications_contact_locations);  // message title
-        CharSequence contentText = ctx.getString(R.string.notifications_contact_locations_received) + ": " + messages.size();
-                                                                                                                                                          // text
-        Intent notificationIntent = new Intent(ctx, ContactsActivity.class);
+        CharSequence contentText = ctx.getString(R.string.notifications_contact_locations_received) + ": " + receivedMessages.getLocationResponsesCount(); // text
+        Intent notificationIntent = new Intent(ctx, MainMapActivity.class);
+        notificationIntent.putExtra(RECEIVED_LOCATIONS, receivedMessages.getLocationResponses());
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
         
         notification.setLatestEventInfo(ctx, contentTitle, contentText, contentIntent);

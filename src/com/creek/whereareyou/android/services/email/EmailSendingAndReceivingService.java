@@ -4,6 +4,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.creek.whereareyou.android.accountaccess.GoogleAccountProvider;
+import com.creek.whereareyou.android.notifier.ContactLocationNotifier;
+import com.creek.whereareyou.android.notifier.ReceivedMessages;
 import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.accounts.Account;
@@ -67,7 +69,11 @@ public class EmailSendingAndReceivingService extends Service {
                 
                 Log.d(TAG, "===================EmailSendingAndReceivingService receiving");
                 EmailReceiver emailReceiver = new EmailReceiver(emailSendingAndReceivingManager);
-                emailReceiver.receiveRequestsAndResponses();
+                ReceivedMessages messageCounts = emailReceiver.receiveRequestsAndResponses();
+                if (messageCounts.hasMessages()) {
+                    ContactLocationNotifier notifier = new ContactLocationNotifier(EmailSendingAndReceivingService.this);
+                    notifier.notifyUser(messageCounts);
+                }
             } catch(Throwable ex) {
                 ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
             }

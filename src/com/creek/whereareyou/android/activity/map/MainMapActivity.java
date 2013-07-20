@@ -29,6 +29,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
 
     private LocationProvider locationProvider;
 
+    public static final String RECEIVED_LOCATIONS = "received_locations";
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
     private static final int CONTACTS_TO_TRACE_MENU_ITEM = Menu.FIRST + 1;
     private static final int CONTACTS_TO_INFORM_MENU_ITEM = Menu.FIRST + 2;
@@ -46,6 +47,11 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            Log.i( "dd","Extra:" + extras.getString("item_id") );
+        }
+        
         setContentView(R.layout.map);
         MapView mapView = (MapView) findViewById(R.id.mapView);
         mapController = mapView.getController();

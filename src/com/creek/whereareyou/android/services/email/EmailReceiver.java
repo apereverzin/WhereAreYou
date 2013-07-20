@@ -8,6 +8,7 @@ import java.util.Set;
 import android.util.Log;
 
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
+import com.creek.whereareyou.android.notifier.ReceivedMessages;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
@@ -27,10 +28,12 @@ public class EmailReceiver {
         this.emailSendingAndReceivingManager = emailSendingAndReceivingManager;
     }
     
-    public void receiveRequestsAndResponses() throws TransformException, ServiceException {
+    public ReceivedMessages receiveRequestsAndResponses() throws TransformException, ServiceException {
         Log.d(TAG, "receiveRequestsAndResponses()");
         Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
         Log.d(TAG, "--------------receiveRequestsAndResponses: " + receivedMessages.size());
+        
+        ReceivedMessages messageCounts = new ReceivedMessages();
         if (receivedMessages.size() > 0) {
             List<GenericMessage> messagesToPersist = new ArrayList<GenericMessage>();
             List<ContactCompoundId> contactCompoundIdsToPersist = new ArrayList<ContactCompoundId>();
@@ -38,9 +41,10 @@ public class EmailReceiver {
             
             if (messagesToPersist.size() > 0) {
                 ReceivedMessagesPersistenceManager messagePersistenceManager = new ReceivedMessagesPersistenceManager();
-                messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist);
+                messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist, messageCounts);
             }
         }
+        return messageCounts;
     }
 
     private void retrieveContactDataForMessages(Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactCompoundIdsToPersist) {
