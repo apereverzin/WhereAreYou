@@ -2,8 +2,10 @@ package com.creek.whereareyou.android.activity.map;
 
 import android.location.Location;
 
+/**
+ * 
+ * @author Andrey Pereverzin
+ */
 public interface LocationAware {
-
-    public abstract void updateWithNewLocation(Location location);
-
+    void updateWithNewLocation(Location location);
 }

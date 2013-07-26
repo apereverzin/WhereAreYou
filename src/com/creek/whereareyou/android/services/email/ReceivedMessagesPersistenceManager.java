@@ -35,8 +35,9 @@ import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 public class ReceivedMessagesPersistenceManager {
     private static final String TAG = ReceivedMessagesPersistenceManager.class.getSimpleName();
 
-    public ReceivedMessages persistReceivedMessages(List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactDataToPersist, ReceivedMessages messageCounts) {
+    public ReceivedMessages persistReceivedMessages(List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactDataToPersist, ReceivedMessages receivedMessages) {
         Log.d(TAG, "persistReceivedMessages()");
+        Log.d(TAG, "--------------persistReceivedMessages()");
 
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
@@ -44,24 +45,29 @@ public class ReceivedMessagesPersistenceManager {
             ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
             LocationRepository locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
             
+            Log.d(TAG, "--------------messagesToPersist.size(): " + messagesToPersist.size());
             for (int i = 0; i < messagesToPersist.size(); i++) {
                 ContactCompoundId contactCompoundId = contactDataToPersist.get(i);
                 GenericMessage message = messagesToPersist.get(i);
 
+                Log.d(TAG, "--------------message: " + message);
                 if (message instanceof RequestMessage) {
+                    Log.d(TAG, "--------------RequestMessage: " + message);
                     persistReceivedContactRequest(contactRequestRepository, contactCompoundId, (RequestMessage) message);
-                    messageCounts.addRequest((RequestMessage) message);
+                    receivedMessages.addRequest((RequestMessage) message);
                 } else if (message instanceof ResponseMessage) {
+                    Log.d(TAG, "--------------ResponseMessage: " + message);
                     persistReceivedNormalContactResponse(contactResponseRepository, contactCompoundId, (ResponseMessage) message);
-                    messageCounts.addNormalResponse((ResponseMessage) message);
+                    receivedMessages.addNormalResponse((ResponseMessage) message);
                 } else if (message instanceof OwnerLocationDataMessage) {
+                    Log.d(TAG, "--------------OwnerLocationDataMessage: " + message);
                     persistReceivedLocationData(locationRepository, contactResponseRepository, contactCompoundId, (OwnerLocationDataMessage) message);
-                    messageCounts.addLocationResponse((OwnerLocationDataMessage) message);
+                    receivedMessages.addLocationResponse((OwnerLocationDataMessage) message);
                 }
                 Log.d(TAG, "--------------message persisted");
             }
             
-            return messageCounts;
+            return receivedMessages;
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
         }

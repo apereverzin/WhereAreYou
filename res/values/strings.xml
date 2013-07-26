@@ -16,12 +16,10 @@
     <string name="contacts">Contacts</string>
     <string name="allowed_location_requests">Allowed Location Requests</string>
     <string name="edit_contact">Edit Contact</string>
-    <string name="view_contact">View Contact</string>
     
     <!-- Map Activity Menu Items -->
-    <string name="menu_edit_email_account">Google account</string>
-    <string name="menu_contacts_to_inform">Contacts to Inform</string>
-    <string name="menu_contacts_to_trace">Contacts to Trace</string>
+    <string name="menu_edit_email_account">Google Account</string>
+    <string name="menu_view_contacts">View Contacts</string>
     
     <!-- Check Email Result -->
     <string name="check_email_result_title">Check Email</string>
@@ -37,22 +35,23 @@
     <string name="no_contacts">No contacts</string>
     
     <!-- Contact List Menu Items -->
-    <string name="menu_view_contact_details">View Details</string>
+    <string name="menu_edit_contact_details">Edit Details</string>
     <string name="menu_view_last_contact_location">View Last Location</string>
     <string name="menu_request_contact_location">Request Location</string>
     
     <!-- Edit Contact -->
     <string name="contact_display_name">Name</string>
     <string name="contact_email">email</string>
-    <string name="location_requests_allowed">Location Requests Allowed</string>
-    <string name="last_sent_location_request">Request Sent at</string>
-    <string name="last_received_location_response">Last Location at</string>
-    <string name="last_received_location_request">Request Received at</string>
-    <string name="last_sent_location_response">Location Sent at</string>
-    <string name="request_location">Request Location</string>
+    <string name="location_requests_allowance">Location Requests Allowed</string>
     
     <!-- Notifications -->
     <string name="notifications_contact_locations">Contact Locations</string>
     <string name="notifications_contact_locations_received">Contact locations received</string>
 
+    <string-array name="requests_allowances_array">
+        <item>Never</item>
+        <item>By Request</item>
+        <item>Restricted</item>
+        <item>Always</item>
+    </string-array>
 </resources>

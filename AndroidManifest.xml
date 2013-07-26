@@ -41,7 +41,7 @@
         <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountEditActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.account.CheckEmailResultActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.map.MainMapActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.contacts.ViewContactActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.contacts.EditContactActivity" />
         
         <service android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService">
             <intent-filter>

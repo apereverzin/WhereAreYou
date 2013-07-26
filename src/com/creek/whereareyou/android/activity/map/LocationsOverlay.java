@@ -2,7 +2,6 @@ package com.creek.whereareyou.android.activity.map;
 
 import android.graphics.Canvas;
 import android.location.Location;
-import android.util.Log;
 
 import com.creek.whereareyou.android.colors.AnnotatedLocationColors;
 import com.creek.whereareyou.android.colors.AnnotatedLocationImage;
@@ -18,8 +17,6 @@ import com.google.android.maps.Overlay;
  * @author Andrey Pereverzin
  */
 public class LocationsOverlay extends Overlay {
-    private static final String TAG = LocationsOverlay.class.getSimpleName();
-    
     private LocationImageFactory locationImageFactory = new LocationImageFactory();
     private AnnotatedLocationPainter painter = new AnnotatedLocationPainter();
 

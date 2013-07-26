@@ -12,11 +12,15 @@ import com.google.android.maps.GeoPoint;
  * 
  * @author Andrey Pereverzin
  */
-public class Util {
+public final class Util {
     private static final String DATE_FORMAT = "dd-MM-yyyy";
     private static final String DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm:ss";
     private static final MathContext DOUBLES_CONTEXT = new MathContext(2, RoundingMode.HALF_UP);
 
+    private Util() {
+        //
+    }
+    
     /** Radius of the Earth in meters */
     private static final double EARTH_RADIUS = 6371000;
 

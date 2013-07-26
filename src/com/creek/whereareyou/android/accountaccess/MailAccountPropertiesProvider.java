@@ -46,7 +46,7 @@ public class MailAccountPropertiesProvider {
     public Properties getMailProperties() throws IOException, CryptoException {
         Log.i(TAG, "getMailProperties");
         if (mailProperties == null) {
-            mailProperties = fileProvider.getPropertiesFromFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
+            mailProperties = fileProvider.retrievePropertiesFromFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
             if (mailProperties != null) {
                 decryptPassword(mailProperties);
             }

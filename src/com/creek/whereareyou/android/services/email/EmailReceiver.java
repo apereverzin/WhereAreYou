@@ -30,24 +30,26 @@ public class EmailReceiver {
     
     public ReceivedMessages receiveRequestsAndResponses() throws TransformException, ServiceException {
         Log.d(TAG, "receiveRequestsAndResponses()");
-        Set<GenericMessage> receivedMessages = emailSendingAndReceivingManager.receiveMessages();
-        Log.d(TAG, "--------------receiveRequestsAndResponses: " + receivedMessages.size());
+        Set<GenericMessage> allReceivedMessages = emailSendingAndReceivingManager.receiveMessages();
+        Log.d(TAG, "--------------receiveRequestsAndResponses: " + allReceivedMessages.size());
         
-        ReceivedMessages messageCounts = new ReceivedMessages();
-        if (receivedMessages.size() > 0) {
+        ReceivedMessages receivedMessages = new ReceivedMessages();
+        if (allReceivedMessages.size() > 0) {
             List<GenericMessage> messagesToPersist = new ArrayList<GenericMessage>();
             List<ContactCompoundId> contactCompoundIdsToPersist = new ArrayList<ContactCompoundId>();
-            retrieveContactDataForMessages(receivedMessages, messagesToPersist, contactCompoundIdsToPersist);
+            retrieveContactDataForMessages(allReceivedMessages, messagesToPersist, contactCompoundIdsToPersist);
             
             if (messagesToPersist.size() > 0) {
                 ReceivedMessagesPersistenceManager messagePersistenceManager = new ReceivedMessagesPersistenceManager();
-                messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist, messageCounts);
+                messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist, receivedMessages);
             }
         }
-        return messageCounts;
+        return receivedMessages;
     }
 
     private void retrieveContactDataForMessages(Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactCompoundIdsToPersist) {
+        Log.d(TAG, "retrieveContactDataForMessages()");
+        Log.d(TAG, "--------------retrieveContactDataForMessages()");
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
             for (GenericMessage message : receivedMessages) {

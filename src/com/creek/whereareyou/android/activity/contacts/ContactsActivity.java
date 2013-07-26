@@ -36,7 +36,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public class ContactsActivity extends ListActivity {
     private static final String TAG = ContactsActivity.class.getSimpleName();
 
-    private static final int VIEW_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
+    private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
     private static final int VIEW_CONTACT_LAST_LOCATION_MENU_ITEM = Menu.FIRST + 1;
     private static final int REQUEST_CONTACT_LOCATION_MENU_ITEM = Menu.FIRST + 2;
 
@@ -115,7 +115,7 @@ public class ContactsActivity extends ListActivity {
         Log.d(TAG, "onCreateContextMenu()");
         super.onCreateContextMenu(menu, v, menuInfo);
         final AndroidContact contactSelected = contactsDataList.get((int)((AdapterContextMenuInfo)menuInfo).id);
-        menu.add(0, VIEW_CONTACT_DETAILS_MENU_ITEM, 0, R.string.menu_view_contact_details);
+        menu.add(0, EDIT_CONTACT_DETAILS_MENU_ITEM, 0, R.string.menu_edit_contact_details);
         menu.add(0, VIEW_CONTACT_LAST_LOCATION_MENU_ITEM, 0, R.string.menu_view_last_contact_location);
         menu.add(0, REQUEST_CONTACT_LOCATION_MENU_ITEM, 0, R.string.menu_request_contact_location).setEnabled(contactSelected.getEmail() != null);
     }
@@ -127,10 +127,10 @@ public class ContactsActivity extends ListActivity {
         final Bundle bundle = new Bundle();
         bundle.putSerializable(CONTACT_SELECTED, contactSelected);
         switch (item.getItemId()) {
-        case VIEW_CONTACT_DETAILS_MENU_ITEM:
+        case EDIT_CONTACT_DETAILS_MENU_ITEM:
             try {
-                Log.d(TAG, "VIEW_CONTACT_DETAILS_MENU_ITEM: " + contactSelected.getId());
-                Intent intent = new Intent(ContactsActivity.this, ViewContactActivity.class);
+                Log.d(TAG, "EDIT_CONTACT_DETAILS_MENU_ITEM: " + contactSelected.getId());
+                Intent intent = new Intent(ContactsActivity.this, EditContactActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 return true;

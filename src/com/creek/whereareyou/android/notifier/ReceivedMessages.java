@@ -1,6 +1,7 @@
 package com.creek.whereareyou.android.notifier;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 import com.creek.whereareyoumodel.message.RequestMessage;
@@ -11,9 +12,9 @@ import com.creek.whereareyoumodel.message.ResponseMessage;
  * @author Andrey Pereverzin
  */
 public class ReceivedMessages {
-    private ArrayList<RequestMessage> requests = new ArrayList<RequestMessage>();
-    private ArrayList<ResponseMessage> normalResponses = new ArrayList<ResponseMessage>();
-    private ArrayList<OwnerLocationDataMessage> locationResponses = new ArrayList<OwnerLocationDataMessage>();
+    private List<RequestMessage> requests = new ArrayList<RequestMessage>();
+    private List<ResponseMessage> normalResponses = new ArrayList<ResponseMessage>();
+    private List<OwnerLocationDataMessage> locationResponses = new ArrayList<OwnerLocationDataMessage>();
     private boolean hasMessages = false;
 
     public int getRequestsCount() {
@@ -25,7 +26,7 @@ public class ReceivedMessages {
         requests.add(requestMessage);
     }
 
-    public ArrayList<RequestMessage> getRequests() {
+    public List<RequestMessage> getRequests() {
         return requests;
     }
 
@@ -39,7 +40,7 @@ public class ReceivedMessages {
         normalResponses.add(responseMessage);
     }
 
-    public ArrayList<ResponseMessage> getNormalResponses() {
+    public List<ResponseMessage> getNormalResponses() {
         return normalResponses;
     }
 
@@ -52,7 +53,7 @@ public class ReceivedMessages {
         locationResponses.add(locationResponse);
     }
 
-    public ArrayList<OwnerLocationDataMessage> getLocationResponses() {
+    public List<OwnerLocationDataMessage> getLocationResponses() {
         return locationResponses;
     }
 

@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import android.os.Environment;
@@ -25,7 +27,7 @@ public class FileProvider {
         return new File(getFullFilePath(filePath));
     }
     
-    public Properties getPropertiesFromFile(String fileName) throws IOException {
+    public Properties retrievePropertiesFromFile(String fileName) throws IOException {
         File f = getFile(fileName);
         if (f.exists()) {
             Properties properties = new Properties();
@@ -42,7 +44,7 @@ public class FileProvider {
         props.store(new FileOutputStream(f), "");
     }
     
-    public String getStringFromFile(String fileName) throws IOException {
+    public String retrieveStringFromFile(String fileName) throws IOException {
         File f = getFile(fileName);
         if(!f.exists()) {
             return "";
@@ -61,13 +63,32 @@ public class FileProvider {
         }
     }
     
-    public void persistStringToFile(String fileName, String value) throws IOException {
+    public List<String> retrieveStringsFromFile(String fileName) throws IOException {
+        List<String> strings = new ArrayList<String>();
         File f = getFile(fileName);
-        if(f.exists()) {
-            f.delete();
+        if(!f.exists()) {
+            return strings;
         }
         
-        f.createNewFile();
+        FileReader fr = null;
+        BufferedReader br = null;
+        try {
+            fr = new FileReader(f);
+            br = new BufferedReader(fr);
+            String s;
+            while((s = br.readLine()) != null) {
+                strings.add(s);
+            }
+            return strings;
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
+    }
+    
+    public void persistStringToFile(String fileName, String value) throws IOException {
+        File f = getNewFile(fileName);
         
         PrintWriter pw = null;
         try {
@@ -78,5 +99,37 @@ public class FileProvider {
                 pw.close();
             }
         }
+    }
+    
+    public void persistStringsToFile(String fileName, List<String> strings) throws IOException {
+        File f = getNewFile(fileName);
+
+        if (strings.size() == 0) {
+            return;
+        }
+        
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(f);
+            for (int i = 0; i < strings.size(); i++) {
+                String s = strings.get(i);
+                pw.write(s + "\n");
+            }
+        } finally {
+            if(pw != null) {
+                pw.close();
+            }
+        }
+    }
+    
+    private File getNewFile(String fileName) throws IOException {
+        File f = getFile(fileName);
+        if(f.exists()) {
+            f.delete();
+        }
+        
+        f.createNewFile();
+        
+        return f;
     }
 }

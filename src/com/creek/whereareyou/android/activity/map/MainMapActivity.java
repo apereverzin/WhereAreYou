@@ -13,6 +13,8 @@ import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
+import com.creek.whereareyou.android.util.DataConversionUtil;
+import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -31,8 +33,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
 
     public static final String RECEIVED_LOCATIONS = "received_locations";
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int CONTACTS_TO_TRACE_MENU_ITEM = Menu.FIRST + 1;
-    private static final int CONTACTS_TO_INFORM_MENU_ITEM = Menu.FIRST + 2;
+    private static final int VIEW_CONTACTS_MENU_ITEM = Menu.FIRST + 1;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -46,11 +47,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Bundle extras = getIntent().getExtras();
-        if(extras != null){
-            Log.i( "dd","Extra:" + extras.getString("item_id") );
-        }
+        Log.d(TAG, "onCreate()");
         
         setContentView(R.layout.map);
         MapView mapView = (MapView) findViewById(R.id.mapView);
@@ -64,10 +61,29 @@ public class MainMapActivity extends MapActivity implements LocationAware {
         overlays.add(locationsOverlay);
         mapView.postInvalidate();
         
-        locationProvider = new LocationProvider();
+        //locationProvider = new LocationProvider();
 
-        locationProvider.initiateLocationUpdates(this);
-        locationProvider.requestLocationUpdates(this);
+        //locationProvider.initiateLocationUpdates(this);
+        //locationProvider.requestLocationUpdates(this);
+
+        Bundle extras = getIntent().getExtras();
+        Log.d(TAG, "++++++++++++++++++++1");
+        if (extras != null) {
+            @SuppressWarnings("unchecked")
+            List<OwnerLocationDataMessage> locationResponses = (List<OwnerLocationDataMessage>)extras.get(RECEIVED_LOCATIONS);
+            Log.d(TAG, "++++++++++++++++++++2: " + locationResponses.size());
+            for (int i = 0; i < locationResponses.size(); i++) {
+                OwnerLocationDataMessage locationResponse = locationResponses.get(i);
+                Log.d(TAG, "++++++++++++++++++++: " + locationResponse);
+            }
+            if (locationResponses.size() > 0) {
+                OwnerLocationDataMessage locationResponse = locationResponses.get(0);
+                Location location = DataConversionUtil.getLocationFromLocationResponse(locationResponse);
+                
+                updateWithNewLocation(location);
+            }
+        }
+        Log.d(TAG, "++++++++++++++++++++3");
     }
 
     @Override
@@ -75,8 +91,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
         Log.i(TAG, "onCreateOptionsMenu() called");
 
         menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.menu_edit_email_account);
-        menu.add(0, CONTACTS_TO_INFORM_MENU_ITEM, 0, R.string.menu_contacts_to_inform);
-        menu.add(0, CONTACTS_TO_TRACE_MENU_ITEM, 0, R.string.menu_contacts_to_trace);
+        menu.add(0, VIEW_CONTACTS_MENU_ITEM, 0, R.string.menu_view_contacts);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -88,10 +103,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
             Intent intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
             startActivity(intent);
             return true;
-        case CONTACTS_TO_TRACE_MENU_ITEM:
-            startContactsActivity();
-            return true;
-        case CONTACTS_TO_INFORM_MENU_ITEM:
+        case VIEW_CONTACTS_MENU_ITEM:
             startContactsActivity();
             return true;
         default:
@@ -101,13 +113,19 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     
     @Override
     public void onDestroy() {
-        locationProvider.stopLocationUpdates(this);
+        if (locationProvider != null) {
+            locationProvider.stopLocationUpdates(this);
+        }
         super.onDestroy();
     }
 
     @Override
     public void updateWithNewLocation(Location location) {
+        Log.d(TAG, "updateWithNewLocation()");
+        Log.d(TAG, "------------updateWithNewLocation()");
         if (location != null) {
+            Log.d(TAG, "updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
+            Log.d(TAG, "------------updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
             locationsOverlay.setLocation(location);
             Double geoLat = location.getLatitude() * 1E6;
             Double geoLng = location.getLongitude() * 1E6;

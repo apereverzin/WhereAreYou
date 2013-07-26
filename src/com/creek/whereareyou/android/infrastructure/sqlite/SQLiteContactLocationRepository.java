@@ -149,12 +149,4 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
     protected final LocationData createEntityInstance() {
         return new LocationData();
     }
-    
-    private LocationData getContactLocationDataFromCursor(Cursor contactLocationDataCursor) {
-        if (contactLocationDataCursor != null && contactLocationDataCursor.getCount() > 0) {
-            contactLocationDataCursor.moveToFirst();
-            return createEntityFromCursor(contactLocationDataCursor);
-        }
-        return null;
-    }
 }

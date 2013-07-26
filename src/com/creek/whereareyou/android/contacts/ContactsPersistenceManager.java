@@ -81,10 +81,10 @@ public class ContactsPersistenceManager {
             SQLiteRepositoryManager.getInstance().openDatabase();
             ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
 
-            List<ContactData> contacts = contactDataRepository.getAllContactData();
+            List<ContactData> contactDataList = contactDataRepository.getAllContactData();
             Map<String, AndroidContact> androidContacts = new HashMap<String, AndroidContact>();
-            for (int i = 0; i < contacts.size(); i++) {
-                ContactData contact = contacts.get(i);
+            for (int i = 0; i < contactDataList.size(); i++) {
+                ContactData contact = contactDataList.get(i);
                 AndroidContact androidContact = new AndroidContact(contact);
                 androidContacts.put(androidContact.getId(), androidContact);
             }
@@ -100,20 +100,20 @@ public class ContactsPersistenceManager {
         for (int i = 0; i < allContacts.size(); i++) {
             AndroidContact androidContact = allContacts.get(i);
             AndroidContact persistedContact = persistedContacts.get(androidContact.getId());
-            combineContacts(androidContact, persistedContact);
+            if (persistedContact != null) {
+                combineContacts(androidContact, persistedContact);
+            }
         }
 
         return allContacts;
     }
 
     private void combineContacts(AndroidContact androidContact, AndroidContact persistedContact) {
-        if (persistedContact != null) {
-            androidContact.setEmail(persistedContact.getEmail());
-            androidContact.setRequestAllowed(persistedContact.isRequestAllowed());
-        }
+        androidContact.setEmail(persistedContact.getEmail());
+        androidContact.setRequestAllowed(persistedContact.isRequestAllowed());
         
         // TODO hack
-        androidContact.setEmail("andrey.pereverzin@gmail.com");
+        //androidContact.setEmail("andrey.pereverzin@gmail.com");
     }
     
     private ContactData createContactData(AndroidContact androidContact) {
@@ -121,7 +121,6 @@ public class ContactsPersistenceManager {
         
         ContactCompoundId contactCompoundId = new ContactCompoundId(androidContact.getId(), androidContact.getEmail());
         contactData.setContactCompoundId(contactCompoundId);
-        contactData.setDisplayName(androidContact.getDisplayName());
         return contactData;
     }
 }

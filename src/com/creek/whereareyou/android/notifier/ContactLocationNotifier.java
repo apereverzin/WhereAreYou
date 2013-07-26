@@ -1,7 +1,11 @@
 package com.creek.whereareyou.android.notifier;
 
+import java.util.ArrayList;
+
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.map.MainMapActivity;
+import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
+
 import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
 
 import android.app.Notification;
@@ -27,12 +31,12 @@ public class ContactLocationNotifier {
         this.ctx = _ctx;
     }
 
-    public void notifyUser(ReceivedMessages messageCounts) {
-        Log.d(TAG, "notifyUser: " + messageCounts.getLocationResponsesCount());
-        Log.d(TAG, "------notifyUser: " + messageCounts.getLocationResponsesCount());
+    public void notifyUser(ReceivedMessages receivedMessages) {
+        Log.d(TAG, "notifyUser: " + receivedMessages.getLocationResponsesCount());
+        Log.d(TAG, "------notifyUser: " + receivedMessages.getRequestsCount() + " " + receivedMessages.getNormalResponsesCount() + " " + receivedMessages.getLocationResponsesCount());
 
-        if (messageCounts.hasMessages()) {
-            displayNotification(messageCounts);
+        if (receivedMessages.getLocationResponsesCount() > 0) {
+            displayNotification(receivedMessages);
         }
     }
 
@@ -44,7 +48,7 @@ public class ContactLocationNotifier {
         CharSequence contentTitle = ctx.getString(R.string.notifications_contact_locations);  // message title
         CharSequence contentText = ctx.getString(R.string.notifications_contact_locations_received) + ": " + receivedMessages.getLocationResponsesCount(); // text
         Intent notificationIntent = new Intent(ctx, MainMapActivity.class);
-        notificationIntent.putExtra(RECEIVED_LOCATIONS, receivedMessages.getLocationResponses());
+        notificationIntent.putExtra(RECEIVED_LOCATIONS, new ArrayList<OwnerLocationDataMessage>(receivedMessages.getLocationResponses()));
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
         
         notification.setLatestEventInfo(ctx, contentTitle, contentText, contentIntent);

@@ -15,8 +15,12 @@ import android.util.Log;
  * @author Andrey Pereverzin
  *
  */
-public class ActivityUtil {
+public final class ActivityUtil {
     private static final String TITLE_ENTRIES_SEPARATOR = "> ";
+    
+    private ActivityUtil() {
+        //
+    }
     
     public static void showException(Context parent, Throwable ex) {
         if(ex != null) {

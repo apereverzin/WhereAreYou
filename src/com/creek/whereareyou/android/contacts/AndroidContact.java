@@ -21,7 +21,6 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
 
     public AndroidContact(ContactData contactData) {
         this.id = contactData.getContactCompoundId().getContactId();
-        this.displayName = contactData.getDisplayName();
         this.email = contactData.getContactCompoundId().getContactEmail();
     }
 

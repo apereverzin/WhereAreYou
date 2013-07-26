@@ -6,11 +6,11 @@ import java.util.Map;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.domain.ContactData;
+import com.creek.whereareyoumodel.domain.RequestAllowance;
 import com.creek.whereareyoumodel.repository.ContactDataRepository;
 
 /**
@@ -20,17 +20,17 @@ import com.creek.whereareyoumodel.repository.ContactDataRepository;
 public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<ContactData> implements ContactDataRepository {
     private static final String TAG = SQLiteContactDataRepository.class.getSimpleName();
     
-    static final String DISPLAY_NAME_FIELD_NAME = "display_name";
-    static final String REQUEST_ALLOWED_FIELD_NAME = "allowed";
+    static final String REQUEST_ALLOWANCE_FIELD_NAME = "allowance";
+    static final String ALLOWANCE_DATE_FIELD_NAME = "allowance_date";
 
     private final String[] fieldNames = new String[] {
-            DISPLAY_NAME_FIELD_NAME,
-            REQUEST_ALLOWED_FIELD_NAME
+            REQUEST_ALLOWANCE_FIELD_NAME,
+            ALLOWANCE_DATE_FIELD_NAME
         };
 
     private final String[] fieldTypes = new String[] {
-            "text not null", 
-            "int not null"
+            "int not null", 
+            "real not null"
         };
 
     @Override
@@ -81,8 +81,8 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     protected final ContentValues getContentValues(ContactData contactData) {
         Log.d(TAG, "getContentValues()");
         ContentValues values = super.getContentValues(contactData);
-        values.put(DISPLAY_NAME_FIELD_NAME, contactData.getDisplayName());
-        values.put(REQUEST_ALLOWED_FIELD_NAME, contactData.isRequestAllowed() ? INT_TRUE : INT_FALSE);
+        values.put(REQUEST_ALLOWANCE_FIELD_NAME, contactData.getRequestAllowance().getCode());
+        values.put(ALLOWANCE_DATE_FIELD_NAME, contactData.getAllowanceDate());
         return values;
     }
     
@@ -90,8 +90,8 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
     protected final ContactData createEntity(Cursor cursor) {
         ContactData contactData = super.createEntity(cursor);
         int numberOfFields = super.getNumberOfFields();
-        contactData.setDisplayName(cursor.getString(numberOfFields++));
-        contactData.setRequestAllowed(cursor.getInt(numberOfFields) == INT_TRUE);
+        contactData.setRequestAllowance(RequestAllowance.getRequestAllowance(cursor.getInt(numberOfFields++)));
+        contactData.setAllowanceDate(cursor.getLong(numberOfFields++));
         Log.d(TAG, "createEntity(): " + contactData);
         return contactData;
     }
