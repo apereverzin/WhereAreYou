@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.SimpleAdapter;
 
 /**
  * List of contacts.
@@ -45,7 +46,7 @@ public class ContactsActivity extends ListActivity {
 
     static final String CONTACT_SELECTED = "CONTACT_SELECTED";
     
-    private List<AndroidContact> contactsDataList;
+    private List<AndroidContact> androidContactList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,12 +55,12 @@ public class ContactsActivity extends ListActivity {
         
         ActivityUtil.setActivityTitle(this, R.string.app_name, R.string.contacts, R.string.allowed_location_requests);
 
-        contactsDataList = getContactsList();
+        androidContactList = getAndroidContacts();
 
         setContentView(R.layout.contacts_list);
 
         // final List<Map<String, Object>> contactsList =
-        // createContactsList(contactsDataList);
+        // createContactsList(androidContactList);
         // SimpleAdapter contactsListAdapter =
         // new SimpleAdapter(getApplicationContext(), contactsList,
         // R.layout.contact_row, new String[] { CONTACT_NAME }, new int[] {
@@ -70,8 +71,8 @@ public class ContactsActivity extends ListActivity {
         final List<CheckBoxContact> contactsList = new ArrayList<CheckBoxContact>();
         final List<CheckBoxContact> uncheckedContactsList = new ArrayList<CheckBoxContact>();
 
-        for (AndroidContact contact : contactsDataList) {
-            CheckBoxContact checkBoxContact = new CheckBoxContact(contact);
+        for (AndroidContact androidContact : androidContactList) {
+            CheckBoxContact checkBoxContact = new CheckBoxContact(androidContact);
             if (checkBoxContact.isSelected()) {
                 contactsList.add(checkBoxContact);
             } else {
@@ -100,7 +101,8 @@ public class ContactsActivity extends ListActivity {
     @Override
     public void onResume() {
         Log.d(TAG, "onResume()");
-        //((SimpleAdapter) getListAdapter()).notifyDataSetChanged();
+        Log.d(TAG, "-----------------------onResume()");
+        ((ContactListCheckBoxAdapter) getListAdapter()).notifyDataSetChanged();
         super.onResume();
     }
 
@@ -114,25 +116,26 @@ public class ContactsActivity extends ListActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         Log.d(TAG, "onCreateContextMenu()");
         super.onCreateContextMenu(menu, v, menuInfo);
-        final AndroidContact contactSelected = contactsDataList.get((int)((AdapterContextMenuInfo)menuInfo).id);
+        final AndroidContact contactSelected = androidContactList.get((int)((AdapterContextMenuInfo)menuInfo).id);
         menu.add(0, EDIT_CONTACT_DETAILS_MENU_ITEM, 0, R.string.menu_edit_contact_details);
         menu.add(0, VIEW_CONTACT_LAST_LOCATION_MENU_ITEM, 0, R.string.menu_view_last_contact_location);
-        menu.add(0, REQUEST_CONTACT_LOCATION_MENU_ITEM, 0, R.string.menu_request_contact_location).setEnabled(contactSelected.getEmail() != null);
+        menu.add(0, REQUEST_CONTACT_LOCATION_MENU_ITEM, 0, R.string.menu_request_contact_location).setEnabled(isContactEmailDefined(contactSelected));
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final AndroidContact contactSelected = contactsDataList.get((int) info.id);
+        final AndroidContact androidContact = androidContactList.get((int) info.id);
         final Bundle bundle = new Bundle();
-        bundle.putSerializable(CONTACT_SELECTED, contactSelected);
+        bundle.putSerializable(CONTACT_SELECTED, androidContact);
         switch (item.getItemId()) {
         case EDIT_CONTACT_DETAILS_MENU_ITEM:
             try {
-                Log.d(TAG, "EDIT_CONTACT_DETAILS_MENU_ITEM: " + contactSelected.getId());
+                Log.d(TAG, "EDIT_CONTACT_DETAILS_MENU_ITEM: " + androidContact.getContactId());
                 Intent intent = new Intent(ContactsActivity.this, EditContactActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                startActivityForResult(intent, requestCode);
                 return true;
             } finally {
                 SQLiteRepositoryManager.getInstance().closeDatabase();
@@ -148,7 +151,7 @@ public class ContactsActivity extends ListActivity {
         case REQUEST_CONTACT_LOCATION_MENU_ITEM:
             Log.d(TAG, "REQUEST_CONTACT_LOCATION_MENU_ITEM");
             try {
-                ContactRequest contactRequest = RequestResponseFactory.getInstance().createContactLocationRequest(contactSelected);
+                ContactRequest contactRequest = RequestResponseFactory.getInstance().createContactLocationRequest(androidContact);
 
                 SQLiteRepositoryManager.getInstance().openDatabase();
                 ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
@@ -184,13 +187,16 @@ public class ContactsActivity extends ListActivity {
         return contactsList;
     }
 
-    private List<AndroidContact> getContactsList() {
+    private List<AndroidContact> getAndroidContacts() {
         try {
             return ContactsPersistenceManager.getInstance().retrieveContacts(this);
         } catch (IOException ex) {
             ActivityUtil.showException(ContactsActivity.this, ex);
             return new ArrayList<AndroidContact>();
         }
-
+    }
+    
+    private boolean isContactEmailDefined(AndroidContact androidContact) {
+        return androidContact.getContactData().getContactEmail() != null && !"".equals(androidContact.getContactData().getContactEmail());
     }
 }

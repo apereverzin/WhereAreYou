@@ -51,7 +51,6 @@
     <string-array name="requests_allowances_array">
         <item>Never</item>
         <item>By Request</item>
-        <item>Restricted</item>
         <item>Always</item>
     </string-array>
 </resources>

@@ -30,7 +30,7 @@ public class SaveButtonListener implements View.OnClickListener {
         Map<String, AndroidContact> contacts = new HashMap<String, AndroidContact>();
         for(CheckBoxContact checkBoxContact : contactsList) {
             if(checkBoxContact.isSelected()) {
-                contacts.put(checkBoxContact.getContact().getId(), checkBoxContact.getContact());
+                contacts.put(checkBoxContact.getContact().getContactId(), checkBoxContact.getContact());
             }
         }
         

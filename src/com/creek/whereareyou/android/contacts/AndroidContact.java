@@ -10,18 +10,25 @@ import com.creek.whereareyoumodel.domain.ContactData;
  */
 @SuppressWarnings("serial")
 public class AndroidContact implements Comparable<AndroidContact>, Serializable {
-    private final String id;
+    private final String contactId;
+    private String contactEmail;
     private String displayName;
-    private String email;
-    private boolean requestAllowed;
+    private ContactDataDTO contactData;
 
-    public AndroidContact(String id) {
-        this.id = id;
+    public AndroidContact(String _contactId) {
+        this.contactId = _contactId;
     }
-
-    public AndroidContact(ContactData contactData) {
-        this.id = contactData.getContactCompoundId().getContactId();
-        this.email = contactData.getContactCompoundId().getContactEmail();
+    
+    public String getContactId() {
+        return contactId;
+    }
+    
+    public String getContactEmail() {
+        return contactEmail;
+    }
+    
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 
     public String getDisplayName() {
@@ -31,32 +38,20 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public String getId() {
-        return id;
+
+    public ContactDataDTO getContactData() {
+        return contactData;
     }
 
-    public boolean isRequestAllowed() {
-        return requestAllowed;
-    }
-
-    public void setRequestAllowed(boolean requestAllowed) {
-        this.requestAllowed = requestAllowed;
+    public void setContactData(ContactDataDTO contactData) {
+        this.contactData = contactData;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((contactId == null) ? 0 : contactId.hashCode());
         return result;
     }
 
@@ -69,10 +64,10 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
         if (getClass() != obj.getClass())
             return false;
         AndroidContact other = (AndroidContact) obj;
-        if (id == null) {
-            if (other.id != null)
+        if (contactId == null) {
+            if (other.contactId != null)
                 return false;
-        } else if (!id.equals(other.id))
+        } else if (!contactId.equals(other.contactId))
             return false;
         return true;
     }
@@ -84,6 +79,6 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
 
     @Override
     public String toString() {
-        return "AndroidContact [id=" + id + ", displayName=" + displayName + ", email=" + email + ", requestAllowed=" + requestAllowed + "]";
+        return "AndroidContact [contactId=" + contactId + ", contactEmail=" + contactEmail + ", displayName=" + displayName + ", contactData=" + contactData + "]";
     }
 }

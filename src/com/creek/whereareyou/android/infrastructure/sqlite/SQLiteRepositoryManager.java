@@ -32,14 +32,13 @@ public class SQLiteRepositoryManager {
     private SQLiteContactRequestRepository contactRequestRepository;
     private SQLiteContactResponseRepository contactResponseRepository;
     private SQLiteContactLocationRepository locationRepository;
-    private DBFileManager dbFileManager;
 
     private static final String DATABASE_PATH = "/data/data/com.creek.whereareyou/databases/";
     private static final String DATABASE_NAME = "whereareyou.db";
     private static final String DROP_TABLE = "drop table if exists %s";
 
     private SQLiteRepositoryManager() {
-        dbFileManager = new DBFileManager();
+        //
     }
 
     public static SQLiteRepositoryManager getInstance() {
@@ -121,12 +120,16 @@ public class SQLiteRepositoryManager {
             whereAreYouDb.execSQL(((SQLiteContactRequestRepository) contactRequestRepository).getCreateTableCommand());
             whereAreYouDb.execSQL(((SQLiteContactResponseRepository) contactResponseRepository).getCreateTableCommand());
             whereAreYouDb.execSQL(((SQLiteContactLocationRepository) locationRepository).getCreateTableCommand());
+            contactDataRepository.setDatabase(whereAreYouDb);
+            contactRequestRepository.setDatabase(whereAreYouDb);
+            contactResponseRepository.setDatabase(whereAreYouDb);
+            locationRepository.setDatabase(whereAreYouDb);
             Log.d(TAG, "===================Database created");
             
             persistReservedData();
 
             // TODO remove this call
-            createContactData();
+            //createContactData();
         }
         
         //closeDatabase();

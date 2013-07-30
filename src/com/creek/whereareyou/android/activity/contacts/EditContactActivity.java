@@ -1,15 +1,13 @@
 package com.creek.whereareyou.android.activity.contacts;
 
-import java.io.FilePermission;
 import java.util.List;
 
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.FileProvider;
 import com.creek.whereareyou.android.contacts.AndroidContact;
-import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
+import com.creek.whereareyou.android.contacts.ContactDataDTO;
+import com.creek.whereareyou.android.infrastructure.sqlite.DBFileManager;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.RequestAllowance;
 import static com.creek.whereareyoumodel.domain.RequestAllowance.NEVER;
@@ -37,7 +35,8 @@ public class EditContactActivity extends Activity implements OnItemSelectedListe
     private EditText emailText;
     private Spinner locationRequestsAllowanceSpinner;
     private Button saveButton;
-    private ContactData contactData;
+    private AndroidContact androidContact;
+    private ContactDataDTO contactDataDto;
     
     @Override
     protected void onCreate(Bundle icicle) {
@@ -50,35 +49,38 @@ public class EditContactActivity extends Activity implements OnItemSelectedListe
 
         Bundle extras = getIntent().getExtras();
 
-        final AndroidContact contact = (AndroidContact) extras.get(ContactsActivity.CONTACT_SELECTED);
-        
-        contactData = ContactsPersistenceManager.getInstance().retrieveContactDataByContactId(contact.getId());
-        contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByContactId(contact.getId());
-        Log.d(TAG, "-----------contactData1 " + contactData);
-        if (contactData == null) {
-            contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contact.getEmail());
-            Log.d(TAG, "-----------contactData2 " + contactData);
-            if (contactData == null) {
-                contactData = new ContactData();
-                ContactCompoundId contactCompoundId = new ContactCompoundId(contact.getId(), contact.getEmail());
-                contactData.setContactCompoundId(contactCompoundId);
-                contactData.setRequestAllowance(NEVER);
-                Log.d(TAG, "-----------contactData3 " + contactData);
-            }
+        androidContact = (AndroidContact) extras.get(ContactsActivity.CONTACT_SELECTED);
+        Log.d(TAG, "-----------androidContact: " + androidContact);
+        contactDataDto = androidContact.getContactData();
+        if (contactDataDto == null) {
+            contactDataDto = new ContactDataDTO(androidContact.getContactId());
+            contactDataDto.setId(-1L);
+            contactDataDto.setContactEmail(androidContact.getContactEmail());
+            contactDataDto.setRequestAllowanceCode(NEVER.getCode());
+            contactDataDto.setAllowanceDate(0L);
         }
         
-        Log.d(TAG, "onCreate() " + contact);
-        Log.d(TAG, "-----------contact " + contact);
-        Log.d(TAG, "-----------contactData " + contactData);
+        Log.d(TAG, "onCreate() " + androidContact);
 
-        displayNameText.setText(contact.getDisplayName());
-        emailText.setText(contact.getEmail());
+        displayNameText.setText(androidContact.getDisplayName());
+        emailText.setText(androidContact.getContactData().getContactEmail());
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----------save() " + contactData);
-                SQLiteRepositoryManager.getInstance().getContactDataRepository().update(contactData);
+                String email = emailText.getText().toString();
+                Log.d(TAG, "-----------email: " + email);
+                contactDataDto.setContactEmail(email);
+                ContactData contactData = contactDataDto.toContactData();
+                Log.d(TAG, "-----------contactData: " + contactData);
+                if (contactData.getId() == -1L) {
+                    contactData = (ContactData) SQLiteRepositoryManager.getInstance().getContactDataRepository().create(contactData);
+                    Log.d(TAG, "-----------create() " + contactData);
+                } else {
+                    SQLiteRepositoryManager.getInstance().getContactDataRepository().update(contactData);
+                    Log.d(TAG, "-----------update() " + contactData);
+                }
                 List<ContactData> contactDataList = SQLiteRepositoryManager.getInstance().getContactDataRepository().getAllContactData();
-                //FileProvider
+                DBFileManager dbFileManager = new DBFileManager();
+                dbFileManager.reserveContactData(contactDataList);
                 setResult(RESULT_OK);
                 finish();
             }
@@ -86,7 +88,7 @@ public class EditContactActivity extends Activity implements OnItemSelectedListe
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.requests_allowances_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         locationRequestsAllowanceSpinner.setAdapter(adapter);
-        locationRequestsAllowanceSpinner.setSelection(contactData.getRequestAllowance().getCode());
+        locationRequestsAllowanceSpinner.setSelection(contactDataDto.getRequestAllowanceCode());
         locationRequestsAllowanceSpinner.setOnItemSelectedListener(this);
 
         StringBuilder title = ActivityUtil.buildActivityTitle(this, R.string.app_name, R.string.edit_contact);
@@ -96,8 +98,8 @@ public class EditContactActivity extends Activity implements OnItemSelectedListe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
         Log.d(TAG, "-----------pos " + pos);
-        contactData.setRequestAllowance(RequestAllowance.values()[pos]);
-        Log.d(TAG, "-----------onItemSelected " + contactData);
+        contactDataDto.setRequestAllowanceCode(RequestAllowance.values()[pos].getCode());
+        Log.d(TAG, "-----------onItemSelected " + contactDataDto);
     }
 
     @Override

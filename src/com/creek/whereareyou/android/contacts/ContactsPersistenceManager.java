@@ -35,91 +35,58 @@ public class ContactsPersistenceManager {
     public void persistContacts(Map<String, AndroidContact> androidContacts) throws IOException {
         Log.d(TAG, "persistContacts()");
         
-        try {
-            SQLiteRepositoryManager.getInstance().openDatabase();
-            ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
+        ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
 
-            for (String contactId : androidContacts.keySet()) {
-                ContactData contact = contactDataRepository.getContactDataByContactId(contactId);
-                if (contact == null) {
-                    AndroidContact androidContact = androidContacts.get(contactId);
-                    contact = createContactData(androidContact);
-                    contactDataRepository.create(contact);
-                } else {
-                    contactDataRepository.update(contact);
-                }
+        for (String contactId : androidContacts.keySet()) {
+            ContactData contact = contactDataRepository.getContactDataByContactId(contactId);
+            if (contact == null) {
+                AndroidContact androidContact = androidContacts.get(contactId);
+                contact = createContactData(androidContact);
+                contactDataRepository.create(contact);
+            } else {
+                contactDataRepository.update(contact);
             }
-        } finally {
-            SQLiteRepositoryManager.getInstance().closeDatabase();
-        }
-    }
-
-    public ContactData retrieveContactDataByContactId(String contactId) {
-        Log.d(TAG, "retrieveContactDataByContactId(): " + contactId);
-        
-        try {
-            SQLiteRepositoryManager.getInstance().openDatabase();
-            ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
-
-            return contactDataRepository.getContactDataByContactId(contactId);
-        } finally {
-            SQLiteRepositoryManager.getInstance().closeDatabase();
         }
     }
     
     public List<AndroidContact> retrieveContacts(Context ctx) throws IOException {
         Log.d(TAG, "retrieveContacts()");
         
-        Map<String, AndroidContact> existingContacts = retrievePersistedContacts();
+        Map<String, ContactData> existingContacts = retrievePersistedContacts();
         return combineContactsLists(ctx, existingContacts);
     }
 
-    private Map<String, AndroidContact> retrievePersistedContacts() throws IOException {
+    private Map<String, ContactData> retrievePersistedContacts() throws IOException {
         Log.d(TAG, "retrievePersistedContacts()");
         
-        try {
-            SQLiteRepositoryManager.getInstance().openDatabase();
             ContactDataRepository contactDataRepository = SQLiteRepositoryManager.getInstance().getContactDataRepository();
 
             List<ContactData> contactDataList = contactDataRepository.getAllContactData();
-            Map<String, AndroidContact> androidContacts = new HashMap<String, AndroidContact>();
+            Map<String, ContactData> contactDataMap = new HashMap<String, ContactData>();
             for (int i = 0; i < contactDataList.size(); i++) {
-                ContactData contact = contactDataList.get(i);
-                AndroidContact androidContact = new AndroidContact(contact);
-                androidContacts.put(androidContact.getId(), androidContact);
+                ContactData contactData = contactDataList.get(i);
+                contactDataMap.put(contactData.getContactCompoundId().getContactId(), contactData);
             }
-            return androidContacts;
-        } finally {
-            SQLiteRepositoryManager.getInstance().closeDatabase();
-        }
+            return contactDataMap;
     }
 
-    private List<AndroidContact> combineContactsLists(Context context, Map<String, AndroidContact> persistedContacts) {
+    private List<AndroidContact> combineContactsLists(Context context, Map<String, ContactData> persistedContacts) {
+        Log.d(TAG, "combineContactsLists()");
         List<AndroidContact> allContacts = androidContactsProvider.getAllContacts(context);
 
         for (int i = 0; i < allContacts.size(); i++) {
             AndroidContact androidContact = allContacts.get(i);
-            AndroidContact persistedContact = persistedContacts.get(androidContact.getId());
-            if (persistedContact != null) {
-                combineContacts(androidContact, persistedContact);
-            }
-        }
+            ContactData contactData = persistedContacts.get(androidContact.getContactId());
+            androidContact.setContactData(new ContactDataDTO(androidContact.getContactId(), contactData));
+       }
 
         return allContacts;
     }
 
-    private void combineContacts(AndroidContact androidContact, AndroidContact persistedContact) {
-        androidContact.setEmail(persistedContact.getEmail());
-        androidContact.setRequestAllowed(persistedContact.isRequestAllowed());
-        
-        // TODO hack
-        //androidContact.setEmail("andrey.pereverzin@gmail.com");
-    }
-    
     private ContactData createContactData(AndroidContact androidContact) {
         ContactData contactData = new ContactData();
         
-        ContactCompoundId contactCompoundId = new ContactCompoundId(androidContact.getId(), androidContact.getEmail());
+        ContactCompoundId contactCompoundId = new ContactCompoundId(androidContact.getContactId(), androidContact.getContactEmail());
         contactData.setContactCompoundId(contactCompoundId);
         return contactData;
     }
