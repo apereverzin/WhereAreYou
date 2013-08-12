@@ -29,8 +29,8 @@ import android.widget.EditText;
  * 
  * @author Andrey Pereverzin
  */
-public class EmailAccountEditActivity extends Activity {
-    private static final String TAG = EmailAccountEditActivity.class.getSimpleName();
+public class EmailAccountImapActivity extends Activity {
+    private static final String TAG = EmailAccountImapActivity.class.getSimpleName();
 
     private EditText emailAddressText;
     private EditText passwordText;
@@ -76,7 +76,7 @@ public class EmailAccountEditActivity extends Activity {
                     fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                     final Bundle bundle = new Bundle();
                     bundle.putSerializable(MAIL_PROPERTIES, fullProps);
-                    Intent intent = new Intent(EmailAccountEditActivity.this, CheckEmailResultActivity.class);
+                    Intent intent = new Intent(EmailAccountImapActivity.this, CheckEmailResultActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 } else {
@@ -98,7 +98,7 @@ public class EmailAccountEditActivity extends Activity {
                 fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                 final Bundle bundle = new Bundle();
                 bundle.putSerializable(MAIL_PROPERTIES, fullProps);
-                Intent intent = new Intent(EmailAccountEditActivity.this, EmailAccountEditAdvancedActivity.class);
+                Intent intent = new Intent(EmailAccountImapActivity.this, EmailAccountEditAdvancedActivity.class);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
             }
@@ -130,11 +130,11 @@ public class EmailAccountEditActivity extends Activity {
                     setResult(RESULT_OK);
                     finish();
                 } catch (ConnectorException ex) {
-                    showException(EmailAccountEditActivity.this, ex);
+                    showException(EmailAccountImapActivity.this, ex);
                 } catch (IOException ex) {
-                    showException(EmailAccountEditActivity.this, ex);
+                    showException(EmailAccountImapActivity.this, ex);
                 } catch (CryptoException ex) {
-                    showException(EmailAccountEditActivity.this, ex);
+                    showException(EmailAccountImapActivity.this, ex);
                 }
             }
         });

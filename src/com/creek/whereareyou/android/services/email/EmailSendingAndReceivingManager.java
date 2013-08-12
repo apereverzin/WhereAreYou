@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
-import android.accounts.Account;
 import android.util.Log;
 
-import com.creek.accessemail.connector.mail.PredefinedMailProperties;
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyoumodel.message.AbstractMessage;
@@ -31,17 +31,20 @@ import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 public class EmailSendingAndReceivingManager {
     private static final String TAG = EmailSendingAndReceivingManager.class.getSimpleName();
     
-    private final Account account;
     private final MessagesService messagesService;
+    private final Properties mailProps;
     
-    public EmailSendingAndReceivingManager(Account account) throws CryptoException, IOException {
-        this.account = account;
-        Properties props = PredefinedMailProperties.getPredefinedPropertiesForServer("gmail");
-        props.put("mail.username", "andrey.pereverzin");
-        props.put("mail.password", "bertoluCCi");
+    public EmailSendingAndReceivingManager() throws CryptoException, IOException {
+        mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
+        messagesService = new MessagesService(mailProps);
+    }
+
+    public EmailSendingAndReceivingManager(Properties props) throws CryptoException, IOException {
+        props.put(MAIL_USERNAME_PROPERTY, "andrey.pereverzin");
+        props.put(MAIL_PASSWORD_PROPERTY, "bertoluCCi");
         MailAccountPropertiesProvider.getInstance().persistMailProperties(props);
         
-        Properties mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
+        mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
         messagesService = new MessagesService(mailProps);
     }
 
@@ -49,7 +52,7 @@ public class EmailSendingAndReceivingManager {
         Log.d(TAG, "sendRequest()");
         contactRequest.setTimeSent(System.currentTimeMillis());
         OwnerRequest payload = new OwnerRequest(contactRequest);
-        RequestMessage message = new RequestMessage(payload, account.name);
+        RequestMessage message = new RequestMessage(payload, mailProps.getProperty(MAIL_USERNAME_PROPERTY));
         Log.d(TAG, "--------------sendRequest: " + message.toJSON());
         Log.d(TAG, "--------------sendRequest: " + contactRequest.getContactCompoundId().getContactEmail());
         messagesService.sendMessage(message, contactRequest.getContactCompoundId().getContactEmail());
@@ -62,10 +65,10 @@ public class EmailSendingAndReceivingManager {
         AbstractMessage message;
         if (contactResponse.getLocationData() != null) {
             SendableLocationData sendableLocationData = new SendableLocationData(contactResponse.getLocationData());
-            message = new OwnerLocationDataMessage(sendableLocationData, account.name);
+            message = new OwnerLocationDataMessage(sendableLocationData, mailProps.getProperty(MAIL_USERNAME_PROPERTY));
         } else {
             OwnerResponse payload = new OwnerResponse(contactResponse);
-            message = new ResponseMessage(payload, account.name);
+            message = new ResponseMessage(payload, mailProps.getProperty(MAIL_USERNAME_PROPERTY));
         }
         
         contactResponse.setTimeSent(System.currentTimeMillis());

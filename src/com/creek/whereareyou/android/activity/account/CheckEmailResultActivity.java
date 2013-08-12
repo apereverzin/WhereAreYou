@@ -48,6 +48,7 @@ public class CheckEmailResultActivity extends Activity {
             public void run() {
                 try {
                     connector.checkSMTPConnection();
+                    connector.checkPOP3Connection();
                     res = true;
                 } catch (ConnectorException ex) {
                     ActivityUtil.logException(TAG, ex);
