@@ -29,8 +29,8 @@ import android.widget.EditText;
  * 
  * @author Andrey Pereverzin
  */
-public class EmailAccountSmtpActivity extends Activity {
-    private static final String TAG = EmailAccountSmtpActivity.class.getSimpleName();
+public class EmailAccountChoosePop3OrImap_3_Activity extends Activity {
+    private static final String TAG = EmailAccountChoosePop3OrImap_3_Activity.class.getSimpleName();
 
     private EditText emailAddressText;
     private EditText passwordText;
@@ -76,7 +76,7 @@ public class EmailAccountSmtpActivity extends Activity {
                     fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                     final Bundle bundle = new Bundle();
                     bundle.putSerializable(MAIL_PROPERTIES, fullProps);
-                    Intent intent = new Intent(EmailAccountSmtpActivity.this, CheckEmailResultActivity.class);
+                    Intent intent = new Intent(EmailAccountChoosePop3OrImap_3_Activity.this, CheckEmailResultActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
                 } else {
@@ -98,7 +98,7 @@ public class EmailAccountSmtpActivity extends Activity {
                 fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                 final Bundle bundle = new Bundle();
                 bundle.putSerializable(MAIL_PROPERTIES, fullProps);
-                Intent intent = new Intent(EmailAccountSmtpActivity.this, EmailAccountEditAdvancedActivity.class);
+                Intent intent = new Intent(EmailAccountChoosePop3OrImap_3_Activity.this, EmailAccountEditAdvancedActivity.class);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
             }
@@ -130,11 +130,11 @@ public class EmailAccountSmtpActivity extends Activity {
                     setResult(RESULT_OK);
                     finish();
                 } catch (ConnectorException ex) {
-                    showException(EmailAccountSmtpActivity.this, ex);
+                    showException(EmailAccountChoosePop3OrImap_3_Activity.this, ex);
                 } catch (IOException ex) {
-                    showException(EmailAccountSmtpActivity.this, ex);
+                    showException(EmailAccountChoosePop3OrImap_3_Activity.this, ex);
                 } catch (CryptoException ex) {
-                    showException(EmailAccountSmtpActivity.this, ex);
+                    showException(EmailAccountChoosePop3OrImap_3_Activity.this, ex);
                 }
             }
         });

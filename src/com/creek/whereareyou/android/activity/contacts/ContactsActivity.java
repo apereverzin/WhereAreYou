@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Properties;
 
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
-import com.creek.accessemail.connector.mail.PredefinedMailProperties;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
-import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
-import com.creek.whereareyou.android.activity.account.EmailAccountEditAdvancedActivity;
+import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.contacts.RequestResponseFactory;
@@ -21,10 +19,7 @@ import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,8 +41,6 @@ public class ContactsActivity extends ListActivity {
 
     // Options menu
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int GET_ACCOUNTS_MENU_ITEM = Menu.FIRST + 1;
-    private static final int ADD_EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST + 2;
 
     // Context menu
     private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
@@ -137,9 +130,15 @@ public class ContactsActivity extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.i(TAG, "onCreateOptionsMenu() called");
-        menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
-        menu.add(0, GET_ACCOUNTS_MENU_ITEM, 0, R.string.get_accounts);
-        menu.add(0, ADD_EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.add_email_account);
+        try {
+            if (areEmailPropertiesDefined()) {
+                menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.edit_email_account);
+            } else {
+                menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
+            }
+        } catch (Exception ex) {
+            ActivityUtil.showException(ContactsActivity.this, ex);
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -147,39 +146,15 @@ public class ContactsActivity extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
-        AccountManager am;
         switch (item.getItemId()) {
         case EMAIL_ACCOUNT_MENU_ITEM:
             try {
-                Properties props = MailAccountPropertiesProvider.getInstance().getMailProperties();
-                String username = props.getProperty(MAIL_USERNAME_PROPERTY);
-                Log.d(TAG, "-------------username: " + username);
-                if (username == null || !username.contains("@") || PredefinedMailProperties.getPredefinedProperties(username) != null) {
-                    intent = new Intent(ContactsActivity.this, EmailAccountEditActivity.class);
-                } else {
-                    intent = new Intent(ContactsActivity.this, EmailAccountEditAdvancedActivity.class);
-                }
+                intent = new Intent(ContactsActivity.this, EmailAccountAddress_1_Activity.class);
+
                 startActivity(intent);
-            } catch (CryptoException ex) {
-                ActivityUtil.showException(ContactsActivity.this, ex);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 ActivityUtil.showException(ContactsActivity.this, ex);
             }
-            return true;
-        case GET_ACCOUNTS_MENU_ITEM:
-            am = (AccountManager) this.getSystemService(Context.ACCOUNT_SERVICE);
-            Account[] accounts = am.getAccounts();
-
-            Log.d(TAG, "======================================");
-            for (int i = 0; i < accounts.length; i++) {
-                Log.d(TAG, "-----------: " + accounts[i].name + ", " + accounts[i].type + ", " + accounts[i].toString());
-            }
-            return true;
-        case ADD_EMAIL_ACCOUNT_MENU_ITEM:
-            am = (AccountManager) this.getSystemService(Context.ACCOUNT_SERVICE);
-
-            am.addAccount("com.google", null, null, null, this, null, null);
-
             return true;
         default:
             return super.onOptionsItemSelected(item);
@@ -253,5 +228,11 @@ public class ContactsActivity extends ListActivity {
     
     private boolean isContactEmailDefined(AndroidContact androidContact) {
         return androidContact.getContactData().getContactEmail() != null && !"".equals(androidContact.getContactData().getContactEmail());
+    }
+    
+    private boolean areEmailPropertiesDefined() throws CryptoException, IOException {
+        Properties props = MailAccountPropertiesProvider.getInstance().getMailProperties();
+        String username = props.getProperty(MAIL_USERNAME_PROPERTY);
+        return username != null && username.length() > 0;
     }
 }

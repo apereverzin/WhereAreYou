@@ -1,0 +1,130 @@
+package com.creek.whereareyou.android.activity.account;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Properties;
+
+import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
+
+import com.creek.whereareyou.R;
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
+import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
+import static com.creek.whereareyou.android.util.ActivityUtil.showException;
+
+import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
+import com.creek.whereareyou.android.util.CryptoException;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
+
+/**
+ * 
+ * @author Andrey Pereverzin
+ */
+public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity {
+    private static final String TAG = EmailAccountAddress_1_Activity.class.getSimpleName();
+
+    private EditText emailAddressText;
+    private EditText passwordText;
+    private Button testButton;
+    private Button nextButton;
+    
+    @Override
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setContentView(R.layout.email_account_address_1);
+        emailAddressText = (EditText) findViewById(R.id.mail_username);
+        passwordText = (EditText) findViewById(R.id.mail_password);
+        testButton = (Button) findViewById(R.id.mail_properties_button_test);
+        nextButton = (Button) findViewById(R.id.mail_properties_button_next);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
+        //final Account googleAccount = GoogleAccountProvider.getInstance().getEmailAccount(this);
+
+        try {
+            bundledProps = buildBundledProperties(getIntent().getExtras());
+            emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
+            passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
+        } catch (Exception ex) {
+            showException(this, ex);
+        }
+
+        testButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Log.d(TAG, "-----testButton clicked");
+                String emailAddress = emailAddressText.getText().toString().toLowerCase();
+                
+                HashMap<String, String> props;
+                Properties predefinedProps = getPredefinedProperties(emailAddress);
+                if (predefinedProps == null) {
+                    props = bundledProps;
+                } else {
+                    props = convertPropertiesToHashMap(predefinedProps);
+                }
+                props.put(MAIL_USERNAME_PROPERTY, emailAddress);
+                props.put(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
+                Intent intent = new Intent(EmailAccountAddress_1_Activity.this, CheckEmailResultActivity.class);
+                putExtrasIntoIntent(intent, props);
+                startActivityForResult(intent, 0);
+            }
+        });
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                try {
+                    String emailAddress = emailAddressText.getText().toString().toLowerCase();
+
+                    //Properties fullProps = getPredefinedProperties(googleAccount.name);
+                    Properties predefinedProps = getPredefinedProperties(emailAddress);
+
+                    Intent intent;
+                    if (predefinedProps != null) {
+                        // TODO check if predefined properties are already redefined
+                        bundledProps = convertPropertiesToHashMap(predefinedProps);
+                        intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountFinish_5_Activity.class);
+                    } else {
+                        intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountSmtp_2_Activity.class);                        
+                    }
+                    putExtrasIntoIntentAndStartActivity(intent);
+                } catch (Exception ex) {
+                    showException(EmailAccountAddress_1_Activity.this, ex);
+                }
+            }
+        });
+
+        StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
+        setTitle(title);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            finish();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private HashMap<String, String> buildBundledProperties(Bundle extras) throws CryptoException, IOException {
+        HashMap<String, String> props = null;
+        if (extras != null) {
+            props = (HashMap<String, String>) extras.get(EmailAccountEditActivity.MAIL_PROPERTIES);
+        }
+        
+        if (props == null) {
+            Properties mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
+            props = convertPropertiesToHashMap(mailProps);
+        }
+        
+        return props;
+    }
+
+    protected void gatherProperties() {
+        gatherTextFieldValue(bundledProps, MAIL_USERNAME_PROPERTY, emailAddressText);
+        gatherTextFieldValue(bundledProps, MAIL_PASSWORD_PROPERTY, passwordText);
+    }
+}

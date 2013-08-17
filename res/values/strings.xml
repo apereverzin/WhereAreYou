@@ -8,7 +8,10 @@
     <string name="back">Back</string>
     <string name="test">Test</string>
     <string name="next">Next</string>
+    <string name="save_and_finish">Save</string>
     <string name="advanced">Advanced</string>
+    <string name="pop3_settings">POP3 Settings</string>
+    <string name="imap_settings">IMAP Settings</string>
     
     <!-- Mail properties -->
     <string name="mail_properties_activity_name">Email Properties</string>
@@ -44,7 +47,13 @@
     <!-- Check Email Result -->
     <string name="check_email_result_title">Check Email</string>
     <string name="check_email_result">Check Email:</string>
-    <string name="check_email_result_wait">Checking email. Please, wait&#8230;</string>
+    <string name="check_email_smtp_result">Check SMTP Settings:</string>
+    <string name="check_email_pop3_result">Check POP3 Settings:</string>
+    <string name="check_email_imap_result">Check IMAP Settings:</string>
+    <string name="check_email_result_wait">Checking email.</string>
+    <string name="check_email_smtp">Checking SMTP settings. Please, wait&#8230;</string>
+    <string name="check_email_pop3">Checking POP3 settings. Please, wait&#8230;</string>
+    <string name="check_email_imap">Checking IMAP settings. Please, wait&#8230;</string>
     <string name="check_email_result_authentication_failed">Authentication failed</string>
     <string name="check_email_result_connection_failed">Connection failed</string>
     <string name="check_email_result_success">Success</string>

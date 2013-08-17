@@ -11,13 +11,13 @@
                   android:layout_width="fill_parent">
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content" 
-                      android:text="@string/check_email_result" 
+                      android:id="@+id/check_email_result_1"
                       android:padding="3dip" />
             <TextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content" 
-                      android:id="@+id/check_email_result"
+                      android:id="@+id/check_email_result_2"
                       android:padding="3dip" />
-        </TableRow>
+            </TableRow>
     </TableLayout>
 
 </LinearLayout>
