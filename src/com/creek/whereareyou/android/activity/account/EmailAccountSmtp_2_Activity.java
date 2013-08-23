@@ -7,14 +7,10 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SM
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_CLASS_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY;
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.util.ActivityUtil;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -31,16 +27,10 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
     private CheckBox smtpStartTlsEnableCheck;
     private EditText smtpSocketFactoryPortText;
     private EditText smtpSocketFactoryClassText;
-    private Button backButton;
-    private Button testButton;
-    private Button nextButton;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.email_account_smpt_2);
-
-        extractBundledProperties();
 
         smtpHostText = (EditText) findViewById(R.id.mail_smtp_host);
         smtpPortText = (EditText) findViewById(R.id.mail_smtp_port);
@@ -48,10 +38,6 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
         smtpSocketFactoryClassText = (EditText) findViewById(R.id.mail_smtp_socket_factory_class);
         smtpSocketFactoryPortText = (EditText) findViewById(R.id.mail_smtp_socket_factory_port);
         smtpStartTlsEnableCheck = (CheckBox) findViewById(R.id.mail_smtp_start_tls_enable);
-        backButton = (Button) findViewById(R.id.mail_properties_button_back);
-        testButton = (Button) findViewById(R.id.mail_properties_button_test);
-        nextButton = (Button) findViewById(R.id.mail_properties_button_next);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         smtpHostText.setText(bundledProps.get(MAIL_SMTP_HOST_PROPERTY));
         smtpPortText.setText(bundledProps.get(MAIL_SMTP_PORT_PROPERTY));
@@ -64,31 +50,21 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
             public void onClick(View view) {
                 Log.d(TAG, "-----backButton clicked");
                 // TODO go back
-                Intent intent = new Intent(EmailAccountSmtp_2_Activity.this, EmailAccountAddress_1_Activity.class);                        
-                gatherProperties();
-                putExtrasIntoIntentAndStartActivity(intent);
+                step(EmailAccountSmtp_2_Activity.this, EmailAccountAddress_1_Activity.class);                        
             }
         });
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                Intent intent = new Intent(EmailAccountSmtp_2_Activity.this, CheckEmailResultActivity.class);
-                gatherProperties();
-                putExtrasIntoIntent(intent, bundledProps);
-                startActivity(intent);
+                getResult(EmailAccountSmtp_2_Activity.this, CheckEmailResultActivity.class);
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----nextButton clicked");
-                try {
-                    Intent intent = new Intent(EmailAccountSmtp_2_Activity.this, EmailAccountPop3_4_Activity.class);                        
-                    putExtrasIntoIntentAndStartActivity(intent);
-                } catch (Exception ex) {
-                    ActivityUtil.showException(EmailAccountSmtp_2_Activity.this, ex);
-                }
+                step(EmailAccountSmtp_2_Activity.this, EmailAccountPop3_4_Activity.class);
             }
         });
 
@@ -103,5 +79,9 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
         gatherBooleanValue(bundledProps, MAIL_SMTP_STARTTLS_ENABLE_PROPERTY, smtpStartTlsEnableCheck);
         gatherTextFieldValue(bundledProps, MAIL_SMTP_SOCKET_FACTORY_CLASS_PROPERTY, smtpSocketFactoryClassText);
         gatherTextFieldValue(bundledProps, MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY, smtpSocketFactoryPortText);
+    }
+    
+    protected int getLayoutId() {
+        return R.layout.email_account_smpt_2;
     }
 }

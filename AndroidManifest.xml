@@ -4,9 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="7" />
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -26,7 +24,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppBaseTheme" >
     
         <uses-library android:name="com.google.android.maps" />
 
@@ -43,14 +41,13 @@
         <activity android:name="com.creek.whereareyou.android.activity.account.CheckEmailResultActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.map.MainMapActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.contacts.EditContactActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountEditActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountEditAdvancedActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountSmtp_2_Activity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountPop3OrImap_3_Activity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountPop3_4_Activity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountImap_4_Activity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountFinish_5_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountEditAdvancedActivity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountSmtp_2_Activity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountChoosePop3OrImap_3_Activity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountPop3_4_Activity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountImap_4_Activity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountFinish_5_Activity"/>
         
         <service android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService">
             <intent-filter>
@@ -64,7 +61,7 @@
             </intent-filter>
         </service>
         
-        <receiver android:name="com.creek.whereareyou.android.services.receivers.LocationChangedReceiver"/>
+        <!-- receiver android:name="com.creek.whereareyou.android.services.receivers.LocationChangedReceiver"/ -->
         <receiver android:name="com.creek.whereareyou.android.services.receivers.BootReceiver">
             <intent-filter>
                 <action android:name ="android.intent.action.BOOT_COMPLETED" />

@@ -19,6 +19,7 @@ import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -145,17 +146,10 @@ public class ContactsActivity extends ListActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
         switch (item.getItemId()) {
         case EMAIL_ACCOUNT_MENU_ITEM:
-            try {
-                intent = new Intent(ContactsActivity.this, EmailAccountAddress_1_Activity.class);
-
-                startActivity(intent);
-            } catch (Exception ex) {
-                ActivityUtil.showException(ContactsActivity.this, ex);
-            }
-            return true;
+            //return startNewActivity(EmailAccountAddress_1_Activity.class);
+            return startNewActivity(EmailAccountAddress_1_Activity.class);
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -234,5 +228,16 @@ public class ContactsActivity extends ListActivity {
         Properties props = MailAccountPropertiesProvider.getInstance().getMailProperties();
         String username = props.getProperty(MAIL_USERNAME_PROPERTY);
         return username != null && username.length() > 0;
+    }
+    
+    private boolean startNewActivity(Class<? extends Activity> clazz) {
+        try {
+            Intent intent = new Intent(this, clazz);
+
+            startActivity(intent);
+        } catch (Exception ex) {
+            ActivityUtil.showException(ContactsActivity.this, ex);
+        }
+        return true;
     }
 }

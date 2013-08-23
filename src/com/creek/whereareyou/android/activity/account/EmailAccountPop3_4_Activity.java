@@ -8,9 +8,7 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PO
 
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.CheckEmailResultActivity;
-import com.creek.whereareyou.android.util.ActivityUtil;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -61,30 +59,21 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----backButton clicked");
-                Intent intent = new Intent(EmailAccountPop3_4_Activity.this, EmailAccountSmtp_2_Activity.class);                        
-                putExtrasIntoIntentAndStartActivity(intent);
+                step(EmailAccountPop3_4_Activity.this, EmailAccountSmtp_2_Activity.class);                        
            }
         });
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                gatherProperties();
-                Intent intent = new Intent(EmailAccountPop3_4_Activity.this, CheckEmailResultActivity.class);
-                putExtrasIntoIntent(intent, bundledProps);
-                startActivity(intent);
+                getResult(EmailAccountPop3_4_Activity.this, CheckEmailResultActivity.class);
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----nextButton clicked");
-                try {
-                    Intent intent = new Intent(EmailAccountPop3_4_Activity.this, EmailAccountFinish_5_Activity.class);                        
-                    putExtrasIntoIntentAndStartActivity(intent);
-                } catch (Exception ex) {
-                    ActivityUtil.showException(EmailAccountPop3_4_Activity.this, ex);
-                }
+                step(EmailAccountPop3_4_Activity.this, EmailAccountFinish_5_Activity.class);                        
             }
         });
 
@@ -98,5 +87,9 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivity {
         gatherTextFieldValue(bundledProps, MAIL_POP3_SOCKET_FACTORY_PORT_PROPERTY, pop3SocketFactoryPortText);
         gatherTextFieldValue(bundledProps, MAIL_POP3_SOCKET_FACTORY_CLASS_PROPERTY, pop3SocketFactoryClassText);
         gatherBooleanValue(bundledProps, MAIL_POP3_SOCKET_FACTORY_FALLBACK_PROPERTY, pop3SocketFactoryFallbackCheck);
+    }
+    
+    protected int getLayoutId() {
+        return R.layout.email_account_pop3_4;
     }
 }

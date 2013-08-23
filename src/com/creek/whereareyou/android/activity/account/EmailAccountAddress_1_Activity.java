@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.activity.account;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Properties;
 
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
@@ -18,8 +19,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 
 /**
@@ -31,33 +30,24 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
 
     private EditText emailAddressText;
     private EditText passwordText;
-    private Button testButton;
-    private Button nextButton;
     
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.email_account_address_1);
         emailAddressText = (EditText) findViewById(R.id.mail_username);
         passwordText = (EditText) findViewById(R.id.mail_password);
-        testButton = (Button) findViewById(R.id.mail_properties_button_test);
-        nextButton = (Button) findViewById(R.id.mail_properties_button_next);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        backButton.setVisibility(View.INVISIBLE);
 
         //final Account googleAccount = GoogleAccountProvider.getInstance().getEmailAccount(this);
 
-        try {
-            bundledProps = buildBundledProperties(getIntent().getExtras());
-            emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
-            passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
-        } catch (Exception ex) {
-            showException(this, ex);
+        if (bundledProps == null) {
+            createBundledProperties();
         }
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                String emailAddress = emailAddressText.getText().toString().toLowerCase();
+                String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                 
                 HashMap<String, String> props;
                 Properties predefinedProps = getPredefinedProperties(emailAddress);
@@ -77,7 +67,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 try {
-                    String emailAddress = emailAddressText.getText().toString().toLowerCase();
+                    String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
 
                     //Properties fullProps = getPredefinedProperties(googleAccount.name);
                     Properties predefinedProps = getPredefinedProperties(emailAddress);
@@ -86,11 +76,17 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                     if (predefinedProps != null) {
                         // TODO check if predefined properties are already redefined
                         bundledProps = convertPropertiesToHashMap(predefinedProps);
+                        bundledProps.put(PREDEFINED_PROPERTIES, TRUE);
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountFinish_5_Activity.class);
+                        putExtrasIntoIntent(intent, bundledProps);
+                        startActivity(intent);
+                        setResult(RESULT_OK);
+                        finish();
                     } else {
+                        bundledProps.put(PREDEFINED_PROPERTIES, FALSE);
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountSmtp_2_Activity.class);                        
+                        putBundledPropertiesIntoIntentAndStartActivity(intent);
                     }
-                    putExtrasIntoIntentAndStartActivity(intent);
                 } catch (Exception ex) {
                     showException(EmailAccountAddress_1_Activity.this, ex);
                 }
@@ -126,5 +122,19 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     protected void gatherProperties() {
         gatherTextFieldValue(bundledProps, MAIL_USERNAME_PROPERTY, emailAddressText);
         gatherTextFieldValue(bundledProps, MAIL_PASSWORD_PROPERTY, passwordText);
+    }
+    
+    protected int getLayoutId() {
+        return R.layout.email_account_address_1;
+    }
+    
+    private void createBundledProperties() {
+        try {
+            bundledProps = buildBundledProperties(getIntent().getExtras());
+            emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
+            passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
+        } catch (Exception ex) {
+            showException(this, ex);
+        }
     }
 }

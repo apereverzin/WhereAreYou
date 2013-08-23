@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 /**
  * 
@@ -18,39 +17,29 @@ import android.widget.Button;
 public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity {
     private static final String TAG = EmailAccountFinish_5_Activity.class.getSimpleName();
 
-    private Button backButton;
-    private Button testButton;
-    private Button finishAndSaveButton;
-
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.email_account_finish_5);
-
-        extractBundledProperties();
-
-        backButton = (Button) findViewById(R.id.mail_properties_button_back);
-        testButton = (Button) findViewById(R.id.mail_properties_button_test);
-        finishAndSaveButton = (Button) findViewById(R.id.mail_properties_button_save_and_finish);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----backButton clicked");
-                Intent intent = new Intent(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class);                        
-                putExtrasIntoIntentAndStartActivity(intent);
+                if (TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
+                    step(EmailAccountFinish_5_Activity.this, EmailAccountAddress_1_Activity.class); 
+                } else {
+                    step(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class); 
+                }
            }
         });
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                Intent intent = new Intent(EmailAccountFinish_5_Activity.this, CheckEmailResultActivity.class);
-                putExtrasIntoIntent(intent, bundledProps);
-                startActivity(intent);
+                getResult(EmailAccountFinish_5_Activity.this, CheckEmailResultActivity.class);
             }
         });
 
-        finishAndSaveButton.setOnClickListener(new View.OnClickListener() {
+        nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----saveButton clicked");
                 try {
@@ -72,5 +61,9 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         if (resultCode == RESULT_OK) {
             finish();
         }
+    }
+    
+    protected int getLayoutId() {
+        return R.layout.email_account_finish_5;
     }
 }

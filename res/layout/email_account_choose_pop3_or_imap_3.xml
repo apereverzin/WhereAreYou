@@ -8,38 +8,25 @@
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
                  android:orientation="vertical" 
                  android:layout_width="fill_parent"
-                 android:layout_height="fill_parent"
-                 android:layout_weight="1" >
+                 android:layout_height="wrap_content">
         <TableRow android:layout_marginBottom="2dip"
                   android:layout_width="fill_parent">
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:orientation="vertical" 
-                          android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1">
      
                 <Button android:id="@+id/mail_properties_button_pop3_settings" 
                         android:text="@string/pop3_settings"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" />
 
-            </LinearLayout>
         </TableRow>
     
         <TableRow android:layout_marginBottom="2dip"
                   android:layout_width="fill_parent">
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                          android:orientation="vertical" 
-                          android:layout_width="fill_parent"
-                          android:layout_height="wrap_content"
-                          android:layout_weight="1">
      
                 <Button android:id="@+id/mail_properties_button_imap_settings" 
                         android:text="@string/imap_settings"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" />
 
-            </LinearLayout>
         </TableRow>
     
         <TableRow android:layout_marginBottom="2dip" 

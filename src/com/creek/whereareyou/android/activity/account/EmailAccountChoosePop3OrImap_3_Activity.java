@@ -1,6 +1,7 @@
 package com.creek.whereareyou.android.activity.account;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import com.creek.accessemail.connector.mail.ConnectorException;
@@ -69,7 +70,7 @@ public class EmailAccountChoosePop3OrImap_3_Activity extends Activity {
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "testButton clicked");
-                String emailAddress = emailAddressText.getText().toString().toLowerCase();
+                String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                 Properties fullProps = getPredefinedProperties(emailAddress);
                 if (fullProps != null) {
                     fullProps.setProperty(MAIL_USERNAME_PROPERTY, emailAddress);
@@ -89,7 +90,7 @@ public class EmailAccountChoosePop3OrImap_3_Activity extends Activity {
         advancedButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----advancedButton clicked");
-                String emailAddress = emailAddressText.getText().toString().toLowerCase();
+                String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                 Properties fullProps = getPredefinedProperties(emailAddress);
                 if (fullProps == null) {
                     fullProps = new Properties();
@@ -107,7 +108,7 @@ public class EmailAccountChoosePop3OrImap_3_Activity extends Activity {
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 try {
-                    String emailAddress = emailAddressText.getText().toString().toLowerCase();
+                    String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                     //Properties fullProps = getPredefinedProperties(googleAccount.name);
                     Properties fullProps = getPredefinedProperties(emailAddress);
 
