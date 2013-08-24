@@ -72,6 +72,7 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
         setTitle(title);
     }
 
+    @Override
     protected void gatherProperties() {
         gatherTextFieldValue(bundledProps, MAIL_SMTP_HOST_PROPERTY, smtpHostText);
         gatherTextFieldValue(bundledProps, MAIL_SMTP_PORT_PROPERTY, smtpPortText);
@@ -81,6 +82,7 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
         gatherTextFieldValue(bundledProps, MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY, smtpSocketFactoryPortText);
     }
     
+    @Override
     protected int getLayoutId() {
         return R.layout.email_account_smpt_2;
     }

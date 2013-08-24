@@ -9,6 +9,7 @@ import com.creek.whereareyou.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -19,6 +20,8 @@ import android.widget.EditText;
  * @author Andrey Pereverzin
  */
 public abstract class AbstractEmailAccountActivity extends Activity {
+    private static final String TAG = AbstractEmailAccountActivity.class.getSimpleName();
+
     protected static final String MAIL_PROPERTIES = "MAIL_PROPERTIES";
     protected static final String PREDEFINED_PROPERTIES = "PREDEFINED_PROPERTIES";
     protected static final String TRUE = "true";
@@ -30,6 +33,7 @@ public abstract class AbstractEmailAccountActivity extends Activity {
    
     @Override
     protected void onCreate(Bundle icicle) {
+        Log.d(TAG, "-------onCreate()");
         super.onCreate(icicle);
         setContentView(getLayoutId());
         backButton = (Button) findViewById(R.id.mail_properties_button_back);
@@ -43,8 +47,11 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     @SuppressWarnings("unchecked")
     protected void extractBundledProperties() {
         Bundle extras = getIntent().getExtras();
+        Log.d(TAG, "-------extras");
         if (extras != null) {
+            Log.d(TAG, "-------extras != null");
             bundledProps = (HashMap<String, String>) extras.get(MAIL_PROPERTIES);
+            Log.d(TAG, "-------bundledProps " + bundledProps);
         }
     }
 

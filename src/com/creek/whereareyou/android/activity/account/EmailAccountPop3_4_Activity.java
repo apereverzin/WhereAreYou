@@ -81,6 +81,7 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivity {
         setTitle(title);
     }
 
+    @Override
     protected void gatherProperties() {
         gatherTextFieldValue(bundledProps, MAIL_POP3_HOST_PROPERTY, pop3HostText);
         gatherTextFieldValue(bundledProps, MAIL_POP3_PORT_PROPERTY, pop3PortText);
@@ -89,6 +90,7 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivity {
         gatherBooleanValue(bundledProps, MAIL_POP3_SOCKET_FACTORY_FALLBACK_PROPERTY, pop3SocketFactoryFallbackCheck);
     }
     
+    @Override
     protected int getLayoutId() {
         return R.layout.email_account_pop3_4;
     }

@@ -1,6 +1,5 @@
 package com.creek.whereareyou.android.activity.account;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
@@ -13,7 +12,6 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_US
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
-import com.creek.whereareyou.android.util.CryptoException;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,6 +31,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     
     @Override
     protected void onCreate(Bundle icicle) {
+        Log.d(TAG, "-------onCreate()");
         super.onCreate(icicle);
         emailAddressText = (EditText) findViewById(R.id.mail_username);
         passwordText = (EditText) findViewById(R.id.mail_password);
@@ -41,8 +40,12 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         //final Account googleAccount = GoogleAccountProvider.getInstance().getEmailAccount(this);
 
         if (bundledProps == null) {
-            createBundledProperties();
+            buildBundledProperties(getIntent().getExtras());
         }
+        
+        Log.d(TAG, "-------bundledProps: " + bundledProps);
+        emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
+        passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -78,6 +81,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                         bundledProps = convertPropertiesToHashMap(predefinedProps);
                         bundledProps.put(PREDEFINED_PROPERTIES, TRUE);
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountFinish_5_Activity.class);
+                        gatherProperties();
                         putExtrasIntoIntent(intent, bundledProps);
                         startActivity(intent);
                         setResult(RESULT_OK);
@@ -104,35 +108,28 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private HashMap<String, String> buildBundledProperties(Bundle extras) throws CryptoException, IOException {
-        HashMap<String, String> props = null;
-        if (extras != null) {
-            props = (HashMap<String, String>) extras.get(EmailAccountEditActivity.MAIL_PROPERTIES);
-        }
-        
-        if (props == null) {
-            Properties mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
-            props = convertPropertiesToHashMap(mailProps);
-        }
-        
-        return props;
-    }
-
+    @Override
     protected void gatherProperties() {
         gatherTextFieldValue(bundledProps, MAIL_USERNAME_PROPERTY, emailAddressText);
         gatherTextFieldValue(bundledProps, MAIL_PASSWORD_PROPERTY, passwordText);
     }
     
+    @Override
     protected int getLayoutId() {
         return R.layout.email_account_address_1;
     }
-    
-    private void createBundledProperties() {
+
+    @SuppressWarnings("unchecked")
+    private void buildBundledProperties(Bundle extras) {
         try {
-            bundledProps = buildBundledProperties(getIntent().getExtras());
-            emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
-            passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
+            if (extras != null) {
+                bundledProps = (HashMap<String, String>) extras.get(EmailAccountEditActivity.MAIL_PROPERTIES);
+            }
+
+            if (bundledProps == null) {
+                Properties mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
+                bundledProps = convertPropertiesToHashMap(mailProps);
+            }
         } catch (Exception ex) {
             showException(this, ex);
         }

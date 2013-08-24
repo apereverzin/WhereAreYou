@@ -63,6 +63,7 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         }
     }
     
+    @Override
     protected int getLayoutId() {
         return R.layout.email_account_finish_5;
     }
