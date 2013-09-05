@@ -1,15 +1,112 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
+<!-- resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
+        
+    </style>
+</resources -->
+<resources>
+    <style name="GenericField">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="GenericField.Email">
+        <item name="android:inputType">textEmailAddress</item>
+    </style>
+    
+    <style name="GenericField.Password">
+        <item name="android:inputType">textPassword</item>
+    </style>
+    
+    <style name="GenericField.Text">
+        <item name="android:inputType">text</item>
+    </style>
+    
+    <style name="GenericField.Text.Next">
+        <item name="android:imeOptions">actionNext</item>
+    </style>
+    
+    <style name="GenericField.Text.Done">
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+    
+    <style name="GenericField.Number">
+        <item name="android:inputType">number</item>
+    </style>
+    
+    <style name="GenericField.Number.Next">
+        <item name="android:imeOptions">actionNext</item>
+    </style>
+    
+    <style name="GenericField.Number.Done">
+        <item name="android:imeOptions">actionDone</item>
+    </style>
+    
+    <style name="TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">3dp</item>
+    </style>
+    
+    <style name="TextView.HorizontallyExpandable">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:padding">3dp</item>
+    </style>
+    
+    <style name="TextView.HorizontallyExpandable.White">
+        <item name="android:textColor">#fff</item>
     </style>
 
+    <style name="ExpandableButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="VerticalLinearLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    
+    <style name="VerticalExpandableLinearLayout">
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+    
+    <style name="VerticalLinearLayout.BlackBackground">
+        <item name="android:background">#000</item>
+    </style>
+    
+    <style name="HorizontalLinearLayout">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="HorizontalLinearLayout.Grey">
+        <item name="android:background">#888</item>
+    </style>
+    
+    <style name="HorizontalLinearLayout.Expandable">
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        </style>
+    
+    <style name="CheckBoxField">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:padding">3dp</item>
+    </style>
+    
+    <style name="ScrollViewFillViewport">
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:fillViewport">true</item>
+    </style>
 </resources>

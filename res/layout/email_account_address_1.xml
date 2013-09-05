@@ -1,48 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent" 
-            android:layout_height="fill_parent">
+            style="@style/ScrollViewFillViewport">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:orientation="vertical"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:paddingTop="6dp"
-                  android:paddingBottom="6dp">
-    
-        <EditText android:id="@+id/mail_username" 
-                  android:inputType="textEmailAddress" 
-                  android:hint="@string/mail_username"
-                  android:layout_width="fill_parent" 
-                  android:layout_height="wrap_content"
-                  android:imeOptions="actionNext"/>
+    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
 
-        <EditText android:id="@+id/mail_password"
-                  android:inputType="textPassword"
-                  android:hint="@string/mail_password"
-                  android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:imeOptions="actionDone"/>
-        
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:orientation="horizontal"
-                      android:layout_width="fill_parent"
-                      android:layout_height="fill_parent">
-            <Button android:id="@+id/mail_properties_button_back" 
-                    android:text="@string/back"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"/>
-            <Button android:id="@+id/mail_properties_button_test" 
-                    android:text="@string/test"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"/>
-            <Button android:id="@+id/mail_properties_button_next" 
-                    android:text="@string/next"
-                    android:layout_height="wrap_content"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"/>
+        <LinearLayout style="@style/VerticalExpandableLinearLayout">
+
+            <EditText android:id="@+id/mail_username" 
+                      style="@style/GenericField.Email" 
+                      android:hint="@string/mail_username"
+                      android:imeOptions="actionNext"/>
+
+            <EditText android:id="@+id/mail_password"
+                      style="@style/GenericField.Password" 
+                      android:hint="@string/mail_password"
+                      android:imeOptions="actionDone"/>
         </LinearLayout>
+        
+        <include layout="@layout/email_account_buttons"/>
+    
     </LinearLayout>
+    
 </ScrollView>

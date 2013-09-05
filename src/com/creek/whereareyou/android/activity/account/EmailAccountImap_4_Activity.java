@@ -1,6 +1,7 @@
 package com.creek.whereareyou.android.activity.account;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import com.creek.accessemail.connector.mail.ConnectorException;
@@ -98,9 +99,9 @@ public class EmailAccountImap_4_Activity extends Activity {
                 fullProps.setProperty(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                 final Bundle bundle = new Bundle();
                 bundle.putSerializable(MAIL_PROPERTIES, fullProps);
-                Intent intent = new Intent(EmailAccountImap_4_Activity.this, EmailAccountEditAdvancedActivity.class);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
+//                Intent intent = new Intent(EmailAccountImap_4_Activity.this, EmailAccountEditAdvancedActivity.class);
+//                intent.putExtras(bundle);
+//                startActivityForResult(intent, 0);
             }
         });
 
@@ -128,7 +129,6 @@ public class EmailAccountImap_4_Activity extends Activity {
                     }
 
                     setResult(RESULT_OK);
-                    finish();
                 } catch (ConnectorException ex) {
                     showException(EmailAccountImap_4_Activity.this, ex);
                 } catch (IOException ex) {
@@ -141,13 +141,6 @@ public class EmailAccountImap_4_Activity extends Activity {
 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            finish();
-        }
     }
 
 //    private String extractUserNameFromEmailAddress(String emailAddress) throws AddressException {

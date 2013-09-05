@@ -5,10 +5,10 @@ import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.ActivityUtil;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 /**
  * 
@@ -20,6 +20,8 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+        TextView descr = (TextView) findViewById(R.id.mail_account_description);
+        descr.setText("Account");
 
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -39,6 +41,7 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
             }
         });
 
+        nextButton.setText(R.string.save_and_finish);
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----saveButton clicked");
@@ -54,13 +57,6 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            finish();
-        }
     }
     
     @Override

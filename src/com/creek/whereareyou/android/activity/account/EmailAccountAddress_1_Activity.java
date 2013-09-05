@@ -85,7 +85,6 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                         putExtrasIntoIntent(intent, bundledProps);
                         startActivity(intent);
                         setResult(RESULT_OK);
-                        finish();
                     } else {
                         bundledProps.put(PREDEFINED_PROPERTIES, FALSE);
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountSmtp_2_Activity.class);                        
@@ -99,13 +98,6 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            finish();
-        }
     }
 
     @Override
@@ -123,7 +115,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     private void buildBundledProperties(Bundle extras) {
         try {
             if (extras != null) {
-                bundledProps = (HashMap<String, String>) extras.get(EmailAccountEditActivity.MAIL_PROPERTIES);
+                bundledProps = (HashMap<String, String>) extras.get(MAIL_PROPERTIES);
             }
 
             if (bundledProps == null) {

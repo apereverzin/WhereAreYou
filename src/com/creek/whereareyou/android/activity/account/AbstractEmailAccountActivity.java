@@ -24,6 +24,7 @@ public abstract class AbstractEmailAccountActivity extends Activity {
 
     protected static final String MAIL_PROPERTIES = "MAIL_PROPERTIES";
     protected static final String PREDEFINED_PROPERTIES = "PREDEFINED_PROPERTIES";
+    protected static final String CHECK_MODE = "CHECK_MODE";
     protected static final String TRUE = "true";
     protected static final String FALSE = "false";
     protected HashMap<String, String> bundledProps;
@@ -44,6 +45,13 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         extractBundledProperties();
     }
     
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (resultCode == RESULT_OK) {
+//            finish();
+//        }
+//    }
+
     @SuppressWarnings("unchecked")
     protected void extractBundledProperties() {
         Bundle extras = getIntent().getExtras();
@@ -59,7 +67,6 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         putBundledPropertiesIntoIntent(intent);
         startActivity(intent);
         setResult(RESULT_OK);
-        finish();
     }
 
     protected void putBundledPropertiesIntoIntent(Intent intent) {

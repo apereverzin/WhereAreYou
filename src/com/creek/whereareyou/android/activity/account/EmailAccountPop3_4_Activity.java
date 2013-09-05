@@ -59,7 +59,7 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----backButton clicked");
-                step(EmailAccountPop3_4_Activity.this, EmailAccountSmtp_2_Activity.class);                        
+                step(EmailAccountPop3_4_Activity.this, EmailAccountSmtp_2_Activity.class);
            }
         });
 

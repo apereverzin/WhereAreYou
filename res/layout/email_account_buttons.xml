@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              style="@style/HorizontalLinearLayout.Grey">
+                  
+    <Button android:id="@+id/mail_properties_button_back" 
+            android:text="@string/back"
+            style="@style/ExpandableButton"/>
+    <Button android:id="@+id/mail_properties_button_test" 
+            android:text="@string/test"
+            style="@style/ExpandableButton"/>
+    <Button android:id="@+id/mail_properties_button_next" 
+            android:text="@string/next"
+            style="@style/ExpandableButton"/>
+</LinearLayout>

@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.activity.account.EmailAccountEditActivity;
+import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
 import com.creek.whereareyou.android.util.DataConversionUtil;
@@ -100,7 +100,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case EMAIL_ACCOUNT_MENU_ITEM:
-            Intent intent = new Intent(MainMapActivity.this, EmailAccountEditActivity.class);
+            Intent intent = new Intent(MainMapActivity.this, EmailAccountAddress_1_Activity.class);
             startActivity(intent);
             return true;
         case VIEW_CONTACTS_MENU_ITEM:
