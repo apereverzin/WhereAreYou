@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.activity.account;
 
+import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP;
+
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -116,8 +118,13 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         startActivity(intent);
     }
     
-    protected <T extends AbstractEmailAccountActivity, U extends Activity> void getResult(T currentActivity, Class<U> nextActivityClass) {
-        Intent intent = buildIntent(currentActivity, nextActivityClass);
+    protected <T extends AbstractEmailAccountActivity, U extends Activity> void getCheckResult(T currentActivity, CheckMode checkMode) {
+        Intent intent = new Intent(currentActivity, CheckEmailResultActivity.class);
+        gatherProperties();
+        final Bundle bundle = new Bundle();
+        bundle.putSerializable(MAIL_PROPERTIES, bundledProps);
+        bundle.putSerializable(CHECK_MODE, checkMode);
+        intent.putExtras(bundle);
         startActivityForResult(intent, 0);
     }
     

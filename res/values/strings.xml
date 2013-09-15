@@ -23,7 +23,6 @@
     <string name="mail_properties_activity_name">Email Properties</string>
     <string name="mail_username">Email Address</string>
     <string name="mail_password">Password</string>
-    <string name="mail_smtp">SMTP</string>
     <string name="mail_smtp_host">SMTP Host</string>
     <string name="mail_smtp_port">SMTP Port</string>
     <string name="mail_smtp_auth">SMTP Auth</string>
@@ -52,19 +51,18 @@
     
     <!-- Check Email Result -->
     <string name="check_email_result_title">Check Email</string>
-    <string name="check_email_result">Check Email:</string>
-    <string name="check_email_smtp_result">Check SMTP Settings:</string>
-    <string name="check_email_pop3_result">Check POP3 Settings:</string>
-    <string name="check_email_imap_result">Check IMAP Settings:</string>
-    <string name="check_email_result_wait">Checking email.</string>
     <string name="check_email_smtp">Checking SMTP settings. Please, wait&#8230;</string>
+    <string name="check_email_settings">Checking email settings. Please, wait&#8230;</string>
     <string name="check_email_pop3">Checking POP3 settings. Please, wait&#8230;</string>
     <string name="check_email_imap">Checking IMAP settings. Please, wait&#8230;</string>
     <string name="check_email_result_authentication_failed">Authentication failed</string>
     <string name="check_email_result_connection_failed">Connection failed</string>
+    <string name="check_email_result_pending">Pending&#8230;</string>
+    <string name="check_email_result_smtp">SMTP</string>
+    <string name="check_email_result_pop3">POP3</string>
+    <string name="check_email_result_imap">IMAP</string>
     <string name="check_email_result_success">Success</string>
     <string name="check_email_result_failure">Failure</string>
-    <string name="check_email_result_pending">Pending&#8230;</string>
     
     <!-- Contacts -->
     <string name="no_contacts">No contacts</string>
@@ -74,7 +72,6 @@
     <string name="edit_email_account">Edit Email Account</string>
     <string name="get_accounts">Get Accounts</string>
     <string name="add_email_account">Add Email Account</string>
-    <string name="action_bar">Action Bar</string>
     
     <!-- Contacts Context Menu Items -->
     <string name="menu_edit_contact_details">Edit Details</string>

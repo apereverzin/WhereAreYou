@@ -5,9 +5,9 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PO
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_POP3_SOCKET_FACTORY_PORT_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_POP3_SOCKET_FACTORY_CLASS_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_POP3_SOCKET_FACTORY_FALLBACK_PROPERTY;
+import static com.creek.whereareyou.android.activity.account.CheckMode.POP3;
 
 import com.creek.whereareyou.R;
-import com.creek.whereareyou.android.activity.account.CheckEmailResultActivity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -66,7 +66,7 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivity {
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                getResult(EmailAccountPop3_4_Activity.this, CheckEmailResultActivity.class);
+                getCheckResult(EmailAccountPop3_4_Activity.this, POP3);
             }
         });
 

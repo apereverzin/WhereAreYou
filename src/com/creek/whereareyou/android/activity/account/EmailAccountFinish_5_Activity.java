@@ -4,6 +4,7 @@ import com.creek.whereareyou.R;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.ActivityUtil;
+import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_POP3;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +38,7 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                getResult(EmailAccountFinish_5_Activity.this, CheckEmailResultActivity.class);
+                getCheckResult(EmailAccountFinish_5_Activity.this, SMTP_AND_POP3);
             }
         });
 

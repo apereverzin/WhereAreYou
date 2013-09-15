@@ -6,6 +6,8 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SM
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_STARTTLS_ENABLE_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_CLASS_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY;
+import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP;
+
 import com.creek.whereareyou.R;
 
 import android.os.Bundle;
@@ -57,7 +59,7 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
-                getResult(EmailAccountSmtp_2_Activity.this, CheckEmailResultActivity.class);
+                getCheckResult(EmailAccountSmtp_2_Activity.this, SMTP);
             }
         });
 

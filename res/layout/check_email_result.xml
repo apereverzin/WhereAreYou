@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/ScrollViewFillViewport">
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical" 
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
+    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+
+        <LinearLayout style="@style/VerticalExpandableLinearLayout">
+
+            <TextView android:text="@+id/check_email_result_1"
+                      style="@style/TextView.HorizontallyExpandable.White"/>
+            <TextView android:text="@+id/check_email_result_2"
+                      style="@style/TextView.HorizontallyExpandable.White"/>
+        </LinearLayout>
+        
+        <include layout="@layout/email_account_buttons"/>
     
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content" 
-                      android:id="@+id/check_email_result_1"
-                      android:padding="3dip" />
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content" 
-                      android:id="@+id/check_email_result_2"
-                      android:padding="3dip" />
-
-</LinearLayout>
+    </LinearLayout>
+    
+</ScrollView>

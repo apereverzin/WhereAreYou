@@ -11,6 +11,8 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PA
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
+import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_POP3;
+
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 
 import android.content.Intent;
@@ -62,7 +64,10 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                 props.put(MAIL_USERNAME_PROPERTY, emailAddress);
                 props.put(MAIL_PASSWORD_PROPERTY, passwordText.getText().toString());
                 Intent intent = new Intent(EmailAccountAddress_1_Activity.this, CheckEmailResultActivity.class);
-                putExtrasIntoIntent(intent, props);
+                final Bundle bundle = new Bundle();
+                bundle.putSerializable(MAIL_PROPERTIES, props);
+                bundle.putSerializable(CHECK_MODE, SMTP_AND_POP3);
+                intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
             }
         });
