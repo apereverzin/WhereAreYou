@@ -28,8 +28,8 @@ import android.widget.TextView;
  * 
  * @author Andrey Pereverzin
  */
-public class EditContactActivity extends Activity implements OnItemSelectedListener {
-    private static final String TAG = EditContactActivity.class.getSimpleName();
+public class ContactDetailsActivity extends Activity implements OnItemSelectedListener {
+    private static final String TAG = ContactDetailsActivity.class.getSimpleName();
 
     private TextView displayNameText;
     private EditText emailText;
@@ -41,7 +41,7 @@ public class EditContactActivity extends Activity implements OnItemSelectedListe
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.contact_edit);
+        setContentView(R.layout.contact_details);
         displayNameText = (TextView) findViewById(R.id.contact_display_name);
         emailText = (EditText) findViewById(R.id.contact_email);
         locationRequestsAllowanceSpinner = (Spinner) findViewById(R.id.location_requests_allowance);

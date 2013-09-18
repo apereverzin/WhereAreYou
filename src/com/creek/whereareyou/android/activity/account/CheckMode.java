@@ -16,7 +16,7 @@ public enum CheckMode {
         this.hasPop3 = hasPop3;
         this.hasImap = hasImap;
     }
-
+    
     public boolean hasSmtp() {
         return hasSmtp;
     }
@@ -28,5 +28,4 @@ public enum CheckMode {
     public boolean hasImap() {
         return hasImap;
     }
-    
 }

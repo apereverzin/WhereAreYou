@@ -6,10 +6,8 @@
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 
-            <TextView android:text="@+id/check_email_result_1"
-                      style="@style/TextView.HorizontallyExpandable.White"/>
-            <TextView android:text="@+id/check_email_result_2"
-                      style="@style/TextView.HorizontallyExpandable.White"/>
+            <TextView android:id="@+id/check_email_result"
+                      style="@style/TextView.White"/>
         </LinearLayout>
         
         <include layout="@layout/email_account_buttons"/>

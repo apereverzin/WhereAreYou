@@ -1,7 +1,7 @@
 package com.creek.whereareyou.android.activity.account;
 
-import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.mail.AuthenticationFailedException;
 
@@ -24,26 +24,32 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
     private static final String TAG = CheckEmailResultActivity.class.getSimpleName();
 
     private StringBuilder resultMessage = new StringBuilder();
-
+    private TextView checkEmailResultText;
+    
     @Override
     protected void onCreate(Bundle icicle) {
         Log.i(TAG, "onCreate() called");
         super.onCreate(icicle);
+        
+        checkEmailResultText = (TextView) findViewById(R.id.check_email_result);
+        Log.i(TAG, "------------" + getParent().getLocalClassName());
 
         testButton.setVisibility(View.INVISIBLE);
         nextButton.setVisibility(View.INVISIBLE);
 
         Bundle extras = getIntent().getExtras();
-        @SuppressWarnings("unchecked")
-        Map<String, String> fullProps = (Map<String, String>) extras.get(MAIL_PROPERTIES);
-        Properties props = new Properties();
-        props.putAll(fullProps);
-        final CheckMode checkMode = (CheckMode) extras.get(CHECK_MODE);
+        final CheckMode checkMode = (CheckMode)extras.get(CHECK_MODE);
         
+        Properties props = convertHashMapToProperties(bundledProps);
+        Log.d(TAG, "------------------------------");
+        Set<Object> keys = props.keySet();
+        for (Object key: keys) {
+            Log.d(TAG, key + " " + props.get(key));
+        }
+        Log.d(TAG, "------------------------------");
         final MailConnector connector = new MailConnector(props);
 
-        setContentView(R.layout.check_email_result);
-        final TextView checkEmailResultText1 = (TextView) findViewById(R.id.check_email_result_1);
+        checkEmailResultText.setText(R.string.check_email_result_pending);
 
         final ProgressDialog progressBar = ProgressDialog.show(CheckEmailResultActivity.this, "", "", true);
         progressBar.setMessage(getString(R.string.check_email_settings));
@@ -67,7 +73,6 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
                 }
             }
         }).start();
-        checkEmailResultText1.setText(R.string.check_email_result_pending);
 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.check_email_result_title));
         setTitle(title);
@@ -78,8 +83,8 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
         super.onWindowFocusChanged(hasFocus);
         
         if (hasFocus) {
-            final TextView checkEmailResultText1 = (TextView) findViewById(R.id.check_email_result_1);
-            checkEmailResultText1.setText(resultMessage);
+            checkEmailResultText = (TextView) findViewById(R.id.check_email_result);
+            checkEmailResultText.setText(resultMessage);
         }
     }
 

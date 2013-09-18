@@ -1,7 +1,5 @@
 package com.creek.whereareyou.android.activity.account;
 
-import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP;
-
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -107,9 +105,7 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     
     protected Properties convertHashMapToProperties(HashMap<String, String> props) {
         Properties properties = new Properties();
-        for (String key: props.keySet()) {
-            properties.put(key, props.get(key));
-        }
+        properties.putAll(props);
         return properties;
     }
     

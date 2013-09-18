@@ -51,7 +51,6 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----testButton clicked");
                 String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                 
                 HashMap<String, String> props;

@@ -38,7 +38,7 @@
 
         <activity android:name="com.creek.whereareyou.android.activity.account.CheckEmailResultActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.map.MainMapActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.contacts.EditContactActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.contacts.ContactDetailsActivity" />
         <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity"/>
         <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountSmtp_2_Activity"/>
         <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountPop3_4_Activity"/>

@@ -1,7 +1,6 @@
 package com.creek.whereareyou.android.activity.account;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Properties;
 
 import com.creek.accessemail.connector.mail.ConnectorException;

@@ -114,9 +114,12 @@ public class ContactsActivity extends ListActivity {
         Log.d(TAG, "onResume()");
         Log.d(TAG, "-----------------------onResume() selectedAndroidContact: " + selectedAndroidContact);
         if (selectedAndroidContact != null) {
-            ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByContactId(selectedAndroidContact.getContactId());
-            selectedAndroidContact.getContactData().setContactEmail(contactData.getContactCompoundId().getContactEmail());
-            selectedAndroidContact.getContactData().setRequestAllowanceCode(contactData.getRequestAllowance().getCode());
+            String contactId = selectedAndroidContact.getContactId();
+            ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByContactId(contactId);
+            if (contactData != null) {
+                selectedAndroidContact.getContactData().setContactEmail(contactData.getContactCompoundId().getContactEmail());
+                selectedAndroidContact.getContactData().setRequestAllowanceCode(contactData.getRequestAllowance().getCode());
+            }
             ((ContactListCheckBoxAdapter) getListAdapter()).notifyDataSetChanged();
         }
         super.onResume();
@@ -176,7 +179,7 @@ public class ContactsActivity extends ListActivity {
         case EDIT_CONTACT_DETAILS_MENU_ITEM:
             try {
                 Log.d(TAG, "EDIT_CONTACT_DETAILS_MENU_ITEM: " + androidContact.getContactId());
-                Intent intent = new Intent(ContactsActivity.this, EditContactActivity.class);
+                Intent intent = new Intent(ContactsActivity.this, ContactDetailsActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 return true;
