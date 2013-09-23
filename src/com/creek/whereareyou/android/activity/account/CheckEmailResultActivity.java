@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.activity.account;
 
+import static android.view.View.INVISIBLE;
+
 import java.util.Properties;
 import java.util.Set;
 
@@ -11,8 +13,10 @@ import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,6 +29,7 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
 
     private StringBuilder resultMessage = new StringBuilder();
     private TextView checkEmailResultText;
+    private Properties mailProps;
     
     @Override
     protected void onCreate(Bundle icicle) {
@@ -32,22 +37,28 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
         super.onCreate(icicle);
         
         checkEmailResultText = (TextView) findViewById(R.id.check_email_result);
-        Log.i(TAG, "------------" + getParent().getLocalClassName());
 
-        testButton.setVisibility(View.INVISIBLE);
-        nextButton.setVisibility(View.INVISIBLE);
+        testButton.setVisibility(INVISIBLE);
+        nextButton.setVisibility(INVISIBLE);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                Log.d(TAG, "-----backButton clicked");
+                finishActivity();
+           }
+        });
 
         Bundle extras = getIntent().getExtras();
         final CheckMode checkMode = (CheckMode)extras.get(CHECK_MODE);
         
-        Properties props = convertHashMapToProperties(bundledProps);
+        mailProps = convertHashMapToProperties(bundledProps);
         Log.d(TAG, "------------------------------");
-        Set<Object> keys = props.keySet();
+        Set<Object> keys = mailProps.keySet();
         for (Object key: keys) {
-            Log.d(TAG, key + " " + props.get(key));
+            Log.d(TAG, key + " " + mailProps.get(key));
         }
         Log.d(TAG, "------------------------------");
-        final MailConnector connector = new MailConnector(props);
+        final MailConnector connector = new MailConnector(mailProps);
 
         checkEmailResultText.setText(R.string.check_email_result_pending);
 
@@ -86,6 +97,16 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
             checkEmailResultText = (TextView) findViewById(R.id.check_email_result);
             checkEmailResultText.setText(resultMessage);
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Log.d(TAG, "BACK key pressed");
+            finishActivity();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -136,5 +157,14 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
                 resultMessage.append(getString(R.string.check_email_result_connection_failed)).append("\n");
             }
         }
+    }
+    
+    private void finishActivity() {
+        Intent intent = new Intent();
+        final Bundle bundle = new Bundle();
+        bundle.putSerializable(MAIL_PROPERTIES, convertPropertiesToHashMap(mailProps));
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

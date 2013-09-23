@@ -6,13 +6,13 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SM
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_STARTTLS_ENABLE_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_CLASS_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY;
+
 import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP;
 
 import com.creek.whereareyou.R;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -20,9 +20,7 @@ import android.widget.EditText;
  * 
  * @author Andrey Pereverzin
  */
-public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
-    private static final String TAG = EmailAccountSmtp_2_Activity.class.getSimpleName();
-
+public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivityWithButtons {
     private EditText smtpHostText;
     private EditText smtpPortText;
     private CheckBox smtpAuthCheck;
@@ -48,28 +46,6 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
         smtpSocketFactoryClassText.setText(bundledProps.get(MAIL_SMTP_SOCKET_FACTORY_CLASS_PROPERTY));
         smtpSocketFactoryPortText.setText(bundledProps.get(MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY));
 
-        backButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "-----backButton clicked");
-                // TODO go back
-                step(EmailAccountSmtp_2_Activity.this, EmailAccountAddress_1_Activity.class);                        
-            }
-        });
-
-        testButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "-----testButton clicked");
-                getCheckResult(EmailAccountSmtp_2_Activity.this, SMTP);
-            }
-        });
-
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "-----nextButton clicked");
-                step(EmailAccountSmtp_2_Activity.this, EmailAccountPop3_4_Activity.class);
-            }
-        });
-
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
     }
@@ -87,5 +63,26 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivity {
     @Override
     protected int getLayoutId() {
         return R.layout.email_account_smpt_2;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected EmailAccountSmtp_2_Activity getCurrentActivity() {
+        return this;
+    }
+
+    @Override
+    protected Class<? extends Activity> getPreviousActivityClass() {
+        return EmailAccountAddress_1_Activity.class;
+    }
+
+    @Override
+    protected Class<? extends Activity> getNextActivityClass() {
+        return EmailAccountPop3_4_Activity.class;
+    }
+
+    @Override
+    protected CheckMode getCheckMode() {
+        return SMTP;
     }
 }

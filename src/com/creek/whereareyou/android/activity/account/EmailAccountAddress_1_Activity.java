@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
 
+import static android.view.View.INVISIBLE;
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 
 import com.creek.whereareyou.R;
@@ -11,6 +12,7 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PA
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
+import static com.creek.whereareyou.android.activity.account.CheckMode.RequestCodes.SMTP_AND_POP3_REQUEST_CODE;
 import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_POP3;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
@@ -18,6 +20,7 @@ import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -37,7 +40,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         super.onCreate(icicle);
         emailAddressText = (EditText) findViewById(R.id.mail_username);
         passwordText = (EditText) findViewById(R.id.mail_password);
-        backButton.setVisibility(View.INVISIBLE);
+        backButton.setVisibility(INVISIBLE);
 
         //final Account googleAccount = GoogleAccountProvider.getInstance().getEmailAccount(this);
 
@@ -51,6 +54,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
 
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                Log.d(TAG, "-----testButton clicked");
                 String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                 
                 HashMap<String, String> props;
@@ -67,12 +71,13 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                 bundle.putSerializable(MAIL_PROPERTIES, props);
                 bundle.putSerializable(CHECK_MODE, SMTP_AND_POP3);
                 intent.putExtras(bundle);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, SMTP_AND_POP3_REQUEST_CODE);
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
+                Log.d(TAG, "-----nextButton clicked");
                 try {
                     String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
 
@@ -94,6 +99,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountSmtp_2_Activity.class);                        
                         putBundledPropertiesIntoIntentAndStartActivity(intent);
                     }
+                    finish();
                 } catch (Exception ex) {
                     showException(EmailAccountAddress_1_Activity.this, ex);
                 }
@@ -102,6 +108,21 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        bundledProps = (HashMap<String, String>) data.getExtras().get(MAIL_PROPERTIES);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            finish();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -114,7 +135,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     protected int getLayoutId() {
         return R.layout.email_account_address_1;
     }
-
+    
     @SuppressWarnings("unchecked")
     private void buildBundledProperties(Bundle extras) {
         try {

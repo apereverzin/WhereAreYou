@@ -4,11 +4,8 @@
 
     <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      android:orientation="vertical"
-                      android:layout_width="fill_parent"
-                      android:layout_height="wrap_content">
-
+        <LinearLayout style="@style/VerticalExpandableLinearLayout">
+            
             <EditText android:id="@+id/mail_pop3_host"
                       style="@style/GenericField.Text.Next"
                       android:hint="@string/mail_pop3_host"/>
@@ -26,8 +23,7 @@
                       android:hint="@string/mail_pop3_socket_factory_class"/>
         </LinearLayout>
         
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                      style="@style/HorizontalLinearLayout.Expandable">
+        <LinearLayout style="@style/HorizontalLinearLayout">
             <TextView android:text="@string/mail_pop3_socket_factory_fallback"
                       style="@style/TextView.HorizontallyExpandable.White"/>
             <CheckBox android:id="@+id/mail_pop3_socket_factory_fallback"
@@ -37,4 +33,5 @@
         <include layout="@layout/email_account_buttons"/>
 
     </LinearLayout>
+    
 </ScrollView>

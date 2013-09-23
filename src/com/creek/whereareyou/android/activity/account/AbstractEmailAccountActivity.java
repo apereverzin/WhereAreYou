@@ -27,24 +27,38 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     protected static final String CHECK_MODE = "CHECK_MODE";
     protected static final String TRUE = "true";
     protected static final String FALSE = "false";
+    
     protected HashMap<String, String> bundledProps;
+
     protected Button backButton;
     protected Button testButton;
     protected Button nextButton;
    
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(TAG, "-------onCreate()");
+        Log.d(TAG, "-------onCreate() " + this.getClass().getCanonicalName());
+
         super.onCreate(icicle);
         setContentView(getLayoutId());
+        
         backButton = (Button) findViewById(R.id.mail_properties_button_back);
         testButton = (Button) findViewById(R.id.mail_properties_button_test);
         nextButton = (Button) findViewById(R.id.mail_properties_button_next);
+        
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         extractBundledProperties();
     }
     
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            bundledProps = (HashMap<String, String>) data.getExtras().get(MAIL_PROPERTIES);
+        }
+    }
+
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        if (resultCode == RESULT_OK) {
@@ -109,19 +123,20 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         return properties;
     }
     
-    protected <T extends AbstractEmailAccountActivity, U extends Activity> void step(T currentActivity, Class<U> nextActivityClass) {
+    protected <T extends AbstractEmailAccountActivity> void step(T currentActivity, Class<? extends Activity> nextActivityClass) {
         Intent intent = buildIntent(currentActivity, nextActivityClass);
+        Log.d(TAG, "-----step: " + currentActivity.getClass().getCanonicalName() + " -> " + nextActivityClass.getCanonicalName());
         startActivity(intent);
     }
     
-    protected <T extends AbstractEmailAccountActivity, U extends Activity> void getCheckResult(T currentActivity, CheckMode checkMode) {
+    protected <T extends AbstractEmailAccountActivity> void getCheckResult(T currentActivity, CheckMode checkMode) {
         Intent intent = new Intent(currentActivity, CheckEmailResultActivity.class);
         gatherProperties();
         final Bundle bundle = new Bundle();
         bundle.putSerializable(MAIL_PROPERTIES, bundledProps);
         bundle.putSerializable(CHECK_MODE, checkMode);
         intent.putExtras(bundle);
-        startActivityForResult(intent, 0);
+        startActivityForResult(intent, checkMode.getRequestCode());
     }
     
     protected void gatherProperties() {
@@ -130,7 +145,8 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     
     protected abstract int getLayoutId();
     
-    private <T extends AbstractEmailAccountActivity, U extends Activity> Intent buildIntent(T currentActivity, Class<U> nextActivityClass) {
+    private <T extends AbstractEmailAccountActivity> Intent buildIntent(T currentActivity, Class<? extends Activity> nextActivityClass) {
+        Log.d(TAG, "-----buildIntent: " + currentActivity.getClass().getCanonicalName() + " -> " + nextActivityClass.getCanonicalName());
         Intent intent = new Intent(currentActivity, nextActivityClass);
         putBundledPropertiesIntoIntentAndStartActivity(intent);
         return intent;

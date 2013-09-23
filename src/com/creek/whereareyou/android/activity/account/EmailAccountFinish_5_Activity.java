@@ -4,10 +4,12 @@ import com.creek.whereareyou.R;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.ActivityUtil;
+
 import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_POP3;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,11 +29,7 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----backButton clicked");
-                if (TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
-                    step(EmailAccountFinish_5_Activity.this, EmailAccountAddress_1_Activity.class); 
-                } else {
-                    step(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class); 
-                }
+                goBack();
            }
         });
 
@@ -59,9 +57,28 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
     }
-    
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            Log.d(TAG, "BACK key pressed");
+            goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
     @Override
     protected int getLayoutId() {
         return R.layout.email_account_finish_5;
+    }
+    
+    private void goBack() {
+        if (TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
+            step(EmailAccountFinish_5_Activity.this, EmailAccountAddress_1_Activity.class); 
+        } else {
+            step(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class); 
+        }
+        finish();
     }
 }
