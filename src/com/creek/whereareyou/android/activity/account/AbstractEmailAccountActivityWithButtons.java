@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import static android.view.View.INVISIBLE;
+
 /**
  * 
  * @author Andrey Pereverzin
@@ -17,6 +19,7 @@ public abstract class AbstractEmailAccountActivityWithButtons extends AbstractEm
         Log.d(TAG, "-------onCreate() " + this.getClass().getCanonicalName());
 
         super.onCreate(icicle);
+        backButton.setVisibility(INVISIBLE);
         
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -30,7 +33,6 @@ public abstract class AbstractEmailAccountActivityWithButtons extends AbstractEm
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
                 getCheckResult(getCurrentActivity(), getCheckMode());
-                finish();
             }
         });
 
@@ -38,7 +40,7 @@ public abstract class AbstractEmailAccountActivityWithButtons extends AbstractEm
             public void onClick(View view) {
                 Log.d(TAG, "-----nextButton clicked: " + getCurrentActivity().getClass().getCanonicalName() + " -> " + getNextActivityClass().getCanonicalName());
                 step(getCurrentActivity(), getNextActivityClass());                        
-                finish();
+                //finish();
             }
         });
     }
@@ -50,9 +52,4 @@ public abstract class AbstractEmailAccountActivityWithButtons extends AbstractEm
     protected abstract Class<? extends Activity> getNextActivityClass();
     
     protected abstract CheckMode getCheckMode();
-
-    protected boolean processBackButton() {
-        step(getCurrentActivity(), getPreviousActivityClass());
-        return true;
-    }
 }

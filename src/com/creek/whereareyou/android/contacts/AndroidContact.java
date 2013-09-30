@@ -2,8 +2,6 @@ package com.creek.whereareyou.android.contacts;
 
 import java.io.Serializable;
 
-import com.creek.whereareyoumodel.domain.ContactData;
-
 /**
  * 
  * @author Andrey Pereverzin

@@ -59,13 +59,6 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (resultCode == RESULT_OK) {
-//            finish();
-//        }
-//    }
-
     @SuppressWarnings("unchecked")
     protected void extractBundledProperties() {
         Bundle extras = getIntent().getExtras();
@@ -75,12 +68,6 @@ public abstract class AbstractEmailAccountActivity extends Activity {
             bundledProps = (HashMap<String, String>) extras.get(MAIL_PROPERTIES);
             Log.d(TAG, "-------bundledProps " + bundledProps);
         }
-    }
-
-    protected void putBundledPropertiesIntoIntentAndStartActivity(Intent intent) {
-        putBundledPropertiesIntoIntent(intent);
-        startActivity(intent);
-        setResult(RESULT_OK);
     }
 
     protected void putBundledPropertiesIntoIntent(Intent intent) {
@@ -124,8 +111,9 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     }
     
     protected <T extends AbstractEmailAccountActivity> void step(T currentActivity, Class<? extends Activity> nextActivityClass) {
-        Intent intent = buildIntent(currentActivity, nextActivityClass);
         Log.d(TAG, "-----step: " + currentActivity.getClass().getCanonicalName() + " -> " + nextActivityClass.getCanonicalName());
+        Intent intent = new Intent(currentActivity, nextActivityClass);
+        putBundledPropertiesIntoIntent(intent);
         startActivity(intent);
     }
     
@@ -144,11 +132,4 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     }
     
     protected abstract int getLayoutId();
-    
-    private <T extends AbstractEmailAccountActivity> Intent buildIntent(T currentActivity, Class<? extends Activity> nextActivityClass) {
-        Log.d(TAG, "-----buildIntent: " + currentActivity.getClass().getCanonicalName() + " -> " + nextActivityClass.getCanonicalName());
-        Intent intent = new Intent(currentActivity, nextActivityClass);
-        putBundledPropertiesIntoIntentAndStartActivity(intent);
-        return intent;
-    }
 }

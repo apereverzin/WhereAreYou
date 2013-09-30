@@ -6,7 +6,9 @@
 
     <ListView android:id="@+id/android:list"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="fill_parent"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"/>
 
     <TextView android:id="@+id/android:empty"
         android:layout_width="fill_parent"

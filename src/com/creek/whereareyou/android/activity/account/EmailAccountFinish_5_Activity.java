@@ -9,9 +9,10 @@ import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+
+import static android.view.View.INVISIBLE;
 
 /**
  * 
@@ -25,6 +26,8 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         super.onCreate(icicle);
         TextView descr = (TextView) findViewById(R.id.mail_account_description);
         descr.setText("Account");
+        
+        backButton.setVisibility(INVISIBLE);
 
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -47,7 +50,7 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
                 try {
                     MailAccountPropertiesProvider.getInstance().persistMailProperties(convertHashMapToProperties(bundledProps));
                     setResult(RESULT_OK);
-                    finish();
+                    //finish();
                 } catch (Exception ex) {
                     ActivityUtil.showException(EmailAccountFinish_5_Activity.this, ex);
                 }
@@ -56,16 +59,6 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
 
         StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
         setTitle(title);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK ) {
-            Log.d(TAG, "BACK key pressed");
-            goBack();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override

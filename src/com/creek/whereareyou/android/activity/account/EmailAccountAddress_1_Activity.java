@@ -20,7 +20,6 @@ import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 
@@ -36,7 +35,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(TAG, "-------onCreate()");
+        Log.d(TAG, "-------onCreate() " + this);
         super.onCreate(icicle);
         emailAddressText = (EditText) findViewById(R.id.mail_username);
         passwordText = (EditText) findViewById(R.id.mail_password);
@@ -51,7 +50,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         Log.d(TAG, "-------bundledProps: " + bundledProps);
         emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
         passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
-
+        
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "-----testButton clicked");
@@ -92,14 +91,12 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountFinish_5_Activity.class);
                         gatherProperties();
                         putExtrasIntoIntent(intent, bundledProps);
-                        startActivity(intent);
-                        setResult(RESULT_OK);
                     } else {
                         bundledProps.put(PREDEFINED_PROPERTIES, FALSE);
                         intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountSmtp_2_Activity.class);                        
-                        putBundledPropertiesIntoIntentAndStartActivity(intent);
+                        putBundledPropertiesIntoIntent(intent);
                     }
-                    finish();
+                    startActivity(intent);
                 } catch (Exception ex) {
                     showException(EmailAccountAddress_1_Activity.this, ex);
                 }
@@ -115,16 +112,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         bundledProps = (HashMap<String, String>) data.getExtras().get(MAIL_PROPERTIES);
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK ) {
-            finish();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
+    
     @Override
     protected void gatherProperties() {
         gatherTextFieldValue(bundledProps, MAIL_USERNAME_PROPERTY, emailAddressText);
