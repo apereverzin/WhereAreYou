@@ -9,7 +9,6 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 public class AndroidContact implements Comparable<AndroidContact>, Serializable {
     private final String contactId;
-    private String contactEmail;
     private String displayName;
     private ContactDataDTO contactData;
 
@@ -21,14 +20,6 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
         return contactId;
     }
     
-    public String getContactEmail() {
-        return contactEmail;
-    }
-    
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
-    }
-
     public String getDisplayName() {
         return displayName;
     }
@@ -77,6 +68,6 @@ public class AndroidContact implements Comparable<AndroidContact>, Serializable 
 
     @Override
     public String toString() {
-        return "AndroidContact [contactId=" + contactId + ", contactEmail=" + contactEmail + ", displayName=" + displayName + ", contactData=" + contactData + "]";
+        return "AndroidContact [contactId=" + contactId + ", displayName=" + displayName + ", contactData=" + contactData + "]";
     }
 }

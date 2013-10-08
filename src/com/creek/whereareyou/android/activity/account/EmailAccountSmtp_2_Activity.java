@@ -8,6 +8,7 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SM
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY;
 
 import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP;
+import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 
 import com.creek.whereareyou.R;
 
@@ -46,8 +47,7 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivityWit
         smtpSocketFactoryClassText.setText(bundledProps.get(MAIL_SMTP_SOCKET_FACTORY_CLASS_PROPERTY));
         smtpSocketFactoryPortText.setText(bundledProps.get(MAIL_SMTP_SOCKET_FACTORY_PORT_PROPERTY));
 
-        StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
-        setTitle(title);
+        setActivityTitle(this, R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_smtp_settings_activity_name);
     }
 
     @Override

@@ -23,7 +23,7 @@ public final class RequestResponseFactory {
     
     public ContactRequest createContactLocationRequest(AndroidContact contact) {
         ContactRequest contactRequest = new ContactRequest();
-        ContactCompoundId contactCompoundId = new ContactCompoundId(contact.getContactId(), contact.getContactEmail());
+        ContactCompoundId contactCompoundId = new ContactCompoundId(contact.getContactId(), contact.getContactData().getContactEmail());
         contactRequest.setContactCompoundId(contactCompoundId);
         contactRequest.setRequestCode(RequestCode.LOCATION);
         contactRequest.setMessage("");

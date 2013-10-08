@@ -20,19 +20,21 @@
     <string name="imap_settings">IMAP Settings</string>
     
     <!-- Mail properties -->
-    <string name="mail_properties_activity_name">Email Properties</string>
+    <string name="mail_settings_activity_name">Email Settings</string>
+    <string name="mail_address_activity_name">Email Address</string>
     <string name="mail_username">Email Address</string>
     <string name="mail_password">Password</string>
+    <string name="mail_smtp_settings_activity_name">SMTP Settings</string>
     <string name="mail_smtp_host">SMTP Host</string>
     <string name="mail_smtp_port">SMTP Port</string>
     <string name="mail_smtp_auth">SMTP Auth</string>
     <string name="mail_smtp_start_tls_enable">SMTP Start Tls Enable</string>
     <string name="mail_smtp_socket_factory_port">SMTP Socket Factory Port</string>
     <string name="mail_smtp_socket_factory_class">SMTP Socket Factory Class</string>
+    <string name="mail_pop3_settings_activity_name">POP3 Settings</string>
     <string name="mail_pop3_host">POP3 Host</string>
     <string name="mail_pop3_port">POP3 Port</string>
-    <string name="mail_pop3_settings">POP3 Settings</string>
-    <string name="mail_imap_settings">IMAP Settings</string>
+    <string name="mail_imap_settings_activity_name">IMAP Settings</string>
     <string name="mail_pop3_socket_factory_port">POP3 Socket Factory Port</string>
     <string name="mail_pop3_socket_factory_class">POP3 Socket Factory Class</string>
     <string name="mail_pop3_socket_factory_fallback">POP3 Socket Factory Fallback</string>

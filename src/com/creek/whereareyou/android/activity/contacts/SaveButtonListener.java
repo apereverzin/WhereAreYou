@@ -11,6 +11,7 @@ import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.app.ListActivity;
 import static android.app.Activity.RESULT_OK;
+import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 import android.view.View;
 
 /**
@@ -37,7 +38,7 @@ public class SaveButtonListener implements View.OnClickListener {
         try {
             ContactsPersistenceManager.getInstance().persistContacts(contacts);
         } catch (IOException ex) {
-            ActivityUtil.showException(activity, ex);
+            showException(activity, ex);
         }
 
         activity.setResult(RESULT_OK);

@@ -36,7 +36,7 @@ public abstract class AbstractEmailAccountActivity extends Activity {
    
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(TAG, "-------onCreate() " + this.getClass().getCanonicalName());
+        Log.d(TAG, "onCreate() " + this.getClass().getCanonicalName());
 
         super.onCreate(icicle);
         setContentView(getLayoutId());
@@ -62,16 +62,14 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     @SuppressWarnings("unchecked")
     protected void extractBundledProperties() {
         Bundle extras = getIntent().getExtras();
-        Log.d(TAG, "-------extras");
         if (extras != null) {
-            Log.d(TAG, "-------extras != null");
             bundledProps = (HashMap<String, String>) extras.get(MAIL_PROPERTIES);
-            Log.d(TAG, "-------bundledProps " + bundledProps);
         }
     }
 
     protected void putBundledPropertiesIntoIntent(Intent intent) {
         gatherProperties();
+
         putExtrasIntoIntent(intent, bundledProps);
     }
 

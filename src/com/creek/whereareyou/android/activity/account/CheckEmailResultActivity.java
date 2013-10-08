@@ -3,7 +3,6 @@ package com.creek.whereareyou.android.activity.account;
 import static android.view.View.INVISIBLE;
 
 import java.util.Properties;
-import java.util.Set;
 
 import javax.mail.AuthenticationFailedException;
 
@@ -43,7 +42,7 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
 
         backButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----backButton clicked");
+                Log.d(TAG, "backButton clicked");
                 finishActivity();
            }
         });
@@ -52,12 +51,6 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
         final CheckMode checkMode = (CheckMode)extras.get(CHECK_MODE);
         
         mailProps = convertHashMapToProperties(bundledProps);
-        Log.d(TAG, "------------------------------");
-        Set<Object> keys = mailProps.keySet();
-        for (Object key: keys) {
-            Log.d(TAG, key + " " + mailProps.get(key));
-        }
-        Log.d(TAG, "------------------------------");
         final MailConnector connector = new MailConnector(mailProps);
 
         checkEmailResultText.setText(R.string.check_email_result_pending);

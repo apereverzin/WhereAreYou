@@ -10,6 +10,7 @@ import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getP
 import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
+import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import static com.creek.whereareyou.android.activity.account.CheckMode.RequestCodes.SMTP_AND_POP3_REQUEST_CODE;
@@ -35,7 +36,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(TAG, "-------onCreate() " + this);
+        Log.d(TAG, "onCreate() " + this);
         super.onCreate(icicle);
         emailAddressText = (EditText) findViewById(R.id.mail_username);
         passwordText = (EditText) findViewById(R.id.mail_password);
@@ -47,13 +48,13 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
             buildBundledProperties(getIntent().getExtras());
         }
         
-        Log.d(TAG, "-------bundledProps: " + bundledProps);
+        Log.d(TAG, "bundledProps: " + bundledProps);
         emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
         passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
         
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----testButton clicked");
+                Log.d(TAG, "testButton clicked");
                 String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
                 
                 HashMap<String, String> props;
@@ -76,7 +77,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----nextButton clicked");
+                Log.d(TAG, "nextButton clicked");
                 try {
                     String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
 
@@ -103,8 +104,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
             }
         });
 
-        StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.mail_properties_activity_name));
-        setTitle(title);
+        setActivityTitle(this, R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_address_activity_name);
     }
     
     @SuppressWarnings("unchecked")

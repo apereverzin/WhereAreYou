@@ -63,4 +63,8 @@ public final class Util {
         }
         return newArray;
     }
+    
+    public static boolean isStringNotEmpty(String str) {
+        return str != null && !"".equals(str);
+    }
 }

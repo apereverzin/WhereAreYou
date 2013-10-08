@@ -7,9 +7,10 @@ import java.util.TimerTask;
 import com.creek.accessemail.connector.mail.PredefinedMailProperties;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
+import static com.creek.whereareyou.android.util.ActivityUtil.showException;
+
 import com.creek.whereareyou.android.notifier.ContactLocationNotifier;
 import com.creek.whereareyou.android.notifier.ReceivedMessages;
-import com.creek.whereareyou.android.util.ActivityUtil;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -77,7 +78,7 @@ public class EmailSendingAndReceivingService extends Service {
                     notifier.notifyUser(messageCounts);
                 }
             } catch(Throwable ex) {
-                ActivityUtil.showException(EmailSendingAndReceivingService.this, ex);
+                showException(EmailSendingAndReceivingService.this, ex);
             }
         }
     };

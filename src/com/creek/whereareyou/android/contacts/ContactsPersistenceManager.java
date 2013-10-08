@@ -86,7 +86,7 @@ public class ContactsPersistenceManager {
     private ContactData createContactData(AndroidContact androidContact) {
         ContactData contactData = new ContactData();
         
-        ContactCompoundId contactCompoundId = new ContactCompoundId(androidContact.getContactId(), androidContact.getContactEmail());
+        ContactCompoundId contactCompoundId = new ContactCompoundId(androidContact.getContactId(), androidContact.getContactData().getContactEmail());
         contactData.setContactCompoundId(contactCompoundId);
         return contactData;
     }

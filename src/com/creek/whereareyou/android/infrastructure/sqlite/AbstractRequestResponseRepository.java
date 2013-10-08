@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_KNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.SENT_TIME_UNKNOWN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.SENT_TIME_KNOWN;
 
 import java.util.List;
 
@@ -83,6 +84,12 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     
     protected final List<T> getUnsent() {
         String criteria = createWhereAndCriteria(new ComparisonClause[]{CREATION_TIME_KNOWN, SENT_TIME_UNKNOWN});
+        Cursor cursor = createCursor(criteria, null, null);
+        return createEntityListFromCursor(cursor);
+    }
+    
+    protected final List<T> getSent() {
+        String criteria = createWhereAndCriteria(new ComparisonClause[]{CREATION_TIME_KNOWN, SENT_TIME_KNOWN});
         Cursor cursor = createCursor(criteria, null, null);
         return createEntityListFromCursor(cursor);
     }

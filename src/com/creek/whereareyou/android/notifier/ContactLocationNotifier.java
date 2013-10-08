@@ -56,7 +56,7 @@ public class ContactLocationNotifier {
     }
 
     private Notification getNotification() {
-        int icon = R.drawable.contact_location_notification;        // icon from resources
+        int icon = R.drawable.location_notification;        // icon from resources
         CharSequence tickerText = ctx.getString(R.string.notifications_contact_locations); // ticker-text
         long when = System.currentTimeMillis();         // notification time
 

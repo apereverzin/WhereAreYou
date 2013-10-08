@@ -16,31 +16,22 @@ public abstract class AbstractEmailAccountActivityWithButtons extends AbstractEm
 
     @Override
     protected void onCreate(Bundle icicle) {
-        Log.d(TAG, "-------onCreate() " + this.getClass().getCanonicalName());
+        Log.d(TAG, "onCreate() " + this.getClass().getCanonicalName());
 
         super.onCreate(icicle);
         backButton.setVisibility(INVISIBLE);
         
-        backButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "-----backButton clicked: " + getCurrentActivity().getClass().getCanonicalName() + " -> " + getPreviousActivityClass().getCanonicalName());
-                step(getCurrentActivity(), getPreviousActivityClass());                        
-                finish();
-            }
-        });
-
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----testButton clicked");
+                Log.d(TAG, "testButton clicked");
                 getCheckResult(getCurrentActivity(), getCheckMode());
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                Log.d(TAG, "-----nextButton clicked: " + getCurrentActivity().getClass().getCanonicalName() + " -> " + getNextActivityClass().getCanonicalName());
+                Log.d(TAG, "nextButton clicked: " + getCurrentActivity().getClass().getCanonicalName() + " -> " + getNextActivityClass().getCanonicalName());
                 step(getCurrentActivity(), getNextActivityClass());                        
-                //finish();
             }
         });
     }

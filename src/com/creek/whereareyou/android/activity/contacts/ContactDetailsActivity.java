@@ -55,7 +55,7 @@ public class ContactDetailsActivity extends Activity implements OnItemSelectedLi
         if (contactDataDto == null) {
             contactDataDto = new ContactDataDTO(androidContact.getContactId());
             contactDataDto.setId(-1L);
-            contactDataDto.setContactEmail(androidContact.getContactEmail());
+            contactDataDto.setContactEmail(androidContact.getContactData().getContactEmail());
             contactDataDto.setRequestAllowanceCode(NEVER.getCode());
             contactDataDto.setAllowanceDate(0L);
         }
