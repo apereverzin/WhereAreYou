@@ -8,6 +8,8 @@ import android.util.Log;
 
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
+
+import com.creek.accessemail.connector.mail.MailConnector;
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyoumodel.message.AbstractMessage;
@@ -36,7 +38,7 @@ public class EmailSendingAndReceivingManager {
     
     public EmailSendingAndReceivingManager() throws CryptoException, IOException {
         mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
-        messagesService = new MessagesService(mailProps);
+        messagesService = new MessagesService(new MailConnector(mailProps));
     }
 
     public EmailSendingAndReceivingManager(Properties props) throws CryptoException, IOException {
@@ -45,7 +47,7 @@ public class EmailSendingAndReceivingManager {
         MailAccountPropertiesProvider.getInstance().persistMailProperties(props);
         
         mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
-        messagesService = new MessagesService(mailProps);
+        messagesService = new MessagesService(new MailConnector(mailProps));
     }
 
     public void sendRequest(ContactRequest contactRequest) throws ServiceException {

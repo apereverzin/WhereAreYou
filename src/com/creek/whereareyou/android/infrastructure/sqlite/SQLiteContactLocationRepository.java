@@ -1,7 +1,7 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
-import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.EQUALS;
-import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.GREATER_THAN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.Comparison.EQUALS;
+import static com.creek.whereareyou.android.infrastructure.sqlite.Comparison.GREATER_THAN;
 
 import java.util.List;
 

@@ -58,6 +58,14 @@ public class SQLiteRepositoryManager {
     public SQLiteDatabase getDatabase() {
         return whereAreYouDb;
     }
+    
+    public void beginTransaction() {
+        whereAreYouDb.beginTransaction();
+    }
+
+    public void endTransaction() {
+        whereAreYouDb.endTransaction();
+    }
 
     public ContactDataRepository getContactDataRepository() {
         if (contactDataRepository == null) {
@@ -147,10 +155,10 @@ public class SQLiteRepositoryManager {
 
     private boolean databaseTablesExist() {
         try {
-            queryTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
-            queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
-            queryTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
-            queryTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
+            testTable(AbstractSQLiteRepository.CONTACT_DATA_TABLE);
+            testTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
+            testTable(AbstractSQLiteRepository.CONTACT_REQUEST_TABLE);
+            testTable(AbstractSQLiteRepository.CONTACT_LOCATION_TABLE);
             Log.d(TAG, "db exists");
             return true;
         } catch (SQLiteException ex) {
@@ -163,7 +171,7 @@ public class SQLiteRepositoryManager {
         whereAreYouDb.execSQL(String.format(DROP_TABLE, tableName));
     }
     
-    private void queryTable(String tableName) {
+    private void testTable(String tableName) {
         whereAreYouDb.query(tableName, new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
     }
         

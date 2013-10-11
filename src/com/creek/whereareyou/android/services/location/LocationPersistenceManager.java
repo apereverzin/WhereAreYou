@@ -34,7 +34,7 @@ public class LocationPersistenceManager {
             SQLiteRepositoryManager.getInstance().openDatabase();
             ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
             
-            List<ContactRequest> unrespondedLocationRequests = contactRequestRepository.getUnrespondedLocationRequests();
+            List<ContactRequest> unrespondedLocationRequests = contactRequestRepository.getIncomingUnrespondedLocationRequests();
             Log.d(TAG, "--------------LocationRequestManager: " + unrespondedLocationRequests.size());
             
             return unrespondedLocationRequests;

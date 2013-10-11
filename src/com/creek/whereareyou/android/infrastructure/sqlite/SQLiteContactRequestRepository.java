@@ -6,9 +6,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
 
-import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.Comparison.EQUALS;
+import static com.creek.whereareyou.android.infrastructure.sqlite.Comparison.EQUALS;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_KNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_UNKNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.RECEIVED_TIME_KNOWN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.RECEIVED_TIME_UNKNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.NOT_PROCESSED;
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
@@ -33,6 +35,8 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
             "int not null"
         };
     
+    static final ComparisonClause LOCATION_REQUEST = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
+
     @Override
     protected ContentValues getContentValues(ContactRequest contactRequest) {
         Log.d(TAG, "getContentValues()");
@@ -108,14 +112,33 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     }
     
     @Override
-    public final List<ContactRequest> getUnrespondedLocationRequests() {
+    public final List<ContactRequest> getIncomingUnrespondedLocationRequests() {
         Log.d(TAG, "getUnrespondedLocationRequests()");
-        ComparisonClause locationRequest = new ComparisonClause(REQUEST_CODE_FIELD_NAME, EQUALS, LOCATION.getCode());
         String criteria = createWhereAndCriteria(
-                new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, locationRequest, NOT_PROCESSED});
+                new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, LOCATION_REQUEST, NOT_PROCESSED});
         Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------+++++++++++getUnrespondedLocationRequests: " + cursor.getCount());
+        Log.d(TAG, "--------------+++++++++++getIncomingUnrespondedLocationRequests: " + cursor.getCount());
         return createEntityListFromCursor(cursor);
+    }
+    
+    @Override
+    public final List<ContactRequest> getOutgoingUnrespondedLocationRequests() {
+        Log.d(TAG, "getUnrespondedLocationRequests()");
+        String criteria = createWhereAndCriteria(
+                new ComparisonClause[]{CREATION_TIME_KNOWN, RECEIVED_TIME_UNKNOWN, LOCATION_REQUEST, NOT_PROCESSED});
+        Cursor cursor = createCursor(criteria, null, null);
+        Log.d(TAG, "--------------+++++++++++getOutgoingUnrespondedLocationRequests: " + cursor.getCount());
+        return createEntityListFromCursor(cursor);
+    }
+
+    @Override
+    public void updateProcessedOutgoingContactRequests(String contactEmail) {
+        Log.d(TAG, "updateProcessedOutgoingContactRequests: " + contactEmail);
+        ComparisonClause emailComparisonClause = new ComparisonClause(EMAIL_FIELD_NAME, EQUALS, contactEmail);
+        String criteria = createWhereAndCriteria(
+                new ComparisonClause[]{emailComparisonClause, CREATION_TIME_KNOWN, RECEIVED_TIME_UNKNOWN, LOCATION_REQUEST, NOT_PROCESSED});
+        ContentValues valuesToSet = getValuesToSet();
+        whereAreYouDb.update(getTableName(), valuesToSet, criteria, null);
     }
 
     @Override
@@ -126,5 +149,11 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     @Override
     protected final String getTableName() {
         return CONTACT_REQUEST_TABLE;
+    }
+
+    private ContentValues getValuesToSet() {
+        ContentValues valuesToSet = new ContentValues();
+        valuesToSet.put(PROCESSED_FIELD_NAME, INT_TRUE);
+        return valuesToSet;
     }
 }

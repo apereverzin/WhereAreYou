@@ -91,6 +91,20 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
         List<ContactResponseEntity> entities = getUnsent();
         return convertContactResponses(entities);
     }
+
+    @Override
+    public List<String> getEmailAddressesForResponsesEverReceived() {
+        List<String> l = new ArrayList<String>();
+        
+        return l;
+    }
+
+    @Override
+    public List<String> getEmailAddressesForResponsesEverSent() {
+        List<String> l = new ArrayList<String>();
+        
+        return l;
+    }
     
     @Override
     protected final ContactResponseEntity createEntityInstance() {

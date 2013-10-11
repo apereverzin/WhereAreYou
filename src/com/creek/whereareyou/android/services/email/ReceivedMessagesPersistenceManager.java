@@ -35,14 +35,16 @@ import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 public class ReceivedMessagesPersistenceManager {
     private static final String TAG = ReceivedMessagesPersistenceManager.class.getSimpleName();
 
-    public ReceivedMessages persistReceivedMessages(List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactDataToPersist, ReceivedMessages receivedMessages) {
+    public ReceivedMessages persistReceivedMessages(List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactDataToPersist, 
+            ReceivedMessages receivedMessages) {
         Log.d(TAG, "persistReceivedMessages()");
         Log.d(TAG, "--------------persistReceivedMessages()");
 
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
             ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
-            ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+            ContactResponseRepository<ContactResponseEntity> contactResponseRepository = 
+                    SQLiteRepositoryManager.getInstance().getContactResponseRepository();
             LocationRepository locationRepository = SQLiteRepositoryManager.getInstance().getLocationRepository();
             
             Log.d(TAG, "--------------messagesToPersist.size(): " + messagesToPersist.size());
@@ -61,7 +63,8 @@ public class ReceivedMessagesPersistenceManager {
                     receivedMessages.addNormalResponse((ResponseMessage) message);
                 } else if (message instanceof OwnerLocationDataMessage) {
                     Log.d(TAG, "--------------OwnerLocationDataMessage: " + message);
-                    persistReceivedLocationData(locationRepository, contactResponseRepository, contactCompoundId, (OwnerLocationDataMessage) message);
+                    persistReceivedLocationData(locationRepository, contactResponseRepository, contactRequestRepository, contactCompoundId, 
+                            (OwnerLocationDataMessage) message);
                     receivedMessages.addLocationResponse((OwnerLocationDataMessage) message);
                 }
                 Log.d(TAG, "--------------message persisted");
@@ -73,7 +76,8 @@ public class ReceivedMessagesPersistenceManager {
         }
     }
     
-    private void persistReceivedContactRequest(ContactRequestRepository contactRequestRepository, ContactCompoundId contactCompoundId, RequestMessage message) {
+    private void persistReceivedContactRequest(ContactRequestRepository contactRequestRepository, ContactCompoundId contactCompoundId, 
+            RequestMessage message) {
         Log.d(TAG, "persistContactRequest: " + contactCompoundId + ", " + message);
         OwnerRequest ownerRequest = message.getOwnerRequest();
         ContactRequest contactRequest = new ContactRequest();
@@ -87,24 +91,32 @@ public class ReceivedMessagesPersistenceManager {
         contactRequestRepository.create(contactRequest);
     }
     
-    private void persistReceivedNormalContactResponse(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactCompoundId contactCompoundId, ResponseMessage message) {
+    private void persistReceivedNormalContactResponse(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, 
+            ContactCompoundId contactCompoundId, ResponseMessage message) {
         Log.d(TAG, "persistNormalContactResponse: " + contactCompoundId + ", " + message);
         Log.d(TAG, "--------------persistNormalContactResponse: " + contactCompoundId + ", " + message);
         OwnerResponse ownerResponse = message.getOwnerResponse();
-        persistReceivedContactResponseEntity(contactResponseRepository, contactCompoundId, NORMAL_RESPONSE_TYPE, -1, ownerResponse.getTimeSent(), ownerResponse.getResponseCode(), ownerResponse.getMessage());
+        persistReceivedContactResponseEntity(contactResponseRepository, contactCompoundId, NORMAL_RESPONSE_TYPE, -1, 
+                ownerResponse.getTimeSent(), ownerResponse.getResponseCode(), ownerResponse.getMessage());
     }
 
-    private void persistReceivedLocationData(LocationRepository locationRepository, ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactCompoundId contactCompoundId, OwnerLocationDataMessage message) {
+    private void persistReceivedLocationData(LocationRepository locationRepository, 
+            ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactRequestRepository contactRequestRepository, 
+            ContactCompoundId contactCompoundId, OwnerLocationDataMessage message) {
         Log.d(TAG, "persistLocationData: " + contactCompoundId + ", " + message);
         Log.d(TAG, "--------------persistLocationData: " + contactCompoundId + ", " + message);
         SendableLocationData sendableLocationData = message.getOwnerLocationData();
         LocationData locationData = sendableLocationData.getLocationData();
         locationData.setContactCompoundId(contactCompoundId);
+        // TODO transaction
         locationData = (LocationData)locationRepository.create(locationData);
-        persistReceivedContactResponseEntity(contactResponseRepository, contactCompoundId, LOCATION_RESPONSE_TYPE, locationData.getId(), System.currentTimeMillis(), ResponseCode.SUCCESS.getCode(), "");
+        persistReceivedContactResponseEntity(contactResponseRepository, contactCompoundId, LOCATION_RESPONSE_TYPE, locationData.getId(), 
+                System.currentTimeMillis(), ResponseCode.SUCCESS.getCode(), "");
+        processOutgoingLocationRequests(contactRequestRepository, contactCompoundId);
     }
     
-    private void persistReceivedContactResponseEntity(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, ContactCompoundId contactCompoundId, int responseType, long locationId, long timeSent, int code, String message) {
+    private void persistReceivedContactResponseEntity(ContactResponseRepository<ContactResponseEntity> contactResponseRepository, 
+            ContactCompoundId contactCompoundId, int responseType, long locationId, long timeSent, int code, String message) {
         Log.d(TAG, "persistContactResponseEntity: " + contactCompoundId);
         Log.d(TAG, "--------------persistContactResponseEntity: " + contactCompoundId);
         ContactResponseEntity contactResponseEntity = new ContactResponseEntity();
@@ -119,5 +131,9 @@ public class ReceivedMessagesPersistenceManager {
         contactResponseEntity.setLocationDataId(locationId);
         contactResponseEntity.setRequestId(UNDEFINED_INT);
         contactResponseRepository.create(contactResponseEntity);
+    }
+    
+    private void processOutgoingLocationRequests(ContactRequestRepository contactRequestRepository, ContactCompoundId contactCompoundId) {
+        contactRequestRepository.updateProcessedOutgoingContactRequests(contactCompoundId.getContactEmail());
     }
 }
