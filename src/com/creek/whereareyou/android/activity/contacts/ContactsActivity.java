@@ -55,6 +55,8 @@ public final class ContactsActivity extends ListActivity {
     private List<AndroidContact> androidContactList;
     
     private ListView lv;
+    
+    private ContactsArrayAdapter contactsListAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +79,7 @@ public final class ContactsActivity extends ListActivity {
             }
         });
         
-        ContactsArrayAdapter contactsListAdapter = new ContactsArrayAdapter(this, androidContactList);
+        contactsListAdapter = new ContactsArrayAdapter(this, androidContactList);
         setListAdapter(contactsListAdapter);
         
         registerForContextMenu(getListView());
@@ -153,6 +155,8 @@ public final class ContactsActivity extends ListActivity {
                 ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
 
                 contactRequestRepository.create(contactRequest);
+                
+                contactsListAdapter.notifyDataSetChanged();
                 return true;
             } finally {
                 SQLiteRepositoryManager.getInstance().closeDatabase();

@@ -68,7 +68,10 @@
     
     <!-- Contacts -->
     <string name="no_contacts">No contacts</string>
-    
+    <string name="request_allowance">Request allowance</string>
+    <string name="state_of_outgoing_requests">State of outgoing requests</string>
+    <string name="state_of_incoming_requests">State of incoming requests</string>
+        
     <!-- Contacts Options Menu Items -->
     <string name="enter_email_account">Enter Email Account</string>
     <string name="edit_email_account">Edit Email Account</string>
