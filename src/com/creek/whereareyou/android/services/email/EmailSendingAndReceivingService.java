@@ -1,12 +1,8 @@
 package com.creek.whereareyou.android.services.email;
 
-import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.creek.accessemail.connector.mail.PredefinedMailProperties;
-import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
-import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import com.creek.whereareyou.android.notifier.ContactLocationNotifier;
@@ -61,10 +57,11 @@ public class EmailSendingAndReceivingService extends Service {
         public void run() {
             Log.i(TAG, "===================EmailSendingAndReceivingService doing work");
             try {
-                Properties props = PredefinedMailProperties.getPredefinedPropertiesForServer("gmail");
-                props.put(MAIL_USERNAME_PROPERTY, "andrey.pereverzin");
-                props.put(MAIL_PASSWORD_PROPERTY, "bertoluCCi");
-                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(props);
+//                Properties props = PredefinedMailProperties.getPredefinedPropertiesForServer("gmail");
+//                props.put(MAIL_USERNAME_PROPERTY, "andrey.pereverzin");
+//                props.put(MAIL_PASSWORD_PROPERTY, "bertoluCCi");
+//                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager(props);
+                EmailSendingAndReceivingManager emailSendingAndReceivingManager = new EmailSendingAndReceivingManager();
                 
                 Log.d(TAG, "===================EmailSendingAndReceivingService sending");
                 EmailSender emailSender = new EmailSender(emailSendingAndReceivingManager);

@@ -16,7 +16,7 @@ import android.util.Log;
  *
  */
 public final class ActivityUtil {
-    private static final String TITLE_ENTRIES_SEPARATOR = "> ";
+    private static final String TITLE_ENTRIES_SEPARATOR = ": ";
     
     private ActivityUtil() {
         //

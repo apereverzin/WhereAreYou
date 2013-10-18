@@ -79,7 +79,11 @@ public final class ContactsActivity extends ListActivity {
             }
         });
         
-        contactsListAdapter = new ContactsArrayAdapter(this, androidContactList);
+        List<ContactData> contactDataList = new ArrayList<ContactData>();
+        for (int i = 0; i < androidContactList.size(); i++) {
+            contactDataList.add(new ContactData(androidContactList.get(i)));
+        }
+        contactsListAdapter = new ContactsArrayAdapter(this, contactDataList);
         setListAdapter(contactsListAdapter);
         
         registerForContextMenu(getListView());
@@ -156,6 +160,7 @@ public final class ContactsActivity extends ListActivity {
 
                 contactRequestRepository.create(contactRequest);
                 
+                contactsListAdapter.updateData(selectedAndroidContact);
                 contactsListAdapter.notifyDataSetChanged();
                 return true;
             } finally {

@@ -9,6 +9,7 @@ import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
+import com.creek.whereareyoumodel.domain.RequestAllowance;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
@@ -30,11 +31,11 @@ import android.widget.TextView;
  * 
  * @author Andrey Pereverzin
  */
-public class ContactsArrayAdapter extends ArrayAdapter<AndroidContact> {
+public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
     private static final String TAG = ContactsArrayAdapter.class.getSimpleName();
 
     private final Context context;
-    private final List<AndroidContact> values;
+    private final List<ContactData> values;
     private final List<String> outgoingUnsentLocationRequestsEmailAddresses;
     private final List<String> outgoingUnrespondedLocationRequestsEmailAddresses;
     private final List<String> outgoingEmailsEverReceivedLocationResponses;
@@ -42,10 +43,10 @@ public class ContactsArrayAdapter extends ArrayAdapter<AndroidContact> {
     private final List<String> incomingUnsentLocationResponsesEmailAddresses;
     private final List<String> incomingEmailsEverSentLocationResponses;
 
-    public ContactsArrayAdapter(Context context, List<AndroidContact> values) {
-        super(context, R.layout.contact_row, values);
-        this.context = context;
-        this.values = values;
+    public ContactsArrayAdapter(Context _context, List<ContactData> _values) {
+        super(_context, R.layout.contact_row, _values);
+        this.context = _context;
+        this.values = _values;
         
         ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
         ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
@@ -56,6 +57,10 @@ public class ContactsArrayAdapter extends ArrayAdapter<AndroidContact> {
         incomingUnrespondedLocationRequestsEmailAddresses = buildListOfIncomingUnrespondedLocationRequestsEmailAddresses(contactRequestRepository);
         incomingUnsentLocationResponsesEmailAddresses = buildListOfIncomingUnsentLocationResponsesEmailAddresses(contactResponseRepository);
         incomingEmailsEverSentLocationResponses = contactResponseRepository.getEmailAddressesForResponsesEverSent();
+        
+        setRequestAllowances();
+        setOutgoingRequestsStatus();
+        setIncomingRequestsStatus();
     }
 
     @Override
@@ -64,16 +69,19 @@ public class ContactsArrayAdapter extends ArrayAdapter<AndroidContact> {
         View rowView = inflater.inflate(R.layout.contact_row, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.contact_name);
 
-        AndroidContact contact = values.get(position);
+        ContactData contact = values.get(position);
         
-        textView.setText(contact.getDisplayName());
+        textView.setText(contact.getAndroidContact().getDisplayName());
 
-        String emailAddress = contact.getContactData().getContactEmail();
         setRequestAllowanceImage(rowView, contact);
-        setOutgoingRequestImage(rowView, emailAddress);
-        setIncomingRequestImage(rowView, emailAddress);
+        setOutgoingRequestImage(rowView, contact);
+        setIncomingRequestImage(rowView, contact);
 
         return rowView;
+    }
+    
+    public void updateData(AndroidContact androidContact) {
+        
     }
 
     private List<String> buildListOfIncomingUnsentLocationResponsesEmailAddresses(ContactResponseRepository<ContactResponseEntity> contactResponseRepository) {
@@ -123,57 +131,72 @@ public class ContactsArrayAdapter extends ArrayAdapter<AndroidContact> {
         
         return l;
     }
+    
+    private void setRequestAllowances() {
+        for (int i = 0; i < values.size(); i++) {
+            ContactData c = values.get(i);
+            int requestAllowanceCode = c.getAndroidContact().getContactData().getRequestAllowanceCode();
+            c.setRequestAllowance(RequestAllowance.getRequestAllowance(requestAllowanceCode));
+        }
+    }
+    
+    private void setOutgoingRequestsStatus() {
+        for (int i = 0; i < values.size(); i++) {
+            ContactData c = values.get(i);
+            String emailAddress = c.getAndroidContact().getContactData().getContactEmail();
+            if (outgoingUnsentLocationRequestsEmailAddresses.contains(emailAddress)) {
+                c.setOutgoingState(OutgoingState.BEING_SENT);
+            } else if (outgoingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
+                c.setOutgoingState(OutgoingState.SENT);
+            } else if (outgoingEmailsEverReceivedLocationResponses.contains(emailAddress)) {
+                c.setOutgoingState(OutgoingState.RECEIVED);
+            } else {
+                c.setOutgoingState(OutgoingState.NONE);
+            }
+        }
+    }
+    
+    private void setIncomingRequestsStatus() {
+        for (int i = 0; i < values.size(); i++) {
+            ContactData c = values.get(i);
+            String emailAddress = c.getAndroidContact().getContactData().getContactEmail();
+            if (incomingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
+                c.setIncomingState(IncomingState.RECEIVED);
+            } else if (incomingUnsentLocationResponsesEmailAddresses.contains(emailAddress)) {
+                c.setIncomingState(IncomingState.BEING_SENT);
+            } else if (incomingEmailsEverSentLocationResponses.contains(emailAddress)) {
+                c.setIncomingState(IncomingState.SENT);
+            } else {
+                c.setIncomingState(IncomingState.NONE);
+            }
+        }
+    }
 
-    private void setRequestAllowanceImage(View rowView, AndroidContact contact) {
+    private void setRequestAllowanceImage(View rowView, ContactData contact) {
         ImageView requestAllowanceImageView = (ImageView) rowView.findViewById(R.id.request_allowance);
 
-        if (isStringNotEmpty(contact.getContactData().getContactEmail())) {
-            if (contact.getContactData().getRequestAllowanceCode() == ALWAYS.getCode()) {
-                Log.d(TAG, "-------allowance: " + contact.getDisplayName() + " ALWAYS");
+        if (isStringNotEmpty(contact.getAndroidContact().getContactData().getContactEmail())) {
+            if (contact.getAndroidContact().getContactData().getRequestAllowanceCode() == ALWAYS.getCode()) {
                 requestAllowanceImageView.setImageResource(R.drawable.request_allowed);
-            } else if (contact.getContactData().getRequestAllowanceCode() == NEVER.getCode()) {
-                Log.d(TAG, "-------allowance: " + contact.getDisplayName() + " NEVER");
+            } else if (contact.getAndroidContact().getContactData().getRequestAllowanceCode() == NEVER.getCode()) {
                 requestAllowanceImageView.setImageResource(R.drawable.request_not_allowed);
             }
-        } else {
-            Log.d(TAG, "-------allowance: " + contact.getDisplayName() + " dummy");
-            //requestAllowanceImageView.setImageResource(R.drawable.outgoing_dummy);
         }
     }
     
-    private void setOutgoingRequestImage(View rowView, String emailAddress) {
+    private void setOutgoingRequestImage(View rowView, ContactData contact) {
         ImageView outgoingRequestImageView = (ImageView) rowView.findViewById(R.id.outgoing_request_state);
 
-        if (outgoingUnsentLocationRequestsEmailAddresses.contains(emailAddress)) {
-            Log.d(TAG, "-------outgoing: " + emailAddress + " unsent");
-            outgoingRequestImageView.setImageResource(R.drawable.outgoing_request_being_sent);
-        } else if (outgoingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
-            Log.d(TAG, "-------outgoing: " + emailAddress + " unresponded");
-            outgoingRequestImageView.setImageResource(R.drawable.outgoing_request_sent);
-        } else if (outgoingEmailsEverReceivedLocationResponses.contains(emailAddress)) {
-            Log.d(TAG, "-------outgoing: " + emailAddress + " ever");
-            outgoingRequestImageView.setImageResource(R.drawable.outgoing_location_received);
-        } else {
-            Log.d(TAG, "-------outgoing: " + emailAddress + " dummy");
-            //outgoingRequestImageView.setImageResource(R.drawable.outgoing_dummy);
+        if (contact.getOutgoingState().hasImage()) {
+            outgoingRequestImageView.setImageResource(contact.getOutgoingState().getImageId());
         }
     }
     
-    private void setIncomingRequestImage(View rowView, String emailAddress) {
+    private void setIncomingRequestImage(View rowView, ContactData contact) {
         ImageView incomingRequestImageView = (ImageView) rowView.findViewById(R.id.incoming_request_state);
         
-        if (incomingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
-            Log.d(TAG, "-------incoming: " + emailAddress + " unresponded");
-            incomingRequestImageView.setImageResource(R.drawable.incoming_request_received);
-        } else if (incomingUnsentLocationResponsesEmailAddresses.contains(emailAddress)) {
-            Log.d(TAG, "-------incoming: " + emailAddress + " unsent");
-            incomingRequestImageView.setImageResource(R.drawable.incoming_location_being_sent);
-        } else if (incomingEmailsEverSentLocationResponses.contains(emailAddress)) {
-            Log.d(TAG, "-------incoming: " + emailAddress + " ever");
-            incomingRequestImageView.setImageResource(R.drawable.incoming_location_sent);
-        } else {
-            Log.d(TAG, "-------incoming: " + emailAddress + " dummy");
-            //incomingRequestImageView.setImageResource(R.drawable.incoming_dummy);
+        if (contact.getIncomingState().hasImage()) {
+            incomingRequestImageView.setImageResource(contact.getIncomingState().getImageId());
         }
     }
 }

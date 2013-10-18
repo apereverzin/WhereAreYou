@@ -50,6 +50,23 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         extractBundledProperties();
     }
     
+    @Override
+    public void onResume() {
+        Log.d(TAG, "-------onResume");
+        super.onResume();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            bundledProps = (HashMap<String, String>) extras.get(MAIL_PROPERTIES);
+            if (bundledProps == null) {
+                Log.d(TAG, "-------------bundledProps not null");
+            } else {
+                Log.d(TAG, "-------------bundledProps null");
+            }
+        } else {
+            Log.d(TAG, "-------------extras null");
+        }
+        //finish();
+    }
     
     @SuppressWarnings("unchecked")
     @Override

@@ -59,6 +59,8 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
                 } catch (Exception ex) {
                     showException(EmailAccountFinish_5_Activity.this, ex);
                 }
+                
+                finish();
             }
         });
 

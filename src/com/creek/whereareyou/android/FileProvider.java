@@ -30,9 +30,13 @@ public class FileProvider {
     public Properties retrievePropertiesFromFile(String fileName) throws IOException {
         File f = getFile(fileName);
         if (f.exists()) {
-            Properties properties = new Properties();
-            properties.load(new FileInputStream(f));
-            return properties;
+            Properties props = new Properties();
+            props.load(new FileInputStream(f));
+            System.out.println("retrievePropertiesFromFile-: " + fileName);
+            System.out.println("---------------------------");
+            props.list(System.out);
+            System.out.println("---------------------------");
+            return props;
         }
         
         return null;
@@ -42,6 +46,11 @@ public class FileProvider {
         File f = getFile(fileName);
         f.createNewFile();
         props.store(new FileOutputStream(f), "");
+        
+        System.out.println("persistPropertiesToFile----: " + fileName);
+        System.out.println("---------------------------");
+        props.list(System.out);
+        System.out.println("---------------------------");
     }
     
     public String retrieveStringFromFile(String fileName) throws IOException {

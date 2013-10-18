@@ -3,7 +3,6 @@
 import com.creek.whereareyou.WhereAreYouApplication;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService;
-import com.creek.whereareyou.android.services.inform.InformService;
 import com.creek.whereareyou.android.services.location.CurrentLocationService;
 
 import android.app.AlarmManager;
@@ -27,8 +26,6 @@ public class BootReceiver extends android.content.BroadcastReceiver {
         //SQLiteDatabase whereAreYouDatabase = SQLiteRepositoryManager.getInstance().createDatabaseIfDoesNotExist(ctx);
         //WhereAreYouApplication.setDatabase(whereAreYouDatabase);
         
-//        startService(context, TraceService.class);
-//        startService(context, InformService.class);
         startService(ctx, EmailSendingAndReceivingService.class);
         startService(ctx, CurrentLocationService.class);
 //        Intent activeIntent = new Intent(context, LocationChangedReceiver.class);

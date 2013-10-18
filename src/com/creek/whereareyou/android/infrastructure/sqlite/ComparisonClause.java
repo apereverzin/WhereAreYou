@@ -26,10 +26,10 @@ class ComparisonClause {
     static final ComparisonClause RECEIVED_TIME_UNKNOWN = new ComparisonClause(TIME_RECEIVED_FIELD_NAME, EQUALS, UNDEFINED_LONG);
     static final ComparisonClause NOT_PROCESSED = new ComparisonClause(PROCESSED_FIELD_NAME, EQUALS, INT_FALSE);
 
-    public ComparisonClause(String fieldName, Comparison comparison, String value) {
-        this.fieldName = fieldName;
-        this.comparison = comparison;
-        this.value = value;
+    public ComparisonClause(String _fieldName, Comparison _comparison, String _value) {
+        this.fieldName = _fieldName;
+        this.comparison = _comparison;
+        this.value = "'" + _value + "'";
     }
     
     public ComparisonClause(String fieldName, Comparison comparison, int value) {
