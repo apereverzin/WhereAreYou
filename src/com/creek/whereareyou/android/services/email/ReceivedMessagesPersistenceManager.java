@@ -134,6 +134,8 @@ public class ReceivedMessagesPersistenceManager {
     }
     
     private void processOutgoingLocationRequests(ContactRequestRepository contactRequestRepository, ContactCompoundId contactCompoundId) {
+        Log.d(TAG, "processOutgoingLocationRequests: " + contactCompoundId);
+        Log.d(TAG, "--------------processOutgoingLocationRequests: " + contactCompoundId);
         contactRequestRepository.updateProcessedOutgoingContactRequests(contactCompoundId.getContactEmail());
     }
 }

@@ -7,19 +7,25 @@ import java.util.Properties;
 
 import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
+import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 import static com.creek.whereareyou.android.util.Util.isStringNotEmpty;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
+import com.creek.whereareyou.android.activity.map.MainMapActivity;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.contacts.RequestResponseFactory;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.ActivityUtil;
 import com.creek.whereareyou.android.util.CryptoException;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
+import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
+import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
+import com.creek.whereareyoumodel.valueobject.SendableLocationData;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -44,6 +50,7 @@ public final class ContactsActivity extends ListActivity {
     
     // Options menu
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
+    private static final int MAP_MENU_ITEM = Menu.FIRST + 1;
 
     // Context menu
     private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
@@ -98,6 +105,7 @@ public final class ContactsActivity extends ListActivity {
             } else {
                 menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
             }
+            menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
         } catch (Exception ex) {
             showException(ContactsActivity.this, ex);
         }
@@ -110,6 +118,24 @@ public final class ContactsActivity extends ListActivity {
         switch (item.getItemId()) {
         case EMAIL_ACCOUNT_MENU_ITEM:
             return startNewActivity(EmailAccountAddress_1_Activity.class);
+        case MAP_MENU_ITEM:
+            Intent intent = new Intent(this, MainMapActivity.class);
+            List<OwnerLocationDataMessage> locations = new ArrayList<OwnerLocationDataMessage>();
+            LocationData locationData = new LocationData();
+            locationData.setAccuracy(935.0F);
+            locationData.setSpeed(0.0F);
+            locationData.setLatitude(51.4456628);
+            locationData.setLongitude(-0.1839771);
+            locationData.setHasAccuracy(true);
+            locationData.setHasSpeed(false);
+            ContactCompoundId contactCompoundId = new ContactCompoundId("100", "andrey.pereverzin@gmail.com");
+            locationData.setContactCompoundId(contactCompoundId);
+            SendableLocationData sendableLocationData = new SendableLocationData(locationData);
+            OwnerLocationDataMessage location = new OwnerLocationDataMessage(sendableLocationData, "andrey.pereverzin@gmail.com");
+            locations.add(location);
+            intent.putExtra(RECEIVED_LOCATIONS, new ArrayList<OwnerLocationDataMessage>(locations));
+            startActivity(intent);
+            return true;
         default:
             return super.onOptionsItemSelected(item);
         }

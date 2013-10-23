@@ -9,22 +9,22 @@ import android.graphics.Paint;
  */
 public class AnnotatedLocationPainter {
     public void drawAnnotatedLocation(Canvas canvas, AnnotatedLocationImage locationImage, String annotationText, AnnotatedLocationColors colors) {
-        PaintColor locationColor = colors.getLocationColor();
-        PaintColor annotationForegroungColor = colors.getAnnotationForegroundColor();
-        PaintColor annotationBackgroundColor = colors.getAnnotationBackgroundColor();
+        int locationColor = colors.getLocationColor();
+        int annotationForegroungColor = colors.getAnnotationForegroundColor();
+        int annotationBackgroundColor = colors.getAnnotationBackgroundColor();
 
         Paint locationPaint = new Paint();
-        locationPaint.setARGB(locationColor.getA(), locationColor.getR(), locationColor.getG(), locationColor.getB());
+        locationPaint.setColor(locationColor);
         locationPaint.setAntiAlias(true);
         locationPaint.setFakeBoldText(true);
 
         Paint annotationForegroundPaint = new Paint();
-        annotationForegroundPaint.setARGB(annotationForegroungColor.getA(), annotationForegroungColor.getR(), annotationForegroungColor.getG(), annotationForegroungColor.getB());
+        annotationForegroundPaint.setColor(annotationForegroungColor);
         annotationForegroundPaint.setAntiAlias(true);
         annotationForegroundPaint.setFakeBoldText(true);
 
         Paint annotationBackgroundPaint = new Paint();
-        annotationBackgroundPaint.setARGB(annotationBackgroundColor.getA(), annotationBackgroundColor.getR(), annotationBackgroundColor.getG(), annotationBackgroundColor.getB());
+        annotationBackgroundPaint.setColor(annotationBackgroundColor);
         annotationBackgroundPaint.setAntiAlias(true);
 
         canvas.drawOval(locationImage.getOval(), locationPaint);

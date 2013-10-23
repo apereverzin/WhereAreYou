@@ -90,10 +90,14 @@ public class LocationPersistenceManager {
         try {
             SQLiteRepositoryManager.getInstance().openDatabase();
             ContactResponseRepository<ContactResponseEntity> contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
+            ContactRequestRepository contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
             
+            // TODO should create one location response per user, not per request
+            // TODO mark all user's requests as 'processed' in one go
             for (int i = 0; i < unrespondedLocationRequests.size(); i++) {
                 ContactRequest request = unrespondedLocationRequests.get(i);
                 persistLocationResponse(contactResponseRepository, request, locationData);
+                markLocationRequestAsProcessed(contactRequestRepository, request);
             }
         } finally {
             SQLiteRepositoryManager.getInstance().closeDatabase();
@@ -119,5 +123,13 @@ public class LocationPersistenceManager {
         contactResponseRepository.create(response);
         Log.d(TAG, "--------------persistLocationResponse: " + response);
         return response;
+    }
+    
+    private ContactRequest markLocationRequestAsProcessed(ContactRequestRepository contactRequestRepository, ContactRequest request) {
+        Log.d(TAG, "markLocationRequestAsProcessed()");
+        request.setProcessed(true);
+        contactRequestRepository.update(request);
+        Log.d(TAG, "--------------markLocationRequestAsProcessed: " + request);
+        return request;
     }
 }

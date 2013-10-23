@@ -98,6 +98,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                         putBundledPropertiesIntoIntent(intent);
                     }
                     startActivity(intent);
+                    finish();
                 } catch (Exception ex) {
                     showException(EmailAccountAddress_1_Activity.this, ex);
                 }

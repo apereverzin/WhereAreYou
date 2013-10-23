@@ -22,9 +22,11 @@ import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 
+import static android.view.KeyEvent.KEYCODE_BACK;
 import static android.view.View.INVISIBLE;
 
 /**
@@ -68,6 +70,16 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KEYCODE_BACK) {
+            Log.d(TAG, "BACK key pressed");
+            goBack();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     protected int getLayoutId() {
         return R.layout.email_account_finish_5;
     }
@@ -100,5 +112,14 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
             sb.append("\n").append(getString(titleId)).append(": " ).append(value);
         }
         
+    }
+    
+    private void goBack() {
+        if (TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
+            step(EmailAccountFinish_5_Activity.this, EmailAccountAddress_1_Activity.class); 
+        } else {
+            step(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class); 
+        }
+        finish();
     }
 }

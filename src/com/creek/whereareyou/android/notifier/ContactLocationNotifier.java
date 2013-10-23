@@ -47,9 +47,9 @@ public class ContactLocationNotifier {
         
         CharSequence contentTitle = ctx.getString(R.string.notifications_contact_locations);  // message title
         CharSequence contentText = ctx.getString(R.string.notifications_contact_locations_received) + ": " + receivedMessages.getLocationResponsesCount(); // text
-        Intent notificationIntent = new Intent(ctx, MainMapActivity.class);
-        notificationIntent.putExtra(RECEIVED_LOCATIONS, new ArrayList<OwnerLocationDataMessage>(receivedMessages.getLocationResponses()));
-        PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
+        Intent mapIntent = new Intent(ctx, MainMapActivity.class);
+        mapIntent.putExtra(RECEIVED_LOCATIONS, new ArrayList<OwnerLocationDataMessage>(receivedMessages.getLocationResponses()));
+        PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, mapIntent, 0);
         
         notification.setLatestEventInfo(ctx, contentTitle, contentText, contentIntent);
         notificationManager.notify(CONTACT_LOCATION_NOTIFICATION_ID, notification);

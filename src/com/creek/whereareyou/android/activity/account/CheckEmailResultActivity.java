@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.widget.TextView;
 
 /**
@@ -37,15 +36,9 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
         
         checkEmailResultText = (TextView) findViewById(R.id.check_email_result);
 
+        backButton.setVisibility(INVISIBLE);
         testButton.setVisibility(INVISIBLE);
         nextButton.setVisibility(INVISIBLE);
-
-        backButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                Log.d(TAG, "backButton clicked");
-                finishActivity();
-           }
-        });
 
         Bundle extras = getIntent().getExtras();
         final CheckMode checkMode = (CheckMode)extras.get(CHECK_MODE);

@@ -204,7 +204,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
     }
 
     private String createWhereCriteria(String fieldName, long fieldValue) {
-        return String.format("%s=%s", fieldName, fieldValue);
+        return String.format("%s='%s'", fieldName, fieldValue);
     }
 
     private String buildFields() {

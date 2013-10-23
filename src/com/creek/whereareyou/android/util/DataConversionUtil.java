@@ -8,7 +8,6 @@ import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.RequestAllowance;
-import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 
 /**
  * 
@@ -20,8 +19,7 @@ public final class DataConversionUtil {
         //
     }
     
-    public static Location getLocationFromLocationResponse(OwnerLocationDataMessage locationResponse) {
-        LocationData locationData = locationResponse.getOwnerLocationData().getLocationData();
+    public static Location getLocationFromLocationResponse(LocationData locationData) {
         Location location = new Location("gps");
         location.setLatitude(locationData.getLatitude());
         location.setLongitude(locationData.getLongitude());

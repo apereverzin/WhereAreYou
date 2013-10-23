@@ -5,25 +5,25 @@ package com.creek.whereareyou.android.colors;
  * @author Andrey Pereverzin
  */
 public class AnnotatedLocationColors {
-    private final PaintColor locationColor;
-    private final PaintColor annotationForegroundColor;
-    private final PaintColor annotationBackgroundColor;
+    private final int locationColor;
+    private final int annotationForegroundColor;
+    private final int annotationBackgroundColor;
  
-    public AnnotatedLocationColors(PaintColor locationColor, PaintColor annotationForegroundColor, PaintColor annotationBackgroundColor) {
+    public AnnotatedLocationColors(int locationColor, int annotationForegroundColor, int annotationBackgroundColor) {
         this.locationColor = locationColor;
         this.annotationForegroundColor = annotationForegroundColor;
         this.annotationBackgroundColor = annotationBackgroundColor;
     }
 
-    public PaintColor getLocationColor() {
+    public int getLocationColor() {
         return locationColor;
     }
 
-    public PaintColor getAnnotationForegroundColor() {
+    public int getAnnotationForegroundColor() {
         return annotationForegroundColor;
     }
 
-    public PaintColor getAnnotationBackgroundColor() {
+    public int getAnnotationBackgroundColor() {
         return annotationBackgroundColor;
     }
 }

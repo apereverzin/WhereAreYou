@@ -1,13 +1,15 @@
 package com.creek.whereareyou.android.activity.map;
 
+//import android.R;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.location.Location;
 
+import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.colors.AnnotatedLocationColors;
 import com.creek.whereareyou.android.colors.AnnotatedLocationImage;
 import com.creek.whereareyou.android.colors.AnnotatedLocationPainter;
 import com.creek.whereareyou.android.colors.LocationImageFactory;
-import com.creek.whereareyou.android.colors.PaintColor;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -19,10 +21,16 @@ import com.google.android.maps.Overlay;
 public class LocationsOverlay extends Overlay {
     private LocationImageFactory locationImageFactory = new LocationImageFactory();
     private AnnotatedLocationPainter painter = new AnnotatedLocationPainter();
+    
+    private final Context ctx;
 
-    private static final int RADIUS = 5;
+    private static final int RADIUS = 3;
 
     Location location;
+
+    public LocationsOverlay(Context _ctx) {
+        this.ctx = _ctx;
+    }
 
     public void setLocation(Location location) {
         this.location = location;
@@ -33,9 +41,9 @@ public class LocationsOverlay extends Overlay {
 
         if (shadow == false && location != null) {
             AnnotatedLocationImage locationImage = locationImageFactory.createAnnotatedLocationImage(mapView, location, RADIUS);
-            PaintColor locationColor = new PaintColor(250, 255, 255, 255);
-            PaintColor annotationForegroundColor = new PaintColor(250, 255, 255, 255);
-            PaintColor annotationBackgroundColor = new PaintColor(175, 50, 50, 50);
+            int locationColor = ctx.getResources().getColor(R.color.location_white);
+            int annotationForegroundColor = ctx.getResources().getColor(R.color.location_annotation_white);
+            int annotationBackgroundColor = ctx.getResources().getColor(R.color.location_annotation_darkgrey);
             AnnotatedLocationColors colors = new AnnotatedLocationColors(locationColor, annotationForegroundColor, annotationBackgroundColor);
             painter.drawAnnotatedLocation(canvas, locationImage, "Here I Am", colors);
         }

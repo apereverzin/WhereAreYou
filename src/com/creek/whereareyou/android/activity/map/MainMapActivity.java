@@ -12,8 +12,10 @@ import android.view.MenuItem;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
+import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
 import com.creek.whereareyou.android.util.DataConversionUtil;
+import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 
 import com.google.android.maps.GeoPoint;
@@ -56,7 +58,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
         mapView.setBuiltInZoomControls(true);
         mapController.setZoom(17);
 
-        locationsOverlay = new LocationsOverlay();
+        locationsOverlay = new LocationsOverlay(this);
         List<Overlay> overlays = mapView.getOverlays();
         overlays.add(locationsOverlay);
         mapView.postInvalidate();
@@ -78,9 +80,11 @@ public class MainMapActivity extends MapActivity implements LocationAware {
             }
             if (locationResponses.size() > 0) {
                 OwnerLocationDataMessage locationResponse = locationResponses.get(0);
-                Location location = DataConversionUtil.getLocationFromLocationResponse(locationResponse);
+                String contactEmail = locationResponse.getSenderEmail();
+                ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
+                Location location = DataConversionUtil.getLocationFromLocationResponse(locationResponse.getOwnerLocationData().getLocationData());
                 
-                updateWithNewLocation(location);
+                updateWithNewLocation(contactData, location);
             }
         }
         Log.d(TAG, "++++++++++++++++++++3");
@@ -121,6 +125,21 @@ public class MainMapActivity extends MapActivity implements LocationAware {
 
     @Override
     public void updateWithNewLocation(Location location) {
+        Log.d(TAG, "updateWithNewLocation()");
+        Log.d(TAG, "------------updateWithNewLocation()");
+        if (location != null) {
+            Log.d(TAG, "updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
+            Log.d(TAG, "------------updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
+            locationsOverlay.setLocation(location);
+            Double geoLat = location.getLatitude() * 1E6;
+            Double geoLng = location.getLongitude() * 1E6;
+            GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
+            mapController.animateTo(point);
+        }
+    }
+
+    @Override
+    public void updateWithNewLocation(ContactData contactData, Location location) {
         Log.d(TAG, "updateWithNewLocation()");
         Log.d(TAG, "------------updateWithNewLocation()");
         if (location != null) {

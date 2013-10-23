@@ -134,6 +134,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
     @Override
     public void updateProcessedOutgoingContactRequests(String contactEmail) {
         Log.d(TAG, "updateProcessedOutgoingContactRequests: " + contactEmail);
+        Log.d(TAG, "--------------updateProcessedOutgoingContactRequests: " + contactEmail);
         ComparisonClause emailComparisonClause = new ComparisonClause(EMAIL_FIELD_NAME, EQUALS, contactEmail);
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{emailComparisonClause, CREATION_TIME_KNOWN, RECEIVED_TIME_UNKNOWN, LOCATION_REQUEST, NOT_PROCESSED});
