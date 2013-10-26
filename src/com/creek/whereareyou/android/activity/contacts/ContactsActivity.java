@@ -86,9 +86,9 @@ public final class ContactsActivity extends ListActivity {
             }
         });
         
-        List<ContactData> contactDataList = new ArrayList<ContactData>();
+        List<CombinedContactData> contactDataList = new ArrayList<CombinedContactData>();
         for (int i = 0; i < androidContactList.size(); i++) {
-            contactDataList.add(new ContactData(androidContactList.get(i)));
+            contactDataList.add(new CombinedContactData(androidContactList.get(i)));
         }
         contactsListAdapter = new ContactsArrayAdapter(this, contactDataList);
         setListAdapter(contactsListAdapter);
@@ -216,7 +216,7 @@ public final class ContactsActivity extends ListActivity {
 
     private List<AndroidContact> getAndroidContacts() {
         try {
-            return ContactsPersistenceManager.getInstance().retrieveContacts(this);
+            return ContactsPersistenceManager.getInstance().retrieveCombinedContacts(this);
         } catch (IOException ex) {
             showException(ContactsActivity.this, ex);
             return new ArrayList<AndroidContact>();

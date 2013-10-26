@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.activity.map;
 
+import java.io.IOException;
 import java.util.List;
 
 import android.content.Intent;
@@ -12,10 +13,11 @@ import android.view.MenuItem;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
-import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
+import com.creek.whereareyou.android.contacts.AndroidContact;
+import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
+import com.creek.whereareyou.android.util.ActivityUtil;
 import com.creek.whereareyou.android.util.DataConversionUtil;
-import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 
 import com.google.android.maps.GeoPoint;
@@ -79,12 +81,16 @@ public class MainMapActivity extends MapActivity implements LocationAware {
                 Log.d(TAG, "++++++++++++++++++++: " + locationResponse);
             }
             if (locationResponses.size() > 0) {
-                OwnerLocationDataMessage locationResponse = locationResponses.get(0);
-                String contactEmail = locationResponse.getSenderEmail();
-                ContactData contactData = SQLiteRepositoryManager.getInstance().getContactDataRepository().getContactDataByEmail(contactEmail);
-                Location location = DataConversionUtil.getLocationFromLocationResponse(locationResponse.getOwnerLocationData().getLocationData());
-                
-                updateWithNewLocation(contactData, location);
+                try {
+                    OwnerLocationDataMessage locationResponse = locationResponses.get(0);
+                    String contactEmail = locationResponse.getSenderEmail();
+                    AndroidContact androidContact = ContactsPersistenceManager.getInstance().getAndroidContactByEmail(this, contactEmail);
+                    Location location = DataConversionUtil.getLocationFromLocationResponse(locationResponse.getOwnerLocationData().getLocationData());
+
+                    updateWithNewContactDataAndLocation(androidContact, location);
+                } catch (IOException ex) {
+                    ActivityUtil.logException(TAG, ex);
+                }
             }
         }
         Log.d(TAG, "++++++++++++++++++++3");
@@ -130,6 +136,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
         if (location != null) {
             Log.d(TAG, "updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
             Log.d(TAG, "------------updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
+            locationsOverlay.setContactData(null);
             locationsOverlay.setLocation(location);
             Double geoLat = location.getLatitude() * 1E6;
             Double geoLng = location.getLongitude() * 1E6;
@@ -139,12 +146,13 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     }
 
     @Override
-    public void updateWithNewLocation(ContactData contactData, Location location) {
+    public void updateWithNewContactDataAndLocation(AndroidContact androidContact, Location location) {
         Log.d(TAG, "updateWithNewLocation()");
         Log.d(TAG, "------------updateWithNewLocation()");
         if (location != null) {
             Log.d(TAG, "updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
             Log.d(TAG, "------------updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
+            locationsOverlay.setContactData(androidContact);
             locationsOverlay.setLocation(location);
             Double geoLat = location.getLatitude() * 1E6;
             Double geoLng = location.getLongitude() * 1E6;

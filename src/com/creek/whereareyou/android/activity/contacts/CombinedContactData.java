@@ -7,13 +7,13 @@ import com.creek.whereareyoumodel.domain.RequestAllowance;
  * 
  * @author Andrey Pereverzin
  */
-public class ContactData {
+public class CombinedContactData {
     private final AndroidContact androidContact;
     private RequestAllowance requestAllowance;
     private OutgoingState outgoingState;
     private IncomingState incomingState;
 
-    public ContactData(AndroidContact androidContact) {
+    public CombinedContactData(AndroidContact androidContact) {
         this.androidContact = androidContact;
     }
 

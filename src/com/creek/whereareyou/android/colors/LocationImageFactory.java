@@ -14,7 +14,7 @@ import com.google.android.maps.Projection;
  */
 public class LocationImageFactory {
 
-    public AnnotatedLocationImage createAnnotatedLocationImage(MapView mapView, Location location, int radius) {
+    public Point getLocationPoint(MapView mapView, Location location) {
         Projection projection = mapView.getProjection();
         Double latitude = location.getLatitude() * 1E6;
         Double longitude = location.getLongitude() * 1E6;
@@ -25,12 +25,18 @@ public class LocationImageFactory {
         Point point = new Point();
         projection.toPixels(geoPoint, point);
         
-        RectF oval = new RectF(point.x - radius, point.y - radius, point.x + radius, point.y + radius);
-
-        RectF backRect = new RectF(point.x + 2 + radius, point.y - 3 * radius, point.x + 65, point.y + radius);
-        
-        Point annotationPoint = new Point(point.x + 2 * radius, point.y);
-        
-        return new AnnotatedLocationImage(oval, backRect, annotationPoint);
-   }
+        return point;
+    }
+    
+    public RectF createLocationImage(Point locationPoint, int radius) {
+        return new RectF(locationPoint.x - radius, locationPoint.y - radius, locationPoint.x + radius, locationPoint.y + radius);
+    }
+    
+    public RectF createAnnotationBackgroundImage(Point locationPoint, int radius) {
+        return new RectF(locationPoint.x + 2 + radius, locationPoint.y - 3 * radius, locationPoint.x + 65, locationPoint.y + radius);
+    }
+    
+    public Point getAnnotationPoint(Point locationPoint, int radius) {
+        return new Point(locationPoint.x + 2 * radius, locationPoint.y);
+    }
 }

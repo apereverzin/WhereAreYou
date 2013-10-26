@@ -19,7 +19,6 @@ import static com.creek.whereareyoumodel.domain.RequestAllowance.ALWAYS;
 import static com.creek.whereareyoumodel.domain.RequestAllowance.NEVER;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,11 +30,9 @@ import android.widget.TextView;
  * 
  * @author Andrey Pereverzin
  */
-public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
-    private static final String TAG = ContactsArrayAdapter.class.getSimpleName();
-
+public class ContactsArrayAdapter extends ArrayAdapter<CombinedContactData> {
     private final Context context;
-    private final List<ContactData> values;
+    private final List<CombinedContactData> values;
     private final List<String> outgoingUnsentLocationRequestsEmailAddresses;
     private final List<String> outgoingUnrespondedLocationRequestsEmailAddresses;
     private final List<String> outgoingEmailsEverReceivedLocationResponses;
@@ -43,7 +40,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
     private final List<String> incomingUnsentLocationResponsesEmailAddresses;
     private final List<String> incomingEmailsEverSentLocationResponses;
 
-    public ContactsArrayAdapter(Context _context, List<ContactData> _values) {
+    public ContactsArrayAdapter(Context _context, List<CombinedContactData> _values) {
         super(_context, R.layout.contact_row, _values);
         this.context = _context;
         this.values = _values;
@@ -69,7 +66,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
         View rowView = inflater.inflate(R.layout.contact_row, parent, false);
         TextView textView = (TextView) rowView.findViewById(R.id.contact_name);
 
-        ContactData contact = values.get(position);
+        CombinedContactData contact = values.get(position);
         
         textView.setText(contact.getAndroidContact().getDisplayName());
 
@@ -134,7 +131,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
     
     private void setRequestAllowances() {
         for (int i = 0; i < values.size(); i++) {
-            ContactData c = values.get(i);
+            CombinedContactData c = values.get(i);
             int requestAllowanceCode = c.getAndroidContact().getContactData().getRequestAllowanceCode();
             c.setRequestAllowance(RequestAllowance.getRequestAllowance(requestAllowanceCode));
         }
@@ -142,7 +139,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
     
     private void setOutgoingRequestsStatus() {
         for (int i = 0; i < values.size(); i++) {
-            ContactData c = values.get(i);
+            CombinedContactData c = values.get(i);
             String emailAddress = c.getAndroidContact().getContactData().getContactEmail();
             if (outgoingUnsentLocationRequestsEmailAddresses.contains(emailAddress)) {
                 c.setOutgoingState(OutgoingState.BEING_SENT);
@@ -158,7 +155,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
     
     private void setIncomingRequestsStatus() {
         for (int i = 0; i < values.size(); i++) {
-            ContactData c = values.get(i);
+            CombinedContactData c = values.get(i);
             String emailAddress = c.getAndroidContact().getContactData().getContactEmail();
             if (incomingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
                 c.setIncomingState(IncomingState.RECEIVED);
@@ -172,7 +169,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
         }
     }
 
-    private void setRequestAllowanceImage(View rowView, ContactData contact) {
+    private void setRequestAllowanceImage(View rowView, CombinedContactData contact) {
         ImageView requestAllowanceImageView = (ImageView) rowView.findViewById(R.id.request_allowance);
 
         if (isStringNotEmpty(contact.getAndroidContact().getContactData().getContactEmail())) {
@@ -184,7 +181,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
         }
     }
     
-    private void setOutgoingRequestImage(View rowView, ContactData contact) {
+    private void setOutgoingRequestImage(View rowView, CombinedContactData contact) {
         ImageView outgoingRequestImageView = (ImageView) rowView.findViewById(R.id.outgoing_request_state);
 
         if (contact.getOutgoingState().hasImage()) {
@@ -192,7 +189,7 @@ public class ContactsArrayAdapter extends ArrayAdapter<ContactData> {
         }
     }
     
-    private void setIncomingRequestImage(View rowView, ContactData contact) {
+    private void setIncomingRequestImage(View rowView, CombinedContactData contact) {
         ImageView incomingRequestImageView = (ImageView) rowView.findViewById(R.id.incoming_request_state);
         
         if (contact.getIncomingState().hasImage()) {

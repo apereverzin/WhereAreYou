@@ -49,11 +49,26 @@ public class ContactsPersistenceManager {
         }
     }
     
-    public List<AndroidContact> retrieveContacts(Context ctx) throws IOException {
-        Log.d(TAG, "retrieveContacts()");
+    public List<AndroidContact> retrieveCombinedContacts(Context ctx) throws IOException {
+        Log.d(TAG, "retrieveCombinedContacts()");
         
         Map<String, ContactData> existingContacts = retrievePersistedContacts();
         return combineContactsLists(ctx, existingContacts);
+    }
+
+    public AndroidContact getAndroidContactByEmail(Context ctx, String contactEmail) throws IOException {
+        Log.d(TAG, "getAndroidContactByEmail()");
+        List<AndroidContact> allContacts = retrieveCombinedContacts(ctx);
+
+        for (int i = 0; i < allContacts.size(); i++) {
+            AndroidContact androidContact = allContacts.get(i);
+            
+            if (androidContact.getContactData() != null && contactEmail.equals(androidContact.getContactData().getContactEmail())) {
+                return androidContact;
+            }
+        }
+        
+        return null;
     }
 
     private Map<String, ContactData> retrievePersistedContacts() throws IOException {
@@ -70,9 +85,9 @@ public class ContactsPersistenceManager {
             return contactDataMap;
     }
 
-    private List<AndroidContact> combineContactsLists(Context context, Map<String, ContactData> persistedContacts) {
+    private List<AndroidContact> combineContactsLists(Context ctx, Map<String, ContactData> persistedContacts) {
         Log.d(TAG, "combineContactsLists()");
-        List<AndroidContact> allContacts = androidContactsProvider.getAllContacts(context);
+        List<AndroidContact> allContacts = androidContactsProvider.getAllContacts(ctx);
 
         for (int i = 0; i < allContacts.size(); i++) {
             AndroidContact androidContact = allContacts.get(i);
