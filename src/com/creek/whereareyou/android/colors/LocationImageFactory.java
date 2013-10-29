@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.colors;
 
+import android.graphics.Paint;
+import android.graphics.Paint.FontMetricsInt;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.location.Location;
@@ -13,6 +15,7 @@ import com.google.android.maps.Projection;
  * @author Andrey Pereverzin
  */
 public class LocationImageFactory {
+    private static final int RADIUS = 3;
 
     public Point getLocationPoint(MapView mapView, Location location) {
         Projection projection = mapView.getProjection();
@@ -28,15 +31,26 @@ public class LocationImageFactory {
         return point;
     }
     
-    public RectF createLocationImage(Point locationPoint, int radius) {
-        return new RectF(locationPoint.x - radius, locationPoint.y - radius, locationPoint.x + radius, locationPoint.y + radius);
+    public RectF createLocationImage(Point locationPoint) {
+        return new RectF(locationPoint.x - RADIUS, locationPoint.y - RADIUS, locationPoint.x + RADIUS, locationPoint.y + RADIUS);
     }
     
-    public RectF createAnnotationBackgroundImage(Point locationPoint, int radius) {
-        return new RectF(locationPoint.x + 2 + radius, locationPoint.y - 3 * radius, locationPoint.x + 65, locationPoint.y + radius);
+    public RectF createAnnotationBackgroundImage(Point locationPoint, String text, Paint paint) {
+        float f = paint.measureText(text);
+        int desc = paint.getFontMetricsInt().descent;
+        int height = paint.getFontMetricsInt().descent + paint.getFontMetricsInt().ascent;
+        int annotationRectX = calcAnnotationRectX(locationPoint.x, desc);
+        int annotationRectY = locationPoint.y - 3 * desc;
+        
+        return new RectF(annotationRectX, annotationRectY, annotationRectX + f + desc + 2, annotationRectY + height);
     }
     
-    public Point getAnnotationPoint(Point locationPoint, int radius) {
-        return new Point(locationPoint.x + 2 * radius, locationPoint.y);
+    public Point getAnnotationPoint(Point locationPoint, Paint paint) {
+        int desc = paint.getFontMetricsInt().descent;
+        return new Point(calcAnnotationRectX(locationPoint.x, desc) + desc, locationPoint.y);
+    }
+    
+    private int calcAnnotationRectX(int locationX, int desc) {
+        return locationX + 2 + desc;
     }
 }
