@@ -9,35 +9,52 @@ import android.graphics.Point;
  * @author Andrey Pereverzin
  */
 public class AnnotatedLocationPainter {
-    public void drawAnnotatedLocation(Canvas canvas, AnnotatedLocationImage annotatedLocationImage) {
+    public void drawAnnotatedLocation(Canvas canvas, AnnotatedLocationImage annotatedLocationImage, Paint paint) {
 
         Annotation annotation = annotatedLocationImage.getAnnotation();
         
-        int locationColor = annotatedLocationImage.getLocationRectangle().getColor();
-        int annotationForegroungColor = annotation.getForegroundColour();
-        int annotationBackgroundColor = annotation.getBackgroundRectangle().getColor();
+        drawLocation(canvas, annotatedLocationImage, paint);
 
-        Paint locationPaint = new Paint();
-        locationPaint.setColor(locationColor);
-        locationPaint.setAntiAlias(true);
-        locationPaint.setFakeBoldText(true);
+        drawAnnotationBackground(canvas, annotation, paint);
 
-        Paint annotationForegroundPaint = new Paint();
-        annotationForegroundPaint.setColor(annotationForegroungColor);
-        annotationForegroundPaint.setAntiAlias(true);
-        annotationForegroundPaint.setFakeBoldText(true);
+        drawAnnotationText(canvas, annotation, paint);
+    }
 
-        Paint annotationBackgroundPaint = new Paint();
-        annotationBackgroundPaint.setColor(annotationBackgroundColor);
-        annotationBackgroundPaint.setAntiAlias(true);
-
-        canvas.drawOval(annotatedLocationImage.getLocationRectangle().getRectangle(), locationPaint);
-        canvas.drawRoundRect(annotation.getBackgroundRectangle().getRectangle(), 5, 5, annotationBackgroundPaint);
+    private void drawAnnotationText(Canvas canvas, Annotation annotation, Paint paint) {
+        paint.setColor(annotation.getForegroundColour());
+        paint.setAntiAlias(true);
+        paint.setFakeBoldText(true);
         Point annotationPoint = annotation.getPoint();
-        canvas.drawText(annotation.getText(), annotationPoint.x, annotationPoint.y, annotationForegroundPaint);
+        canvas.drawText(annotation.getText(), annotationPoint.x, annotationPoint.y, paint);
+    }
+
+    private void drawAnnotationBackground(Canvas canvas, Annotation annotation, Paint paint) {
+        paint.setColor(annotation.getBackgroundRectangle().getColor());
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRoundRect(annotation.getBackgroundRectangle().getRectangle(), 5, 5, paint);
+    }
+
+    private void drawLocation(Canvas canvas, AnnotatedLocationImage annotatedLocationImage, Paint paint) {
+        drawAccuracyCircle(canvas, annotatedLocationImage, paint);
+
+        paint.setColor(annotatedLocationImage.getLocationImage().getColor());
+        paint.setAntiAlias(true);
+        paint.setFakeBoldText(true);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawOval(annotatedLocationImage.getLocationImage().getRectangle(), paint);
     }
     
-    public void drawLocation(Canvas canvas, ColouredRectangle locationImage) {
+    private void drawAccuracyCircle(Canvas canvas, AnnotatedLocationImage annotatedLocationImage, Paint paint) {
+        paint.setColor(annotatedLocationImage.getLocationImage().getColor());
+        paint.setAntiAlias(true);
+        paint.setFakeBoldText(true);
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawCircle(annotatedLocationImage.getLocationPoint().x, annotatedLocationImage.getLocationPoint().y, 
+                annotatedLocationImage.getAccuracy(), paint);
+    }
+    
+    public void drawLocation(Canvas canvas, ColouredCircledRectangle locationImage) {
         int locationColor = locationImage.getColor();
 
         Paint locationPaint = new Paint();

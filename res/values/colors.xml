@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <color name="location_white">#fbffffff</color>
+   <color name="location_blue">#fb0000ff</color>
    <color name="location_annotation_white">#fbffffff</color>
    <color name="location_annotation_darkgrey">#af323232</color>
 </resources>

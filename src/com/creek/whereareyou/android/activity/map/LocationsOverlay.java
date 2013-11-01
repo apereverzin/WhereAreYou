@@ -2,15 +2,12 @@ package com.creek.whereareyou.android.activity.map;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.RectF;
 import android.location.Location;
 
-import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.colors.AnnotatedLocationImage;
 import com.creek.whereareyou.android.colors.AnnotatedLocationPainter;
-import com.creek.whereareyou.android.colors.Annotation;
-import com.creek.whereareyou.android.colors.ColouredRectangle;
 import com.creek.whereareyou.android.colors.LocationImageFactory;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.google.android.maps.GeoPoint;
@@ -27,7 +24,6 @@ public class LocationsOverlay extends Overlay {
     
     private final Context ctx;
 
-    private static final int RADIUS = 3;
 
     private AndroidContact androidContact;
     Location location;
@@ -48,18 +44,12 @@ public class LocationsOverlay extends Overlay {
     public void draw(Canvas canvas, MapView mapView, boolean shadow) {
 
         if (shadow == false && location != null) {
+            Paint paint = new Paint();
             Point locationPoint = locationImageFactory.getLocationPoint(mapView, location);
-            RectF locationCircle = locationImageFactory.createLocationImage(locationPoint, RADIUS);
-            RectF annotationBackgroundRectangle = locationImageFactory.createAnnotationBackgroundImage(locationPoint, RADIUS);
-            Point annotationPoint = locationImageFactory.getAnnotationPoint(locationPoint, RADIUS);
-            int locationColor = ctx.getResources().getColor(R.color.location_white);
-            int annotationForegroundColor = ctx.getResources().getColor(R.color.location_annotation_white);
-            int annotationBackgroundColor = ctx.getResources().getColor(R.color.location_annotation_darkgrey);
-            ColouredRectangle locationRectangle = new ColouredRectangle(locationCircle, locationColor);
-            ColouredRectangle backgroundRectangle = new ColouredRectangle(annotationBackgroundRectangle, annotationBackgroundColor);
-            Annotation annotation = new Annotation(backgroundRectangle, androidContact.getDisplayName(), annotationPoint, annotationForegroundColor);
-            AnnotatedLocationImage annotatedLocationImage = new AnnotatedLocationImage(locationRectangle, annotation);
-            painter.drawAnnotatedLocation(canvas, annotatedLocationImage);
+            int accuracy = locationImageFactory.getLocationAccuracyInPixels(mapView, location.getAccuracy());
+            AnnotatedLocationImage annotatedLocationImage = 
+                    locationImageFactory.createAnnotatedLocationImage(ctx, locationPoint, accuracy, androidContact.getDisplayName(), paint);
+            painter.drawAnnotatedLocation(canvas, annotatedLocationImage, paint);
         }
         
         super.draw(canvas, mapView, shadow);
