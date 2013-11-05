@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.creek.whereareyou.R;
+
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
@@ -13,6 +14,7 @@ import static com.creek.whereareyou.android.util.Util.isStringNotEmpty;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
 import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
+import com.creek.whereareyou.android.activity.account.GoogleAccount_1_Activity;
 import com.creek.whereareyou.android.activity.map.MainMapActivity;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
@@ -50,7 +52,8 @@ public final class ContactsActivity extends ListActivity {
     
     // Options menu
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int MAP_MENU_ITEM = Menu.FIRST + 1;
+    private static final int GOOGLE_ACCOUNT_MENU_ITEM = Menu.FIRST + 1;
+    private static final int MAP_MENU_ITEM = Menu.FIRST + 2;
 
     // Context menu
     private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
@@ -105,6 +108,7 @@ public final class ContactsActivity extends ListActivity {
             } else {
                 menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
             }
+            menu.add(0, GOOGLE_ACCOUNT_MENU_ITEM, 0, R.string.google_account);
             menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
         } catch (Exception ex) {
             showException(ContactsActivity.this, ex);
@@ -118,6 +122,8 @@ public final class ContactsActivity extends ListActivity {
         switch (item.getItemId()) {
         case EMAIL_ACCOUNT_MENU_ITEM:
             return startNewActivity(EmailAccountAddress_1_Activity.class);
+        case GOOGLE_ACCOUNT_MENU_ITEM:
+            return startNewActivity(GoogleAccount_1_Activity.class);
         case MAP_MENU_ITEM:
             Intent intent = new Intent(this, MainMapActivity.class);
             List<OwnerLocationDataMessage> locations = new ArrayList<OwnerLocationDataMessage>();

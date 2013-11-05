@@ -70,9 +70,6 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
                 }
             }
         }).start();
-
-        StringBuilder title = new StringBuilder(getString(R.string.app_name)).append(": ").append(getString(R.string.check_email_result_title));
-        setTitle(title);
     }
 
     @Override
@@ -100,6 +97,10 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
         return R.layout.check_email_result;
     }
 
+    protected int[] getTitleComponents() {
+        return new int[]{R.string.app_name, R.string.check_email_result_title};
+    }
+    
     private void runSmtpConnectionTest(MailConnector connector, ProgressDialog progressBar, int resultHeaderMessageId) {
         resultMessage.append(getString(resultHeaderMessageId)).append(": ");
         try {

@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.activity.account;
 
+import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
+
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -48,8 +50,11 @@ public abstract class AbstractEmailAccountActivity extends Activity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         extractBundledProperties();
+        
+        setActivityTitle(this, getTitleComponents());
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         Log.d(TAG, "-------onResume");
@@ -147,4 +152,6 @@ public abstract class AbstractEmailAccountActivity extends Activity {
     }
     
     protected abstract int getLayoutId();
+    
+    protected abstract int[] getTitleComponents();
 }

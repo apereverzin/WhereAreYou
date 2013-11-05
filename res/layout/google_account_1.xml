@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            style="@style/ScrollViewFillViewport">
+
+    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+
+        <LinearLayout style="@style/VerticalExpandableLinearLayout">
+
+            <EditText android:id="@+id/mail_username" 
+                      style="@style/GenericField.Email" 
+                      android:hint="@string/google_account"
+                      android:imeOptions="actionNext"/>
+
+            <EditText android:id="@+id/mail_password"
+                      style="@style/GenericField.Password" 
+                      android:hint="@string/mail_password"
+                      android:imeOptions="actionDone"/>
+        </LinearLayout>
+        
+        <include layout="@layout/email_account_buttons"/>
+    
+    </LinearLayout>
+    
+</ScrollView>

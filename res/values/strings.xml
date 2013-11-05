@@ -23,6 +23,8 @@
     <string name="mail_settings_activity_name">Email Settings</string>
     <string name="mail_address_activity_name">Email Address</string>
     <string name="mail_username">Email Address</string>
+    <string name="google_account">Google Account</string>
+    <string name="google_account_activity_name">Google Account</string>
     <string name="mail_password">Password</string>
     <string name="mail_smtp_settings_activity_name">SMTP Settings</string>
     <string name="mail_smtp_host">SMTP Host</string>
@@ -40,6 +42,7 @@
     <string name="mail_pop3_socket_factory_fallback">POP3 Socket Factory Fallback</string>
     <string name="mail_imap_host">IMAP Host</string>
     <string name="mail_imap_port">IMAP Port</string>
+    <string name="finish_activity_name">Finish</string>
     
     <!-- Activity Titles -->
     <string name="app_name">WhereAreYou</string>
@@ -75,6 +78,7 @@
     <!-- Contacts Options Menu Items -->
     <string name="enter_email_account">Enter Email Account</string>
     <string name="edit_email_account">Edit Email Account</string>
+    <string name="edit_google_account">Edit Google Account</string>
     <string name="get_accounts">Get Accounts</string>
     <string name="add_email_account">Add Email Account</string>
     <string name="map">Map</string>
@@ -97,4 +101,7 @@
         <item>Never</item>
         <item>Always</item>
     </string-array>
+    
+    <string name="google_account_not_found">Google Account is not found. Please, define your Google Account first</string>
+    <string name="not_google_account">Google Account must be either username@googlemail.com or username@gmail.com</string>
 </resources>

@@ -7,7 +7,6 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PO
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_POP3_SOCKET_FACTORY_FALLBACK_PROPERTY;
 
 import static com.creek.whereareyou.android.activity.account.CheckMode.POP3;
-import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 
 import com.creek.whereareyou.R;
 
@@ -42,8 +41,6 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivityWit
         pop3SocketFactoryPortText.setText(bundledProps.get(MAIL_POP3_SOCKET_FACTORY_PORT_PROPERTY));
         pop3SocketFactoryClassText.setText(bundledProps.get(MAIL_POP3_SOCKET_FACTORY_CLASS_PROPERTY));
         pop3SocketFactoryFallbackCheck.setChecked("true".equalsIgnoreCase(bundledProps.get(MAIL_POP3_SOCKET_FACTORY_FALLBACK_PROPERTY)));
-
-        setActivityTitle(this, R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_pop3_settings_activity_name);
     }
 
     @Override
@@ -79,5 +76,10 @@ public class EmailAccountPop3_4_Activity extends AbstractEmailAccountActivityWit
     @Override
     protected CheckMode getCheckMode() {
         return POP3;
+    }
+    
+    @Override
+    protected int[] getTitleComponents() {
+        return new int[]{R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_pop3_settings_activity_name};
     }
 }

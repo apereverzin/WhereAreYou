@@ -35,7 +35,8 @@ public class LocationImageFactory {
     }
 
     public int getLocationAccuracyInPixels(MapView mapView, float accuracy) {
-        return 15;
+        Projection projection = mapView.getProjection();
+        return (int) projection.metersToEquatorPixels(accuracy);
     }
 
     public AnnotatedLocationImage createAnnotatedLocationImage(Context ctx, Point locationPoint, int accuracy, String text, Paint paint) {

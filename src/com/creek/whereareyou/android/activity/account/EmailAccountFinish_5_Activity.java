@@ -17,7 +17,6 @@ import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SM
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_SMTP_STARTTLS_ENABLE_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_POP3;
-import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import android.os.Bundle;
@@ -65,8 +64,6 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
                 finish();
             }
         });
-
-        setActivityTitle(this, R.string.app_name, R.string.mail_settings_activity_name);
     }
 
     @Override
@@ -84,8 +81,14 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         return R.layout.email_account_finish_5;
     }
     
-    private String buildMailSettingsDescription() {
+    @Override
+    protected int[] getTitleComponents() {
+        return new int[]{R.string.app_name, R.string.mail_settings_activity_name, R.string.finish_activity_name};
+    }
+    
+    protected String buildMailSettingsDescription() {
         StringBuilder sb = new StringBuilder();
+        
         sb.append(getString(R.string.mail_username)).append(": " ).append(bundledProps.get(MAIL_USERNAME_PROPERTY));
         
         if (!TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
@@ -105,6 +108,15 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
         return sb.toString();
     }
     
+    protected void goBack() {
+        if (TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
+            step(EmailAccountFinish_5_Activity.this, EmailAccountAddress_1_Activity.class); 
+        } else {
+            step(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class); 
+        }
+        finish();
+    }
+    
     private void addProperty(StringBuilder sb, int titleId, String propertyName) {
         String value = bundledProps.get(propertyName);
         
@@ -112,14 +124,5 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
             sb.append("\n").append(getString(titleId)).append(": " ).append(value);
         }
         
-    }
-    
-    private void goBack() {
-        if (TRUE.equals(bundledProps.get(PREDEFINED_PROPERTIES))) {
-            step(EmailAccountFinish_5_Activity.this, EmailAccountAddress_1_Activity.class); 
-        } else {
-            step(EmailAccountFinish_5_Activity.this, EmailAccountPop3_4_Activity.class); 
-        }
-        finish();
     }
 }

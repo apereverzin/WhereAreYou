@@ -19,6 +19,17 @@ public class AnnotatedLocationPainter {
 
         drawAnnotationText(canvas, annotation, paint);
     }
+    
+    public void drawLocation(Canvas canvas, ColouredCircledRectangle locationImage) {
+        int locationColor = locationImage.getColor();
+
+        Paint locationPaint = new Paint();
+        locationPaint.setColor(locationColor);
+        locationPaint.setAntiAlias(true);
+        locationPaint.setFakeBoldText(true);
+
+        canvas.drawOval(locationImage.getRectangle(), locationPaint);
+    }
 
     private void drawAnnotationText(Canvas canvas, Annotation annotation, Paint paint) {
         paint.setColor(annotation.getForegroundColour());
@@ -36,7 +47,7 @@ public class AnnotatedLocationPainter {
     }
 
     private void drawLocation(Canvas canvas, AnnotatedLocationImage annotatedLocationImage, Paint paint) {
-        drawAccuracyCircle(canvas, annotatedLocationImage, paint);
+        drawLocationAccuracyCircle(canvas, annotatedLocationImage, paint);
 
         paint.setColor(annotatedLocationImage.getLocationImage().getColor());
         paint.setAntiAlias(true);
@@ -45,23 +56,12 @@ public class AnnotatedLocationPainter {
         canvas.drawOval(annotatedLocationImage.getLocationImage().getRectangle(), paint);
     }
     
-    private void drawAccuracyCircle(Canvas canvas, AnnotatedLocationImage annotatedLocationImage, Paint paint) {
+    private void drawLocationAccuracyCircle(Canvas canvas, AnnotatedLocationImage annotatedLocationImage, Paint paint) {
         paint.setColor(annotatedLocationImage.getLocationImage().getColor());
         paint.setAntiAlias(true);
         paint.setFakeBoldText(true);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(annotatedLocationImage.getLocationPoint().x, annotatedLocationImage.getLocationPoint().y, 
                 annotatedLocationImage.getAccuracy(), paint);
-    }
-    
-    public void drawLocation(Canvas canvas, ColouredCircledRectangle locationImage) {
-        int locationColor = locationImage.getColor();
-
-        Paint locationPaint = new Paint();
-        locationPaint.setColor(locationColor);
-        locationPaint.setAntiAlias(true);
-        locationPaint.setFakeBoldText(true);
-
-        canvas.drawOval(locationImage.getRectangle(), locationPaint);
     }
 }

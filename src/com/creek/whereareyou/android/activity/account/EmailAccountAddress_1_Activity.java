@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.activity.account;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
@@ -10,13 +11,13 @@ import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getP
 import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
-import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import static com.creek.whereareyou.android.activity.account.CheckMode.RequestCodes.SMTP_AND_POP3_REQUEST_CODE;
 import static com.creek.whereareyou.android.activity.account.CheckMode.SMTP_AND_POP3;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
+import com.creek.whereareyou.android.util.CryptoException;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ import android.widget.EditText;
 public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity {
     private static final String TAG = EmailAccountAddress_1_Activity.class.getSimpleName();
 
-    private EditText emailAddressText;
+    protected EditText emailAddressText;
     private EditText passwordText;
     
     @Override
@@ -42,14 +43,12 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         passwordText = (EditText) findViewById(R.id.mail_password);
         backButton.setVisibility(INVISIBLE);
 
-        //final Account googleAccount = GoogleAccountProvider.getInstance().getEmailAccount(this);
-
         if (bundledProps == null) {
             buildBundledProperties(getIntent().getExtras());
         }
         
         Log.d(TAG, "bundledProps: " + bundledProps);
-        emailAddressText.setText(bundledProps.get(MAIL_USERNAME_PROPERTY));
+        emailAddressText.setText(extractEmailAddressText());
         passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
         
         testButton.setOnClickListener(new View.OnClickListener() {
@@ -78,34 +77,23 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         nextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "nextButton clicked");
+                
                 try {
                     String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
-
-                    //Properties fullProps = getPredefinedProperties(googleAccount.name);
-                    Properties predefinedProps = getPredefinedProperties(emailAddress);
-
-                    Intent intent;
-                    if (predefinedProps != null) {
-                        // TODO check if predefined properties are already redefined
-                        bundledProps = convertPropertiesToHashMap(predefinedProps);
-                        bundledProps.put(PREDEFINED_PROPERTIES, TRUE);
-                        intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountFinish_5_Activity.class);
-                        gatherProperties();
-                        putExtrasIntoIntent(intent, bundledProps);
-                    } else {
-                        bundledProps.put(PREDEFINED_PROPERTIES, FALSE);
-                        intent = new Intent(EmailAccountAddress_1_Activity.this, EmailAccountSmtp_2_Activity.class);                        
-                        putBundledPropertiesIntoIntent(intent);
+                    if (!isValid(emailAddress)) {
+                        return;
                     }
-                    startActivity(intent);
+                    startActivity(getNextIntent(emailAddress));
                     finish();
                 } catch (Exception ex) {
-                    showException(EmailAccountAddress_1_Activity.this, ex);
+                    showException(getCurrentActivity(), ex);
                 }
             }
         });
+    }
 
-        setActivityTitle(this, R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_address_activity_name);
+    protected String extractEmailAddressText() {
+        return bundledProps.get(MAIL_USERNAME_PROPERTY);
     }
     
     @SuppressWarnings("unchecked")
@@ -126,6 +114,39 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     }
     
     @SuppressWarnings("unchecked")
+    protected <T extends AbstractEmailAccountActivity> T getCurrentActivity() {
+        return (T) this;
+    }
+    
+    @Override
+    protected int[] getTitleComponents() {
+        return new int[]{R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_address_activity_name};
+    }
+    
+    protected Intent getNextIntent(String emailAddress) {
+        Properties predefinedProps = getPredefinedProperties(emailAddress);
+
+        Intent intent;
+        if (predefinedProps != null) {
+            // TODO check if predefined properties are already redefined
+            bundledProps = convertPropertiesToHashMap(predefinedProps);
+            bundledProps.put(PREDEFINED_PROPERTIES, TRUE);
+            intent = new Intent(getCurrentActivity(), EmailAccountFinish_5_Activity.class);
+            gatherProperties();
+            putExtrasIntoIntent(intent, bundledProps);
+        } else {
+            bundledProps.put(PREDEFINED_PROPERTIES, FALSE);
+            intent = new Intent(getCurrentActivity(), EmailAccountSmtp_2_Activity.class);                        
+            putBundledPropertiesIntoIntent(intent);
+        }
+        return intent;
+    }
+    
+    protected boolean isValid(String emailAddress) {
+        return true;
+    }
+
+    @SuppressWarnings("unchecked")
     private void buildBundledProperties(Bundle extras) {
         try {
             if (extras != null) {
@@ -133,11 +154,15 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
             }
 
             if (bundledProps == null) {
-                Properties mailProps = MailAccountPropertiesProvider.getInstance().getMailProperties();
+                Properties mailProps = getMailProperties();
                 bundledProps = convertPropertiesToHashMap(mailProps);
             }
         } catch (Exception ex) {
             showException(this, ex);
         }
+    }
+    
+    protected Properties getMailProperties() throws CryptoException, IOException {
+        return MailAccountPropertiesProvider.getInstance().getMailProperties();
     }
 }
