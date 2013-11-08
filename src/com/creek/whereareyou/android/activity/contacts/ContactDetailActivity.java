@@ -7,12 +7,15 @@ import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactDataDTO;
 import com.creek.whereareyou.android.infrastructure.sqlite.DBFileManager;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
-import com.creek.whereareyou.android.util.ActivityUtil;
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.RequestAllowance;
+
+import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_SELECTED;
+import static com.creek.whereareyou.android.util.ActivityUtil.buildActivityTitle;
 import static com.creek.whereareyoumodel.domain.RequestAllowance.NEVER;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,14 +31,14 @@ import android.widget.TextView;
  * 
  * @author Andrey Pereverzin
  */
-public class ContactDetailsActivity extends Activity implements OnItemSelectedListener {
-    private static final String TAG = ContactDetailsActivity.class.getSimpleName();
+public class ContactDetailActivity extends Activity implements OnItemSelectedListener {
+    private static final String TAG = ContactDetailActivity.class.getSimpleName();
 
     private TextView displayNameText;
     private EditText emailText;
     private Spinner locationRequestsAllowanceSpinner;
     private Button saveButton;
-    private AndroidContact androidContact;
+    private IndexedContactData indexedContact;
     private ContactDataDTO contactDataDto;
     
     @Override
@@ -49,7 +52,8 @@ public class ContactDetailsActivity extends Activity implements OnItemSelectedLi
 
         Bundle extras = getIntent().getExtras();
 
-        androidContact = (AndroidContact) extras.get(ContactsActivity.CONTACT_SELECTED);
+        indexedContact = (IndexedContactData) extras.get(CONTACT_SELECTED);
+        AndroidContact androidContact = indexedContact.getContactData().getAndroidContact();
         Log.d(TAG, "-----------androidContact: " + androidContact);
         contactDataDto = androidContact.getContactData();
         if (contactDataDto == null) {
@@ -70,6 +74,7 @@ public class ContactDetailsActivity extends Activity implements OnItemSelectedLi
                 Log.d(TAG, "-----------email: " + email);
                 contactDataDto.setContactEmail(email);
                 ContactData contactData = contactDataDto.toContactData();
+                
                 Log.d(TAG, "-----------contactData: " + contactData);
                 if (contactData.getId() == -1L) {
                     contactData = (ContactData) SQLiteRepositoryManager.getInstance().getContactDataRepository().create(contactData);
@@ -78,20 +83,22 @@ public class ContactDetailsActivity extends Activity implements OnItemSelectedLi
                     SQLiteRepositoryManager.getInstance().getContactDataRepository().update(contactData);
                     Log.d(TAG, "-----------update() " + contactData);
                 }
+                
                 List<ContactData> contactDataList = SQLiteRepositoryManager.getInstance().getContactDataRepository().getAllContactData();
                 DBFileManager dbFileManager = new DBFileManager();
                 dbFileManager.reserveContactData(contactDataList);
-                setResult(RESULT_OK);
-                finish();
+
+                finishActivity();
             }
         });
+        
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.requests_allowances_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         locationRequestsAllowanceSpinner.setAdapter(adapter);
         locationRequestsAllowanceSpinner.setSelection(contactDataDto.getRequestAllowanceCode());
         locationRequestsAllowanceSpinner.setOnItemSelectedListener(this);
 
-        StringBuilder title = ActivityUtil.buildActivityTitle(this, R.string.app_name, R.string.edit_contact);
+        StringBuilder title = buildActivityTitle(this, R.string.app_name, R.string.edit_contact);
         setTitle(title);
     }
     
@@ -105,5 +112,18 @@ public class ContactDetailsActivity extends Activity implements OnItemSelectedLi
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
+    }
+    
+    private void finishActivity() {
+        Log.d(TAG, "finishActivity()");
+        Log.d(TAG, "-----------finishActivity()");
+        Intent intent = new Intent();
+        final Bundle bundle = new Bundle();
+        indexedContact.getContactData().getAndroidContact().getContactData().setContactEmail(contactDataDto.getContactEmail());
+        indexedContact.getContactData().setRequestAllowance(RequestAllowance.getRequestAllowance(contactDataDto.getRequestAllowanceCode()));
+        bundle.putSerializable(CONTACT_SELECTED, indexedContact);
+        intent.putExtras(bundle);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

@@ -6,12 +6,12 @@
 
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="14" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
     
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -37,14 +37,14 @@
         </activity>
 
         <activity android:name="com.creek.whereareyou.android.activity.map.MainMapActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.contacts.ContactDetailsActivity" />
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity"/>
-        <activity android:name="com.creek.whereareyou.android.activity.account.GoogleAccount_1_Activity"/>
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountSmtp_2_Activity"/>
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountPop3_4_Activity"/>
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountImap_4_Activity"/>
-        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountFinish_5_Activity"/>
-        <activity android:name="com.creek.whereareyou.android.activity.account.GoogleAccountFinish_5_Activity"/>
+        <activity android:name="com.creek.whereareyou.android.activity.contacts.ContactDetailActivity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.GoogleAccount_1_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountSmtp_2_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountPop3_4_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountImap_4_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.EmailAccountFinish_5_Activity" />
+        <activity android:name="com.creek.whereareyou.android.activity.account.GoogleAccountFinish_5_Activity" />
         <activity android:name="com.creek.whereareyou.android.activity.account.CheckEmailResultActivity" />
         
         <service android:name="com.creek.whereareyou.android.services.email.EmailSendingAndReceivingService">
