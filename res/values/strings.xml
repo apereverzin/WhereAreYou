@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="alternate_title">An alternate title that is long</string>
-    <string name="toggle_title">Toggle title</string>
-
-    <string name="menu_refresh">Refresh</string>
-    <string name="menu_search">Search</string>
-    <string name="menu_share">Share</string>
-    
     <!-- buttons -->
     <string name="save">Save</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
     <string name="back">Back</string>
     <string name="test">Test</string>
     <string name="next">Next</string>
     <string name="save_and_finish">Save</string>
-    <string name="advanced">Advanced</string>
-    <string name="pop3_settings">POP3 Settings</string>
-    <string name="imap_settings">IMAP Settings</string>
     
     <!-- Mail properties -->
     <string name="mail_settings_activity_name">Email Settings</string>
@@ -47,7 +35,6 @@
     <!-- Activity Titles -->
     <string name="app_name">WhereAreYou</string>
     <string name="contacts">Contacts</string>
-    <string name="allowed_location_requests">Allowed Location Requests</string>
     <string name="edit_contact">Edit Contact</string>
     
     <!-- Map Activity Menu Items -->
@@ -78,9 +65,6 @@
     <!-- Contacts Options Menu Items -->
     <string name="enter_email_account">Enter Email Account</string>
     <string name="edit_email_account">Edit Email Account</string>
-    <string name="edit_google_account">Edit Google Account</string>
-    <string name="get_accounts">Get Accounts</string>
-    <string name="add_email_account">Add Email Account</string>
     <string name="map">Map</string>
     
     <!-- Contacts Context Menu Items -->
@@ -92,6 +76,7 @@
     <string name="contact_display_name">Name</string>
     <string name="contact_email">email</string>
     <string name="location_requests_allowance">Location Requests Allowed</string>
+    <string name="googlemail_com">\@googlemail.com</string>
     
     <!-- Notifications -->
     <string name="notifications_contact_locations">Contact Locations</string>
@@ -103,5 +88,6 @@
     </string-array>
     
     <string name="google_account_not_found">Google Account is not found. Please, define your Google Account first</string>
+    <string name="invalid_email_address">Invalid email address</string>
     <string name="not_google_account">Google Account must be either username@googlemail.com or username@gmail.com</string>
 </resources>

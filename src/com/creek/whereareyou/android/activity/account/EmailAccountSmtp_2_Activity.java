@@ -85,6 +85,6 @@ public class EmailAccountSmtp_2_Activity extends AbstractEmailAccountActivityWit
     
     @Override
     protected int[] getTitleComponents() {
-        return new int[]{R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_smtp_settings_activity_name};
+        return new int[] { R.string.mail_smtp_settings_activity_name };
     }
 }

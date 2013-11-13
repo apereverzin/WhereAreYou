@@ -69,6 +69,13 @@ public class ContactsArrayAdapter extends ArrayAdapter<CombinedContactData> {
         CombinedContactData contactData = values.get(position);
         contactData.setIncomingState(incomingState);
     }
+    
+    public ContactsArrayAdapter recreate(IndexedContactData replacement) {
+        int index = replacement.getContactInd();
+        values.remove(index);
+        values.set(index, replacement.getContactData());
+        return new ContactsArrayAdapter(ctx, values);
+    }
 
     private void setRequestAllowanceImage(View rowView, CombinedContactData contact) {
         ImageView requestAllowanceImageView = (ImageView) rowView.findViewById(R.id.request_allowance);

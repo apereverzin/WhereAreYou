@@ -98,7 +98,7 @@ public class CheckEmailResultActivity extends AbstractEmailAccountActivity {
     }
 
     protected int[] getTitleComponents() {
-        return new int[]{R.string.app_name, R.string.check_email_result_title};
+        return new int[]{ R.string.check_email_result_title };
     }
     
     private void runSmtpConnectionTest(MailConnector connector, ProgressDialog progressBar, int resultHeaderMessageId) {

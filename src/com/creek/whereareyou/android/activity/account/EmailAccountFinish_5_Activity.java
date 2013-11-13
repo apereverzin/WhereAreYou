@@ -83,7 +83,7 @@ public class EmailAccountFinish_5_Activity extends AbstractEmailAccountActivity 
     
     @Override
     protected int[] getTitleComponents() {
-        return new int[]{R.string.app_name, R.string.mail_settings_activity_name, R.string.finish_activity_name};
+        return new int[]{ R.string.finish_activity_name };
     }
     
     protected String buildMailSettingsDescription() {

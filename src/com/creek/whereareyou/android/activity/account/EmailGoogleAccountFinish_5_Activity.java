@@ -8,19 +8,15 @@ import com.creek.whereareyou.R;
  * 
  * @author Andrey Pereverzin
  */
-public class GoogleAccountFinish_5_Activity extends EmailAccountFinish_5_Activity {
+public class EmailGoogleAccountFinish_5_Activity extends EmailAccountFinish_5_Activity {
     @Override
     protected int getLayoutId() {
-        return R.layout.google_account_finish_5;
-    }
-    
-    protected Class<? extends AbstractEmailAccountActivity> getPreviousActivityClass() {
-        return GoogleAccount_1_Activity.class;
+        return R.layout.email_google_account_finish_5;
     }
     
     @Override
     protected int[] getTitleComponents() {
-        return new int[]{R.string.app_name, R.string.google_account_activity_name, R.string.finish_activity_name};
+        return new int[] { R.string.finish_activity_name };
     }
     
     @Override
@@ -32,8 +28,9 @@ public class GoogleAccountFinish_5_Activity extends EmailAccountFinish_5_Activit
         return sb.toString();
     }
     
+    @Override
     protected void goBack() {
-        step(GoogleAccountFinish_5_Activity.this, GoogleAccount_1_Activity.class); 
+        step(EmailGoogleAccountFinish_5_Activity.this, EmailGoogleAccountAddress_1_Activity.class); 
         finish();
     }
 }

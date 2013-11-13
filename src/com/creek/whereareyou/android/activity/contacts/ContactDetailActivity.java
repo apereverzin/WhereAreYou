@@ -1,6 +1,7 @@
 package com.creek.whereareyou.android.activity.contacts;
 
 import java.util.List;
+import java.util.Locale;
 
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.contacts.AndroidContact;
@@ -35,7 +36,7 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
     private static final String TAG = ContactDetailActivity.class.getSimpleName();
 
     private TextView displayNameText;
-    private EditText emailText;
+    private EditText emailAddressText;
     private Spinner locationRequestsAllowanceSpinner;
     private Button saveButton;
     private IndexedContactData indexedContact;
@@ -44,9 +45,9 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setContentView(R.layout.contact_details);
+        setContentView(getLayoutId());
         displayNameText = (TextView) findViewById(R.id.contact_display_name);
-        emailText = (EditText) findViewById(R.id.contact_email);
+        emailAddressText = (EditText) findViewById(R.id.contact_email);
         locationRequestsAllowanceSpinner = (Spinner) findViewById(R.id.location_requests_allowance);
         saveButton = (Button) findViewById(R.id.contact_save);
 
@@ -54,7 +55,6 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
 
         indexedContact = (IndexedContactData) extras.get(CONTACT_SELECTED);
         AndroidContact androidContact = indexedContact.getContactData().getAndroidContact();
-        Log.d(TAG, "-----------androidContact: " + androidContact);
         contactDataDto = androidContact.getContactData();
         if (contactDataDto == null) {
             contactDataDto = new ContactDataDTO(androidContact.getContactId());
@@ -67,21 +67,17 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         Log.d(TAG, "onCreate() " + androidContact);
 
         displayNameText.setText(androidContact.getDisplayName());
-        emailText.setText(androidContact.getContactData().getContactEmail());
+        emailAddressText.setText(getEmailAddressText(androidContact));
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String email = emailText.getText().toString();
-                Log.d(TAG, "-----------email: " + email);
+                String email = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
                 contactDataDto.setContactEmail(email);
                 ContactData contactData = contactDataDto.toContactData();
                 
-                Log.d(TAG, "-----------contactData: " + contactData);
                 if (contactData.getId() == -1L) {
                     contactData = (ContactData) SQLiteRepositoryManager.getInstance().getContactDataRepository().create(contactData);
-                    Log.d(TAG, "-----------create() " + contactData);
                 } else {
                     SQLiteRepositoryManager.getInstance().getContactDataRepository().update(contactData);
-                    Log.d(TAG, "-----------update() " + contactData);
                 }
                 
                 List<ContactData> contactDataList = SQLiteRepositoryManager.getInstance().getContactDataRepository().getAllContactData();
@@ -98,15 +94,13 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         locationRequestsAllowanceSpinner.setSelection(contactDataDto.getRequestAllowanceCode());
         locationRequestsAllowanceSpinner.setOnItemSelectedListener(this);
 
-        StringBuilder title = buildActivityTitle(this, R.string.app_name, R.string.edit_contact);
+        StringBuilder title = buildActivityTitle(this, R.string.edit_contact);
         setTitle(title);
     }
     
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-        Log.d(TAG, "-----------pos " + pos);
         contactDataDto.setRequestAllowanceCode(RequestAllowance.values()[pos].getCode());
-        Log.d(TAG, "-----------onItemSelected " + contactDataDto);
     }
 
     @Override
@@ -114,9 +108,20 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         // Another interface callback
     }
     
+    protected int getLayoutId() {
+        return R.layout.contact_detail;
+    }
+    
+    protected String getEmailAddressText(AndroidContact androidContact) {
+        return androidContact.getContactData().getContactEmail();
+    }
+    
+    protected String buildEmailAddress(String emailAddressText) {
+        return emailAddressText;
+    }
+
     private void finishActivity() {
         Log.d(TAG, "finishActivity()");
-        Log.d(TAG, "-----------finishActivity()");
         Intent intent = new Intent();
         final Bundle bundle = new Bundle();
         indexedContact.getContactData().getAndroidContact().getContactData().setContactEmail(contactDataDto.getContactEmail());

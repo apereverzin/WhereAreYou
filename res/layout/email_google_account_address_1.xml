@@ -6,11 +6,17 @@
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 
-            <EditText android:id="@+id/mail_username" 
-                      style="@style/GenericField.Email" 
-                      android:hint="@string/google_account"
-                      android:imeOptions="actionNext"/>
-
+            <LinearLayout style="@style/HorizontalLinearLayout">
+                <EditText android:id="@+id/mail_username"
+                          style="@style/GenericField.Email" 
+                          android:hint="@string/mail_username"
+                          android:layout_width="0dp"
+                          android:layout_weight="1"
+                          android:imeOptions="actionDone"/>
+                <TextView android:text="@string/googlemail_com"
+                          style="@style/TextView.White"/>
+            </LinearLayout>
+            
             <EditText android:id="@+id/mail_password"
                       style="@style/GenericField.Password" 
                       android:hint="@string/mail_password"

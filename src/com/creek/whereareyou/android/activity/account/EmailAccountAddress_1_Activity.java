@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * 
@@ -48,13 +49,13 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         }
         
         Log.d(TAG, "bundledProps: " + bundledProps);
-        emailAddressText.setText(extractEmailAddressText());
+        emailAddressText.setText(getEmailAddressText(bundledProps.get(MAIL_USERNAME_PROPERTY)));
         passwordText.setText(bundledProps.get(MAIL_PASSWORD_PROPERTY));
         
         testButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Log.d(TAG, "testButton clicked");
-                String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
+                String emailAddress = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
                 
                 HashMap<String, String> props;
                 Properties predefinedProps = getPredefinedProperties(emailAddress);
@@ -79,10 +80,13 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                 Log.d(TAG, "nextButton clicked");
                 
                 try {
-                    String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
+                    String emailAddress = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
+                    
                     if (!isValid(emailAddress)) {
+                        Toast.makeText(EmailAccountAddress_1_Activity.this, R.string.invalid_email_address, Toast.LENGTH_LONG).show();
                         return;
                     }
+                    
                     startActivity(getNextIntent(emailAddress));
                     finish();
                 } catch (Exception ex) {
@@ -90,10 +94,6 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                 }
             }
         });
-    }
-
-    protected String extractEmailAddressText() {
-        return bundledProps.get(MAIL_USERNAME_PROPERTY);
     }
     
     @SuppressWarnings("unchecked")
@@ -105,6 +105,10 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     @Override
     protected void gatherProperties() {
         gatherTextFieldValue(bundledProps, MAIL_USERNAME_PROPERTY, emailAddressText);
+        if (emailAddressText.getText() != null) {
+            bundledProps.put(MAIL_USERNAME_PROPERTY, 
+                    buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault())));
+        }
         gatherTextFieldValue(bundledProps, MAIL_PASSWORD_PROPERTY, passwordText);
     }
     
@@ -120,7 +124,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     
     @Override
     protected int[] getTitleComponents() {
-        return new int[]{R.string.app_name, R.string.mail_settings_activity_name, R.string.mail_address_activity_name};
+        return new int[] { R.string.mail_address_activity_name };
     }
     
     protected Intent getNextIntent(String emailAddress) {
@@ -164,5 +168,17 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     
     protected Properties getMailProperties() throws CryptoException, IOException {
         return MailAccountPropertiesProvider.getInstance().getMailProperties();
+    }
+    
+    protected int getActivityResourceId() {
+        return R.layout.contact_detail;
+    }
+    
+    protected String getEmailAddressText(String emailAddress) {
+        return emailAddress;
+    }
+    
+    protected String buildEmailAddress(String emailAddressText) {
+        return emailAddressText;
     }
 }

@@ -10,16 +10,15 @@ import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.activity.contacts.OutgoingState.BEING_SENT;
 import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
+import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 import static com.creek.whereareyou.android.util.Util.isStringNotEmpty;
 
 import com.creek.whereareyou.android.accountaccess.MailAccountPropertiesProvider;
-import com.creek.whereareyou.android.activity.account.EmailAccountAddress_1_Activity;
-import com.creek.whereareyou.android.activity.account.GoogleAccount_1_Activity;
+import com.creek.whereareyou.android.activity.account.EmailGoogleAccountAddress_1_Activity;
 import com.creek.whereareyou.android.activity.map.MainMapActivity;
 import com.creek.whereareyou.android.contacts.RequestResponseFactory;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
-import com.creek.whereareyou.android.util.ActivityUtil;
 import com.creek.whereareyou.android.util.CryptoException;
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.LocationData;
@@ -51,8 +50,7 @@ public final class ContactsActivity extends ListActivity {
     
     // Options menu
     private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int GOOGLE_ACCOUNT_MENU_ITEM = Menu.FIRST + 1;
-    private static final int MAP_MENU_ITEM = Menu.FIRST + 2;
+    private static final int MAP_MENU_ITEM = Menu.FIRST + 1;
 
     // Context menu
     private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
@@ -69,10 +67,10 @@ public final class ContactsActivity extends ListActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-onCreate()");
+        Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 
-        ActivityUtil.setActivityTitle(this, R.string.app_name, R.string.contacts);
+        setActivityTitle(this, R.string.contacts);
 
         CombinedContactDataBuilder combinedContactDataBuilder = new CombinedContactDataBuilder(this);
         combinedContacts = combinedContactDataBuilder.buildCombinedContactDataList();
@@ -104,7 +102,6 @@ public final class ContactsActivity extends ListActivity {
             } else {
                 menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
             }
-            menu.add(0, GOOGLE_ACCOUNT_MENU_ITEM, 0, R.string.google_account);
             menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
         } catch (Exception ex) {
             showException(ContactsActivity.this, ex);
@@ -117,9 +114,7 @@ public final class ContactsActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case EMAIL_ACCOUNT_MENU_ITEM:
-            return startNewActivity(EmailAccountAddress_1_Activity.class);
-        case GOOGLE_ACCOUNT_MENU_ITEM:
-            return startNewActivity(GoogleAccount_1_Activity.class);
+            return startNewActivity(EmailGoogleAccountAddress_1_Activity.class);
         case MAP_MENU_ITEM:
             Intent intent = new Intent(this, MainMapActivity.class);
             List<OwnerLocationDataMessage> locations = new ArrayList<OwnerLocationDataMessage>();
@@ -165,7 +160,7 @@ public final class ContactsActivity extends ListActivity {
         case EDIT_CONTACT_DETAILS_MENU_ITEM:
             try {
                 Log.d(TAG, "EDIT_CONTACT_DETAILS_MENU_ITEM: " + indexedContact);
-                Intent intent = new Intent(ContactsActivity.this, ContactDetailActivity.class);
+                Intent intent = new Intent(ContactsActivity.this, ContactGoogleAccountDetailActivity.class);
                 intent.putExtras(bundle);
                 startActivityForResult(intent, 0);
                 return true;
@@ -208,16 +203,23 @@ public final class ContactsActivity extends ListActivity {
         if (requestCode == 0 && data != null) {
             Bundle extras = data.getExtras();
             if (extras != null) {
-                IndexedContactData res = (IndexedContactData) extras.get(CONTACT_SELECTED);
-                if (res != null) {
-                    contactsListAdapter.notifyDataSetInvalidated();
-                    CombinedContactDataBuilder combinedContactDataBuilder = new CombinedContactDataBuilder(this);
-                    combinedContacts = combinedContactDataBuilder.buildCombinedContactDataList();
-                    contactsListAdapter = new ContactsArrayAdapter(this, combinedContacts);
-                    setListAdapter(contactsListAdapter);
-                }
+                processResultBundle(extras);
             }
         }
+    }
+
+    private void processResultBundle(Bundle extras) {
+        IndexedContactData res = (IndexedContactData) extras.get(CONTACT_SELECTED);
+        if (res != null) {
+            recreateContactListAdapter(res);
+        }
+    }
+
+    private void recreateContactListAdapter(IndexedContactData res) {
+        CombinedContactDataBuilder combinedContactDataBuilder = new CombinedContactDataBuilder(this);
+        combinedContacts = combinedContactDataBuilder.buildCombinedContactDataList();
+        contactsListAdapter = new ContactsArrayAdapter(this, combinedContacts);
+        setListAdapter(contactsListAdapter);
     }
     
     private boolean areEmailPropertiesDefined() throws CryptoException, IOException {
@@ -229,7 +231,6 @@ public final class ContactsActivity extends ListActivity {
     private boolean startNewActivity(Class<? extends Activity> clazz) {
         try {
             Intent intent = new Intent(this, clazz);
-
             startActivity(intent);
         } catch (Exception ex) {
             showException(ContactsActivity.this, ex);
