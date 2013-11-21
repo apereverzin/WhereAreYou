@@ -12,7 +12,7 @@ import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.RequestAllowance;
 
 import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_SELECTED;
-import static com.creek.whereareyou.android.util.ActivityUtil.buildActivityTitle;
+import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyoumodel.domain.RequestAllowance.NEVER;
 
 import android.app.Activity;
@@ -70,7 +70,10 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         emailAddressText.setText(getEmailAddressText(androidContact));
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String email = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
+                String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
+                Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=emailAddress: " + emailAddress);
+                String email = buildEmailAddress(emailAddress);
+                Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=email: " + email);
                 contactDataDto.setContactEmail(email);
                 ContactData contactData = contactDataDto.toContactData();
                 
@@ -94,8 +97,7 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         locationRequestsAllowanceSpinner.setSelection(contactDataDto.getRequestAllowanceCode());
         locationRequestsAllowanceSpinner.setOnItemSelectedListener(this);
 
-        StringBuilder title = buildActivityTitle(this, R.string.edit_contact);
-        setTitle(title);
+        setActivityTitle(this, R.string.edit_contact);
     }
     
     @Override

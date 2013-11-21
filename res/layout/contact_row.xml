@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               style="@style/HorizontalLinearLayout.Expandable">
         <TextView android:id="@+id/contact_name"
-                  style="@style/TextView.HorizontallyExpandable.White"/>
+                  style="@style/TextView.HorizontallyExpandable.ContactRowText"/>
         <ImageView android:id="@+id/request_allowance"
                    android:contentDescription="@string/request_allowance"
                    style="@style/ContactRowImage"/>

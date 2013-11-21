@@ -2,15 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/ScrollViewFillViewport">
 
-    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+    <LinearLayout style="@style/VerticalLinearLayout.AccountBackground">
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 
             <TextView android:id="@+id/mail_account_description"
-                      android:layout_width="wrap_content"
-                      android:layout_height="wrap_content" 
-                      android:padding="3dp"
-                      android:textColor="#fff"/>
+                      style="@style/TextView.AccountValueText"/>
         </LinearLayout>
         
     <include layout="@layout/email_account_buttons"/>

@@ -6,7 +6,12 @@ import java.util.List;
 
 import android.util.Log;
 
+import com.creek.whereareyou.WhereAreYouApplication;
+import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
+import com.creek.whereareyou.android.activity.contacts.OutgoingState;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
+
+import static com.creek.whereareyou.android.activity.contacts.OutgoingState.SENT;
 import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLiteRepository.UNDEFINED_LONG;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.CryptoException;
@@ -54,7 +59,7 @@ public class EmailSender {
 
         Log.d(TAG, "--------------sendRequests: " + unsentRequests.size());
         for (int i = 0; i < unsentRequests.size(); i++) {
-            ContactRequest data = unsentRequests.get(i);
+            final ContactRequest data = unsentRequests.get(i);
             try {
                 Log.d(TAG, "--------------sending request: " + data);
                 emailSendingAndReceivingManager.sendRequest(data);
@@ -64,6 +69,20 @@ public class EmailSender {
                     contactRequestRepository = SQLiteRepositoryManager.getInstance().getContactRequestRepository();
 
                     contactRequestRepository.update(data);
+                    
+                    final ContactsActivity contactsActivity = WhereAreYouApplication.getContactsActivity();
+                    
+                    Log.d(TAG, "--------------about to set outgoing request state");
+                    if (contactsActivity != null) {
+                        Log.d(TAG, "--------------outgoing request state will be set");
+                        contactsActivity.runOnUiThread(new Runnable() {
+                            public void run() {
+                                contactsActivity.setOutgoingRequestState(data.getContactCompoundId().getContactId(), SENT);
+                                Log.d(TAG, "--------------outgoing request state is set");
+                            }
+                        });
+                    }
+                    
                     Log.d(TAG, "--------------request sent: " + data);
                 } finally {
                     SQLiteRepositoryManager.getInstance().closeDatabase();

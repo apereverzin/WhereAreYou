@@ -49,6 +49,8 @@ public class MailAccountPropertiesProvider {
             mailProperties = fileProvider.retrievePropertiesFromFile(WHEREAREYOU_PROPERTIES_FILE_PATH);
             if (mailProperties != null) {
                 decryptPassword(mailProperties);
+            } else {
+                return new Properties();
             }
         }
         return mailProperties;

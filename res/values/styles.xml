@@ -3,7 +3,7 @@
         
     </style>
 </resources -->
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="GenericField">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -53,12 +53,33 @@
         <item name="android:padding">3dp</item>
     </style>
     
-    <style name="TextView.HorizontallyExpandable.White">
-        <item name="android:textColor">#fff</item>
+    <style name="TextView.HorizontallyExpandable.AccountLabelText">
+        <item name="android:textColor">@color/account_label_text</item>
     </style>
 
-    <style name="TextView.White">
-        <item name="android:textColor">#fff</item>
+    <style name="TextView.HorizontallyExpandable.AccountValueText">
+        <item name="android:textColor">@color/account_value_text</item>
+    </style>
+
+    <style name="TextView.AccountLabelText">
+        <item name="android:textColor">@color/account_label_text</item>
+    </style>
+
+    <style name="TextView.AccountValueText">
+        <item name="android:textColor">@color/account_value_text</item>
+    </style>
+
+    <style name="TextView.ContactLabelText">
+        <item name="android:textColor">@color/contact_label_text</item>
+    </style>
+
+    <style name="TextView.ContactValueText">
+        <item name="android:textColor">@color/contact_value_text</item>
+    </style>
+
+    <style name="TextView.HorizontallyExpandable.ContactRowText">
+        <item name="android:textColor">@color/contact_row_text</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="ExpandableButton">
@@ -82,8 +103,12 @@
         <item name="android:layout_weight">1</item>
     </style>
     
-    <style name="VerticalLinearLayout.BlackBackground">
-        <item name="android:background">#000</item>
+    <style name="VerticalLinearLayout.AccountBackground">
+        <item name="android:background">@color/account_background</item>
+    </style>
+    
+    <style name="VerticalLinearLayout.ContactBackground">
+        <item name="android:background">@color/contact_background</item>
     </style>
     
     <style name="HorizontalLinearLayout">
@@ -99,7 +124,7 @@
     <style name="HorizontalLinearLayout.Expandable">
         <item name="android:layout_height">0dp</item>
         <item name="android:layout_weight">1</item>
-        </style>
+    </style>
     
     <style name="CheckBoxField">
         <item name="android:layout_height">wrap_content</item>

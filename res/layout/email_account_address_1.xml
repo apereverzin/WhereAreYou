@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/ScrollViewFillViewport">
 
-    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+    <LinearLayout style="@style/VerticalLinearLayout.AccountBackground">
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 

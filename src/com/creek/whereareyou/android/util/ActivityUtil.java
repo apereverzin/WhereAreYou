@@ -52,14 +52,6 @@ public final class ActivityUtil {
         Log.e(tag, ex.getLocalizedMessage(), ex);
     }
     
-    public static StringBuilder buildActivityTitle(Activity activity, int... stringIds) {
-        StringBuilder title = new StringBuilder(activity.getString(R.string.app_name));
-        for(int stringId: stringIds) {
-            title.append(": ").append(activity.getString(stringId));
-        }
-        return title;
-    }
-    
     public static void printStackTrace(String TAG, Throwable ex) {
         StackTraceElement[] sta = ex.getStackTrace();
         if (ex.getMessage() != null) {

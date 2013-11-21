@@ -1,5 +1,6 @@
 package com.creek.whereareyou;
 
+import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 
 import android.app.Application;
@@ -13,6 +14,8 @@ import android.util.Log;
 public class WhereAreYouApplication extends Application {
     private static final String TAG = WhereAreYouApplication.class.getSimpleName();
     private static SQLiteDatabase whereAreYouDatabase;
+    
+    private static ContactsActivity contactsActivity;
     
     @Override
     public final void onCreate() {
@@ -41,5 +44,13 @@ public class WhereAreYouApplication extends Application {
     
     public static SQLiteDatabase getDatabase() {
         return whereAreYouDatabase;
+    }
+    
+    public static void registerContactActivity(ContactsActivity _contactActivity) {
+        contactsActivity = _contactActivity;
+    }
+    
+    public static ContactsActivity getContactsActivity() {
+        return contactsActivity;
     }
 }

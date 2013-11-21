@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/ScrollViewFillViewport">
 
-    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+    <LinearLayout style="@style/VerticalLinearLayout.AccountBackground">
     
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 
@@ -15,14 +15,14 @@
 
             <LinearLayout style="@style/HorizontalLinearLayout">
                 <TextView android:text="@string/mail_smtp_auth"
-                          style="@style/TextView.HorizontallyExpandable.White"/>
+                          style="@style/TextView.HorizontallyExpandable.AccountLabelText"/>
                 <CheckBox android:id="@+id/mail_smtp_auth"
                           style="@style/CheckBoxField"/>
             </LinearLayout>
 
             <LinearLayout style="@style/HorizontalLinearLayout">
                 <TextView android:text="@string/mail_smtp_start_tls_enable"
-                          style="@style/TextView.HorizontallyExpandable.White"/>
+                          style="@style/TextView.HorizontallyExpandable.AccountLabelText"/>
                 <CheckBox android:id="@+id/mail_smtp_start_tls_enable"
                           style="@style/CheckBoxField"/>
             </LinearLayout>

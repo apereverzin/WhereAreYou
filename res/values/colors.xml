@@ -6,14 +6,18 @@
     <color name="location_annotation_darkgrey">#af323232</color>
 
     <!-- Contact list -->
-    <color name="contact_list_background">#000</color>
-    <color name="contact_list_text">#fff</color>
+    <color name="contacts_background">#000000</color>
+    <color name="contact_row_text">#ffffff</color>
 
     <!-- Contact -->
-    <color name="contact_background">#000</color>
-    <color name="contact_text">#fff</color>
+    <color name="contact_background">#000000</color>
+    <color name="contact_label_text">#ffffff</color>
+    <color name="contact_value_text">#ffffff</color>
     
     <!-- Account -->
-    <color name="account_background">#000</color>
-    <color name="account_list_text">#fff</color>
+    <color name="account_background">#000000</color>
+    <color name="account_label_text">#ffffff</color>
+    <color name="account_value_text">#ffffff</color>
+
+    <color name="buttons_background">#888888</color>
 </resources>

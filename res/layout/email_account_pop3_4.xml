@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/ScrollViewFillViewport">
 
-    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+    <LinearLayout style="@style/VerticalLinearLayout.AccountBackground">
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
             
@@ -25,7 +25,7 @@
         
         <LinearLayout style="@style/HorizontalLinearLayout">
             <TextView android:text="@string/mail_pop3_socket_factory_fallback"
-                      style="@style/TextView.HorizontallyExpandable.White"/>
+                      style="@style/TextView.HorizontallyExpandable.AccountLabelText"/>
             <CheckBox android:id="@+id/mail_pop3_socket_factory_fallback"
                       style="@style/CheckBoxField"/>
         </LinearLayout>

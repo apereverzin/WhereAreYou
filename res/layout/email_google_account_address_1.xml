@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/ScrollViewFillViewport">
 
-    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+    <LinearLayout style="@style/VerticalLinearLayout.AccountBackground">
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 
@@ -14,7 +14,7 @@
                           android:layout_weight="1"
                           android:imeOptions="actionDone"/>
                 <TextView android:text="@string/googlemail_com"
-                          style="@style/TextView.White"/>
+                          style="@style/TextView.AccountValueText"/>
             </LinearLayout>
             
             <EditText android:id="@+id/mail_password"

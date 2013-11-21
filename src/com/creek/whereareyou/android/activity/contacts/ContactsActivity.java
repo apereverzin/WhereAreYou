@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.creek.whereareyou.R;
+import com.creek.whereareyou.WhereAreYouApplication;
 
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.activity.contacts.OutgoingState.BEING_SENT;
@@ -87,10 +88,10 @@ public final class ContactsActivity extends ListActivity {
             }
         });
         
-        contactsListAdapter = new ContactsArrayAdapter(this, combinedContacts);
-        setListAdapter(contactsListAdapter);
+        updateContactsListAdapter();
         
         registerForContextMenu(getListView());
+        WhereAreYouApplication.registerContactActivity(this);
     }
 
     @Override
@@ -102,7 +103,7 @@ public final class ContactsActivity extends ListActivity {
             } else {
                 menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
             }
-            menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
+            //menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
         } catch (Exception ex) {
             showException(ContactsActivity.this, ex);
         }
@@ -140,7 +141,7 @@ public final class ContactsActivity extends ListActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=-=-onCreateContextMenu()");
+        Log.d(TAG, "onCreateContextMenu()");
         super.onCreateContextMenu(menu, v, menuInfo);
         final CombinedContactData contactSelected = combinedContacts.get((int) ((AdapterContextMenuInfo) menuInfo).id);
         menu.add(0, EDIT_CONTACT_DETAILS_MENU_ITEM, 0, R.string.menu_edit_contact_details);
@@ -153,12 +154,12 @@ public final class ContactsActivity extends ListActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         final CombinedContactData selectedContact = combinedContacts.get((int) info.id);
-        IndexedContactData indexedContact = new IndexedContactData(selectedContact, (int) info.id);
-        final Bundle bundle = new Bundle();
-        bundle.putSerializable(CONTACT_SELECTED, indexedContact);
         switch (item.getItemId()) {
         case EDIT_CONTACT_DETAILS_MENU_ITEM:
             try {
+                IndexedContactData indexedContact = new IndexedContactData(selectedContact, (int) info.id, lv.getFirstVisiblePosition());
+                final Bundle bundle = new Bundle();
+                bundle.putSerializable(CONTACT_SELECTED, indexedContact);
                 Log.d(TAG, "EDIT_CONTACT_DETAILS_MENU_ITEM: " + indexedContact);
                 Intent intent = new Intent(ContactsActivity.this, ContactGoogleAccountDetailActivity.class);
                 intent.putExtras(bundle);
@@ -207,6 +208,26 @@ public final class ContactsActivity extends ListActivity {
             }
         }
     }
+    
+    public void setOutgoingRequestState(String contactId, OutgoingState outgoingState) {
+        for (int i = 0; i < combinedContacts.size(); i++) {
+            CombinedContactData combinedContact = combinedContacts.get(i);
+            if (combinedContact.getAndroidContact().getContactId().equals(contactId)) {
+                combinedContact.setOutgoingState(outgoingState);
+                contactsListAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+    
+    public void setIncomingRequestState(String contactId, IncomingState incomingState) {
+        for (int i = 0; i < combinedContacts.size(); i++) {
+            CombinedContactData combinedContact = combinedContacts.get(i);
+            if (combinedContact.getAndroidContact().getContactId().equals(contactId)) {
+                combinedContact.setIncomingState(incomingState);
+                contactsListAdapter.notifyDataSetChanged();
+            }
+        }
+    }
 
     private void processResultBundle(Bundle extras) {
         IndexedContactData res = (IndexedContactData) extras.get(CONTACT_SELECTED);
@@ -216,14 +237,23 @@ public final class ContactsActivity extends ListActivity {
     }
 
     private void recreateContactListAdapter(IndexedContactData res) {
-        CombinedContactDataBuilder combinedContactDataBuilder = new CombinedContactDataBuilder(this);
-        combinedContacts = combinedContactDataBuilder.buildCombinedContactDataList();
+        combinedContacts.set(res.getContactInd(), res.getContactData());
+        updateContactsListAdapter();
+        lv.setSelection(res.getFirstVisiblePosition());
+    }
+    
+    private void updateContactsListAdapter() {
         contactsListAdapter = new ContactsArrayAdapter(this, combinedContacts);
         setListAdapter(contactsListAdapter);
     }
     
     private boolean areEmailPropertiesDefined() throws CryptoException, IOException {
         Properties props = MailAccountPropertiesProvider.getInstance().getMailProperties();
+        
+        if (props == null) {
+            return false;
+        } 
+        
         String username = props.getProperty(MAIL_USERNAME_PROPERTY);
         return username != null && username.length() > 0;
     }

@@ -2,15 +2,15 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
             style="@style/ScrollViewFillViewport">
 
-    <LinearLayout style="@style/VerticalLinearLayout.BlackBackground">
+    <LinearLayout style="@style/VerticalLinearLayout.ContactBackground">
 
         <LinearLayout style="@style/VerticalExpandableLinearLayout">
 
             <LinearLayout style="@style/HorizontalLinearLayout">
                 <TextView android:text="@string/contact_display_name"
-                          style="@style/TextView.White"/>
+                          style="@style/TextView.ContactLabelText"/>
                 <TextView android:id="@+id/contact_display_name" 
-                          style="@style/TextView.White"/>
+                          style="@style/TextView.ContactValueText"/>
             </LinearLayout>
             
             <LinearLayout style="@style/HorizontalLinearLayout">
@@ -21,12 +21,12 @@
                           android:layout_weight="1"
                           android:imeOptions="actionDone"/>
                 <TextView android:text="@string/googlemail_com"
-                          style="@style/TextView.White"/>
+                          style="@style/TextView.ContactValueText"/>
             </LinearLayout>
             
             <LinearLayout style="@style/HorizontalLinearLayout">
                 <TextView android:text="@string/location_requests_allowance"
-                          style="@style/TextView.White"/>
+                          style="@style/TextView.ContactLabelText"/>
                 <Spinner android:id="@+id/location_requests_allowance"
                          android:layout_width="fill_parent"
                          android:layout_height="wrap_content" />
