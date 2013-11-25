@@ -11,5 +11,5 @@ import android.location.Location;
 public interface LocationAware {
     void updateWithNewLocation(Location location);
     
-    void updateWithNewContactDataAndLocation(AndroidContact contactData, Location location);
+    void updateWithNewContactDataAndLocation(AndroidContact contactData, long locationTime, Location location);
 }

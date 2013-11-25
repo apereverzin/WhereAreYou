@@ -11,6 +11,9 @@ import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManag
 import com.creek.whereareyoumodel.domain.ContactData;
 import com.creek.whereareyoumodel.domain.RequestAllowance;
 
+import static android.widget.Toast.LENGTH_LONG;
+import static android.widget.Toast.makeText;
+import static com.creek.accessemail.connector.mail.MailUtil.isEmailAddressValid;
 import static com.creek.whereareyou.android.activity.contacts.ContactsActivity.CONTACT_SELECTED;
 import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyoumodel.domain.RequestAllowance.NEVER;
@@ -71,9 +74,13 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
-                Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=emailAddress: " + emailAddress);
+                
+                if (!isValid(emailAddress)) {
+                    makeText(ContactDetailActivity.this, R.string.invalid_email_address, LENGTH_LONG).show();
+                    return;
+                }
+                
                 String email = buildEmailAddress(emailAddress);
-                Log.d(TAG, "-=-=-=-=-=-=-=-=-=-=email: " + email);
                 contactDataDto.setContactEmail(email);
                 ContactData contactData = contactDataDto.toContactData();
                 
@@ -120,6 +127,10 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
     
     protected String buildEmailAddress(String emailAddressText) {
         return emailAddressText;
+    }
+    
+    protected boolean isValid(String emailAddressText) {
+        return isEmailAddressValid(emailAddressText);
     }
 
     private void finishActivity() {

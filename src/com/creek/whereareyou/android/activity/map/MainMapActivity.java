@@ -1,5 +1,8 @@
 package com.creek.whereareyou.android.activity.map;
 
+import static com.creek.whereareyou.android.util.ActivityUtil.logException;
+import static com.creek.whereareyou.android.util.DataConversionUtil.getLocationFromLocationResponse;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -16,8 +19,7 @@ import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import com.creek.whereareyou.android.contacts.ContactsPersistenceManager;
 import com.creek.whereareyou.android.locationprovider.LocationProvider;
-import com.creek.whereareyou.android.util.ActivityUtil;
-import com.creek.whereareyou.android.util.DataConversionUtil;
+import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 
 import com.google.android.maps.GeoPoint;
@@ -85,11 +87,12 @@ public class MainMapActivity extends MapActivity implements LocationAware {
                     OwnerLocationDataMessage locationResponse = locationResponses.get(0);
                     String contactEmail = locationResponse.getSenderEmail();
                     AndroidContact androidContact = ContactsPersistenceManager.getInstance().getAndroidContactByEmail(this, contactEmail);
-                    Location location = DataConversionUtil.getLocationFromLocationResponse(locationResponse.getOwnerLocationData().getLocationData());
+                    LocationData locationData = locationResponse.getOwnerLocationData().getLocationData();
+                    Location location = getLocationFromLocationResponse(locationData);
 
-                    updateWithNewContactDataAndLocation(androidContact, location);
+                    updateWithNewContactDataAndLocation(androidContact, locationData.getLocationTime(), location);
                 } catch (IOException ex) {
-                    ActivityUtil.logException(TAG, ex);
+                    logException(TAG, ex);
                 }
             }
         }
@@ -146,7 +149,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     }
 
     @Override
-    public void updateWithNewContactDataAndLocation(AndroidContact androidContact, Location location) {
+    public void updateWithNewContactDataAndLocation(AndroidContact androidContact, long locationTime, Location location) {
         Log.d(TAG, "updateWithNewLocation()");
         Log.d(TAG, "------------updateWithNewLocation()");
         if (location != null) {

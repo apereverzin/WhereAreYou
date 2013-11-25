@@ -16,7 +16,7 @@
             <LinearLayout style="@style/HorizontalLinearLayout">
                 <EditText android:id="@+id/contact_email"
                           style="@style/GenericField.Email" 
-                          android:hint="@string/contact_email"
+                          android:hint="@string/account"
                           android:layout_width="0dp"
                           android:layout_weight="1"
                           android:imeOptions="actionDone"/>

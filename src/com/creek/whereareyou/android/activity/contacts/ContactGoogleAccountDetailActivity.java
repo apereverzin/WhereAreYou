@@ -1,6 +1,8 @@
 package com.creek.whereareyou.android.activity.contacts;
 
-import com.creek.accessemail.connector.mail.MailUtil;
+import static com.creek.accessemail.connector.mail.MailUtil.extractUsernameFromEmailAddress;
+import static com.creek.accessemail.connector.mail.MailUtil.isEmailUsernameValid;
+
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -18,11 +20,20 @@ public class ContactGoogleAccountDetailActivity extends ContactDetailActivity im
     
     @Override
     protected String getEmailAddressText(AndroidContact androidContact) {
-        return MailUtil.extractUsernameFromEmailAddress(androidContact.getContactData().getContactEmail());
+        return extractUsernameFromEmailAddress(androidContact.getContactData().getContactEmail());
     }
     
     @Override
     protected String buildEmailAddress(String emailAddressText) {
-        return emailAddressText + getString(R.string.googlemail_com);
+        if (emailAddressText != null && emailAddressText.length() > 0) {
+            return emailAddressText + getString(R.string.googlemail_com);
+        }
+        
+        return "";
+    }
+    
+    @Override
+    protected boolean isValid(String emailAddressText) {
+        return isEmailUsernameValid(emailAddressText);
     }
 }

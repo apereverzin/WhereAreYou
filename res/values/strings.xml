@@ -74,7 +74,7 @@
     
     <!-- Edit Contact -->
     <string name="contact_display_name">Name</string>
-    <string name="contact_email">email</string>
+    <string name="account">Account</string>
     <string name="location_requests_allowance">Location Requests Allowed</string>
     <string name="googlemail_com">\@googlemail.com</string>
     

@@ -1,5 +1,6 @@
 package com.creek.whereareyou.android.activity.account;
 
+import static com.creek.accessemail.connector.mail.MailUtil.isEmailUsernameValid;
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 
 import java.util.Properties;
@@ -44,7 +45,7 @@ public class EmailGoogleAccountAddress_1_Activity extends EmailAccountAddress_1_
     }
     
     @Override
-    protected boolean isValid(String emailAddress) {
-        return true;
+    protected boolean isValid(String emailUsername) {
+        return isEmailUsernameValid(emailUsername);
     }
 }

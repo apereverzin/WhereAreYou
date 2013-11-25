@@ -103,7 +103,7 @@ public final class ContactsActivity extends ListActivity {
             } else {
                 menu.add(0, EMAIL_ACCOUNT_MENU_ITEM, 0, R.string.enter_email_account);
             }
-            //menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
+            menu.add(0, MAP_MENU_ITEM, 0, R.string.map);
         } catch (Exception ex) {
             showException(ContactsActivity.this, ex);
         }

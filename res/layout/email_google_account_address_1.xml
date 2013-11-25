@@ -8,7 +8,7 @@
 
             <LinearLayout style="@style/HorizontalLinearLayout">
                 <EditText android:id="@+id/mail_username"
-                          style="@style/GenericField.Email" 
+                          style="@style/GenericField.Account" 
                           android:hint="@string/mail_username"
                           android:layout_width="0dp"
                           android:layout_weight="1"

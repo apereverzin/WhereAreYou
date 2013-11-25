@@ -6,11 +6,15 @@ import java.util.Locale;
 import java.util.Properties;
 
 import static android.view.View.INVISIBLE;
+import static android.widget.Toast.LENGTH_LONG;
+import static android.widget.Toast.makeText;
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 
+import com.creek.accessemail.connector.mail.MailUtil;
 import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
+import static com.creek.accessemail.connector.mail.MailUtil.isEmailAddressValid;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
 
 import static com.creek.whereareyou.android.activity.account.CheckMode.RequestCodes.SMTP_AND_POP3_REQUEST_CODE;
@@ -24,7 +28,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 /**
  * 
@@ -83,7 +86,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                     String emailAddress = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
                     
                     if (!isValid(emailAddress)) {
-                        Toast.makeText(EmailAccountAddress_1_Activity.this, R.string.invalid_email_address, Toast.LENGTH_LONG).show();
+                        makeText(EmailAccountAddress_1_Activity.this, R.string.invalid_email_address, LENGTH_LONG).show();
                         return;
                     }
                     
@@ -147,7 +150,7 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
     }
     
     protected boolean isValid(String emailAddress) {
-        return true;
+        return isEmailAddressValid(emailAddress);
     }
 
     @SuppressWarnings("unchecked")

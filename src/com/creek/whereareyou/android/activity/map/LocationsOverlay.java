@@ -24,8 +24,8 @@ public class LocationsOverlay extends Overlay {
     
     private final Context ctx;
 
-
     private AndroidContact androidContact;
+    private String locationTime;
     Location location;
 
     public LocationsOverlay(Context _ctx) {
@@ -34,6 +34,10 @@ public class LocationsOverlay extends Overlay {
 
     public void setContactData(AndroidContact _androidContact) {
         this.androidContact = _androidContact;
+    }
+
+    public void setLocationTime(String _locationTime) {
+        this.locationTime = _locationTime;
     }
 
     public void setLocation(Location _location) {
