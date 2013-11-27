@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.WhereAreYouApplication;
 
+import static android.view.Menu.FIRST;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
 import static com.creek.whereareyou.android.activity.contacts.OutgoingState.BEING_SENT;
 import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
@@ -50,13 +51,13 @@ public final class ContactsActivity extends ListActivity {
     private static final String TAG = ContactsActivity.class.getSimpleName();
     
     // Options menu
-    private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int MAP_MENU_ITEM = Menu.FIRST + 1;
+    private static final int EMAIL_ACCOUNT_MENU_ITEM = FIRST;
+    private static final int MAP_MENU_ITEM = FIRST + 1;
 
     // Context menu
-    private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = Menu.FIRST;
-    private static final int VIEW_CONTACT_LAST_LOCATION_MENU_ITEM = Menu.FIRST + 1;
-    private static final int REQUEST_CONTACT_LOCATION_MENU_ITEM = Menu.FIRST + 2;
+    private static final int EDIT_CONTACT_DETAILS_MENU_ITEM = FIRST;
+    private static final int VIEW_CONTACT_LAST_LOCATION_MENU_ITEM = FIRST + 1;
+    private static final int REQUEST_CONTACT_LOCATION_MENU_ITEM = FIRST + 2;
 
     static final String CONTACT_SELECTED = "CONTACT_SELECTED";
     
@@ -128,6 +129,7 @@ public final class ContactsActivity extends ListActivity {
             locationData.setHasSpeed(false);
             ContactCompoundId contactCompoundId = new ContactCompoundId("100", "andrey.pereverzin@gmail.com");
             locationData.setContactCompoundId(contactCompoundId);
+            locationData.setLocationTime(System.currentTimeMillis());
             SendableLocationData sendableLocationData = new SendableLocationData(locationData);
             OwnerLocationDataMessage location = new OwnerLocationDataMessage(sendableLocationData, "andrey.pereverzin@gmail.com");
             locations.add(location);

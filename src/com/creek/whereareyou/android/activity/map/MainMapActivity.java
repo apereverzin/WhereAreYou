@@ -1,7 +1,9 @@
 package com.creek.whereareyou.android.activity.map;
 
+import static android.view.Menu.FIRST;
 import static com.creek.whereareyou.android.util.ActivityUtil.logException;
 import static com.creek.whereareyou.android.util.DataConversionUtil.getLocationFromLocationResponse;
+import static com.creek.whereareyou.android.util.Util.formatLocationTime;
 
 import java.io.IOException;
 import java.util.List;
@@ -38,8 +40,9 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     private LocationProvider locationProvider;
 
     public static final String RECEIVED_LOCATIONS = "received_locations";
-    private static final int EMAIL_ACCOUNT_MENU_ITEM = Menu.FIRST;
-    private static final int VIEW_CONTACTS_MENU_ITEM = Menu.FIRST + 1;
+    private static final int EMAIL_ACCOUNT_MENU_ITEM = FIRST;
+    private static final int VIEW_CONTACTS_MENU_ITEM = FIRST + 1;
+
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -133,7 +136,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
     }
 
     @Override
-    public void updateWithNewLocation(Location location) {
+    public void updateWithNewLocation(long locationTime, Location location) {
         Log.d(TAG, "updateWithNewLocation()");
         Log.d(TAG, "------------updateWithNewLocation()");
         if (location != null) {
@@ -141,6 +144,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
             Log.d(TAG, "------------updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
             locationsOverlay.setContactData(null);
             locationsOverlay.setLocation(location);
+            locationsOverlay.setLocationTime(formatLocationTime(locationTime));
             Double geoLat = location.getLatitude() * 1E6;
             Double geoLng = location.getLongitude() * 1E6;
             GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());
@@ -157,6 +161,7 @@ public class MainMapActivity extends MapActivity implements LocationAware {
             Log.d(TAG, "------------updateWithNewLocation(): " + location.getLatitude() + ", " + location.getLongitude());
             locationsOverlay.setContactData(androidContact);
             locationsOverlay.setLocation(location);
+            locationsOverlay.setLocationTime(formatLocationTime(locationTime));
             Double geoLat = location.getLatitude() * 1E6;
             Double geoLng = location.getLongitude() * 1E6;
             GeoPoint point = new GeoPoint(geoLat.intValue(), geoLng.intValue());

@@ -8,27 +8,27 @@ import android.graphics.Point;
  */
 public class Annotation {
     private final ColouredCircledRectangle backgroundRectangle;
-    private final String text;
-    private final Point point;
+    private final String[] texts;
+    private final Point[] points;
     private final int foregroundColour;
 
-    public Annotation(ColouredCircledRectangle backgroundRectangle, String text, Point point, int foregroundColour) {
-        this.backgroundRectangle = backgroundRectangle;
-        this.text = text;
-        this.point = point;
-        this.foregroundColour = foregroundColour;
+    public Annotation(ColouredCircledRectangle _backgroundRectangle, String[] _texts, Point[] _points, int _foregroundColour) {
+        this.backgroundRectangle = _backgroundRectangle;
+        this.texts = _texts;
+        this.points = _points;
+        this.foregroundColour = _foregroundColour;
     }
 
     public ColouredCircledRectangle getBackgroundRectangle() {
         return backgroundRectangle;
     }
 
-    public String getText() {
-        return text;
+    public String[] getTexts() {
+        return texts;
     }
 
-    public Point getPoint() {
-        return point;
+    public Point[] getPoints() {
+        return points;
     }
 
     public int getForegroundColour() {

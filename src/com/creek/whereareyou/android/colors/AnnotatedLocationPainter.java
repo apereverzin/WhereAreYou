@@ -17,7 +17,7 @@ public class AnnotatedLocationPainter {
 
         drawAnnotationBackground(canvas, annotation, paint);
 
-        drawAnnotationText(canvas, annotation, paint);
+        drawAnnotationTexts(canvas, annotation, paint);
     }
     
     public void drawLocation(Canvas canvas, ColouredCircledRectangle locationImage) {
@@ -31,12 +31,14 @@ public class AnnotatedLocationPainter {
         canvas.drawOval(locationImage.getRectangle(), locationPaint);
     }
 
-    private void drawAnnotationText(Canvas canvas, Annotation annotation, Paint paint) {
+    private void drawAnnotationTexts(Canvas canvas, Annotation annotation, Paint paint) {
         paint.setColor(annotation.getForegroundColour());
         paint.setAntiAlias(true);
         paint.setFakeBoldText(true);
-        Point annotationPoint = annotation.getPoint();
-        canvas.drawText(annotation.getText(), annotationPoint.x, annotationPoint.y, paint);
+        for (int i = 0; i < annotation.getTexts().length; i++) {
+            Point annotationPoint = annotation.getPoints()[i];
+            canvas.drawText(annotation.getTexts()[i], annotationPoint.x, annotationPoint.y, paint);
+        }
     }
 
     private void drawAnnotationBackground(Canvas canvas, Annotation annotation, Paint paint) {

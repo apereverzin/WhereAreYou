@@ -44,7 +44,7 @@ public class WhereLocationListener extends AbstractLocationListener implements L
         Log.d(TAG, "onLocationChanged: " + loc.getProvider() + " " + loc.getLatitude() + " " + loc.getLongitude());
         Log.d(TAG, "-------------onLocationChanged: " + loc.getProvider() + " " + loc.getLatitude() + " " + loc.getLongitude());
         for (LocationAware locationAwareComponent: locationAwareComponents) {
-            locationAwareComponent.updateWithNewLocation(loc);
+            locationAwareComponent.updateWithNewLocation(System.currentTimeMillis(), loc);
         }
     }
     

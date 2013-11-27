@@ -7,6 +7,7 @@ import com.creek.whereareyou.android.activity.map.MainMapActivity;
 import com.creek.whereareyoumodel.message.OwnerLocationDataMessage;
 
 import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
+import static java.lang.String.format;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -45,8 +46,8 @@ public class ContactLocationNotifier {
         
         Notification notification = getNotification();
         
-        CharSequence contentTitle = ctx.getString(R.string.notifications_contact_locations);  // message title
-        CharSequence contentText = ctx.getString(R.string.notifications_contact_locations_received) + ": " + receivedMessages.getLocationResponsesCount(); // text
+        CharSequence contentTitle = ctx.getString(R.string.notifications_contact_locations);
+        CharSequence contentText = buildNotifivationContent(receivedMessages);
         Intent mapIntent = new Intent(ctx, MainMapActivity.class);
         mapIntent.putExtra(RECEIVED_LOCATIONS, new ArrayList<OwnerLocationDataMessage>(receivedMessages.getLocationResponses()));
         PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, mapIntent, 0);
@@ -56,10 +57,15 @@ public class ContactLocationNotifier {
     }
 
     private Notification getNotification() {
-        int icon = R.drawable.location_notification;        // icon from resources
-        CharSequence tickerText = ctx.getString(R.string.notifications_contact_locations); // ticker-text
-        long when = System.currentTimeMillis();         // notification time
+        int icon = R.drawable.location_notification;
+        CharSequence tickerText = ctx.getString(R.string.notifications_contact_locations);
+        long when = System.currentTimeMillis();
 
         return new Notification(icon, tickerText, when);
+    }
+    
+    private String buildNotifivationContent(ReceivedMessages receivedMessages) {
+        return format("%s: %s", ctx.getString(R.string.notifications_contact_locations_received), 
+                receivedMessages.getLocationResponsesCount());
     }
 }

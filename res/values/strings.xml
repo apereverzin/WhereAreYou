@@ -10,26 +10,26 @@
     <!-- Mail properties -->
     <string name="mail_settings_activity_name">Email Settings</string>
     <string name="mail_address_activity_name">Email Address</string>
-    <string name="mail_username">Email Address</string>
-    <string name="google_account">Google Account</string>
+    <string name="mail_username">Email address</string>
+    <string name="google_account">Google account</string>
     <string name="google_account_activity_name">Google Account</string>
     <string name="mail_password">Password</string>
     <string name="mail_smtp_settings_activity_name">SMTP Settings</string>
-    <string name="mail_smtp_host">SMTP Host</string>
-    <string name="mail_smtp_port">SMTP Port</string>
-    <string name="mail_smtp_auth">SMTP Auth</string>
-    <string name="mail_smtp_start_tls_enable">SMTP Start Tls Enable</string>
-    <string name="mail_smtp_socket_factory_port">SMTP Socket Factory Port</string>
-    <string name="mail_smtp_socket_factory_class">SMTP Socket Factory Class</string>
+    <string name="mail_smtp_host">SMTP host</string>
+    <string name="mail_smtp_port">SMTP port</string>
+    <string name="mail_smtp_auth">SMTP auth</string>
+    <string name="mail_smtp_start_tls_enable">SMTP start Tls enable</string>
+    <string name="mail_smtp_socket_factory_port">SMTP socket factory port</string>
+    <string name="mail_smtp_socket_factory_class">SMTP socket factory class</string>
     <string name="mail_pop3_settings_activity_name">POP3 Settings</string>
-    <string name="mail_pop3_host">POP3 Host</string>
-    <string name="mail_pop3_port">POP3 Port</string>
-    <string name="mail_imap_settings_activity_name">IMAP Settings</string>
-    <string name="mail_pop3_socket_factory_port">POP3 Socket Factory Port</string>
-    <string name="mail_pop3_socket_factory_class">POP3 Socket Factory Class</string>
-    <string name="mail_pop3_socket_factory_fallback">POP3 Socket Factory Fallback</string>
-    <string name="mail_imap_host">IMAP Host</string>
-    <string name="mail_imap_port">IMAP Port</string>
+    <string name="mail_pop3_host">POP3 host</string>
+    <string name="mail_pop3_port">POP3 port</string>
+    <string name="mail_imap_settings_activity_name">IMAP settings</string>
+    <string name="mail_pop3_socket_factory_port">POP3 socket factory port</string>
+    <string name="mail_pop3_socket_factory_class">POP3 socket factory class</string>
+    <string name="mail_pop3_socket_factory_fallback">POP3 socket factory fallback</string>
+    <string name="mail_imap_host">IMAP host</string>
+    <string name="mail_imap_port">IMAP port</string>
     <string name="finish_activity_name">Finish</string>
     
     <!-- Activity Titles -->
@@ -63,23 +63,23 @@
     <string name="state_of_incoming_requests">State of incoming requests</string>
         
     <!-- Contacts Options Menu Items -->
-    <string name="enter_email_account">Enter Email Account</string>
-    <string name="edit_email_account">Edit Email Account</string>
+    <string name="enter_email_account">Enter email account</string>
+    <string name="edit_email_account">Edit email account</string>
     <string name="map">Map</string>
     
     <!-- Contacts Context Menu Items -->
     <string name="menu_edit_contact_details">Edit Details</string>
-    <string name="menu_view_last_contact_location">View Last Location</string>
-    <string name="menu_request_contact_location">Request Location</string>
+    <string name="menu_view_last_contact_location">View last location</string>
+    <string name="menu_request_contact_location">Request location</string>
     
     <!-- Edit Contact -->
     <string name="contact_display_name">Name</string>
     <string name="account">Account</string>
-    <string name="location_requests_allowance">Location Requests Allowed</string>
+    <string name="location_requests_allowance">Location requests allowed</string>
     <string name="googlemail_com">\@googlemail.com</string>
     
     <!-- Notifications -->
-    <string name="notifications_contact_locations">Contact Locations</string>
+    <string name="notifications_contact_locations">Contact locations</string>
     <string name="notifications_contact_locations_received">Contact locations received</string>
 
     <string-array name="requests_allowances_array">
@@ -87,7 +87,7 @@
         <item>Always</item>
     </string-array>
     
-    <string name="google_account_not_found">Google Account is not found. Please, define your Google Account first</string>
+    <string name="google_account_not_found">Google account is not found. Please, define your Google account first</string>
     <string name="invalid_email_address">Invalid email address</string>
     <string name="not_google_account">Google Account must be either username@googlemail.com or username@gmail.com</string>
 </resources>

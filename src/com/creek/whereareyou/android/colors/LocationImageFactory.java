@@ -39,24 +39,25 @@ public class LocationImageFactory {
         return (int) projection.metersToEquatorPixels(accuracy);
     }
 
-    public AnnotatedLocationImage createAnnotatedLocationImage(Context ctx, Point locationPoint, int accuracy, String text, Paint paint) {
+    public AnnotatedLocationImage createAnnotatedLocationImage(Context ctx, Point locationPoint, int accuracy, String[] texts, Paint paint) {
         ColouredCircledRectangle locationImage = createLocationImage(ctx, locationPoint);
-        ColouredCircledRectangle backgroundRectangle = createAnnotationBackground(ctx, locationPoint, text, paint);
-        Annotation annotation = createAnnotation(ctx, locationPoint, text, backgroundRectangle, getBackgroundRadius(paint));
+        ColouredCircledRectangle backgroundRectangle = createAnnotationBackground(ctx, locationPoint, texts, paint);
+        Annotation annotation = createAnnotation(ctx, locationPoint, texts, backgroundRectangle, getBackgroundRadius(paint), paint);
         return new AnnotatedLocationImage(locationPoint, accuracy, locationImage, annotation);
 
     }
 
-    private Annotation createAnnotation(Context ctx, Point locationPoint, String text, ColouredCircledRectangle backgroundRectangle, int backgroudRadius) {
+    private Annotation createAnnotation(Context ctx, Point locationPoint, String[] texts, ColouredCircledRectangle backgroundRectangle, 
+            int backgroudRadius, Paint paint) {
         int annotationForegroundColor = ctx.getResources().getColor(R.color.location_annotation_white);
-        Point annotationPoint = getAnnotationPoint(locationPoint, backgroudRadius);
-        Annotation annotation = new Annotation(backgroundRectangle, text, annotationPoint, annotationForegroundColor);
+        Point[] annotationPoints = getAnnotationPoints(locationPoint, backgroudRadius, texts.length, paint);
+        Annotation annotation = new Annotation(backgroundRectangle, texts, annotationPoints, annotationForegroundColor);
         return annotation;
     }
 
-    private ColouredCircledRectangle createAnnotationBackground(Context ctx, Point locationPoint, String text, Paint paint) {
+    private ColouredCircledRectangle createAnnotationBackground(Context ctx, Point locationPoint, String[] texts, Paint paint) {
         int annotationBackgroundColor = ctx.getResources().getColor(R.color.location_annotation_darkgrey);
-        RectF annotationBackgroundRectangle = createAnnotationBackgroundImage(locationPoint, text, paint);
+        RectF annotationBackgroundRectangle = createAnnotationBackgroundImage(locationPoint, texts, paint);
         ColouredCircledRectangle backgroundRectangle = new ColouredCircledRectangle(annotationBackgroundRectangle, annotationBackgroundColor);
         return backgroundRectangle;
     }
@@ -68,21 +69,46 @@ public class LocationImageFactory {
         return locationRectangle;
     }
 
-    private RectF createAnnotationBackgroundImage(Point locationPoint, String text, Paint paint) {
+    private RectF createAnnotationBackgroundImage(Point locationPoint, String[] texts, Paint paint) {
         FontMetricsInt fm = paint.getFontMetricsInt();
         int backgroudRadius = getBackgroundRadius(paint);
         int left = locationPoint.x + 2 + backgroudRadius;
         int bottom = locationPoint.y + backgroudRadius;
-        float width = paint.measureText(text) + 2 * backgroudRadius;
-        int height = fm.descent - fm.ascent;
+        float width = measureWidth(texts, paint) + 2 * backgroudRadius;
+        int height = (fm.descent - fm.ascent) * texts.length;
         return new RectF(left, bottom - height, left + width, bottom);
     }
 
-    private Point getAnnotationPoint(Point locationPoint, int backgroudRadius) {
-        return new Point(locationPoint.x + 2 + 2 * backgroudRadius, locationPoint.y);
+    private Point[] getAnnotationPoints(Point locationPoint, int backgroudRadius, int lines, Paint paint) {
+        FontMetricsInt fm = paint.getFontMetricsInt();
+        int lineHeight = fm.descent - fm.ascent;
+
+        Point[] points = new Point[lines];
+        int x = locationPoint.x + 2 + 2 * backgroudRadius;
+        int y = locationPoint.y - lineHeight * (lines - 1);
+        
+        for (int i = 0; i < lines; i++) {
+          points[i] = new Point(x, y);
+          y += lineHeight;
+        }
+        
+        return points;
     }
 
     private int getBackgroundRadius(Paint paint) {
         return paint.getFontMetricsInt().descent;
+    }
+    
+    private float measureWidth(String[] texts, Paint paint) {
+        float maxWidth = 0.0f;
+        
+        for (int i = 0; i < texts.length; i++) {
+            float width = paint.measureText(texts[i]);
+            if (width > maxWidth) {
+                maxWidth = width;
+            }
+        }
+        
+        return maxWidth;
     }
 }

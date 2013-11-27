@@ -9,7 +9,7 @@ import android.location.Location;
  * @author Andrey Pereverzin
  */
 public interface LocationAware {
-    void updateWithNewLocation(Location location);
+    void updateWithNewLocation(long locationTime, Location location);
     
     void updateWithNewContactDataAndLocation(AndroidContact contactData, long locationTime, Location location);
 }

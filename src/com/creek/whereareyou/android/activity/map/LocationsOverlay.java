@@ -51,8 +51,8 @@ public class LocationsOverlay extends Overlay {
             Paint paint = new Paint();
             Point locationPoint = locationImageFactory.getLocationPoint(mapView, location);
             int accuracy = locationImageFactory.getLocationAccuracyInPixels(mapView, location.getAccuracy());
-            AnnotatedLocationImage annotatedLocationImage = 
-                    locationImageFactory.createAnnotatedLocationImage(ctx, locationPoint, accuracy, androidContact.getDisplayName(), paint);
+            AnnotatedLocationImage annotatedLocationImage = locationImageFactory.createAnnotatedLocationImage(
+                    ctx, locationPoint, accuracy, new String[]{androidContact.getDisplayName(), locationTime}, paint);
             painter.drawAnnotatedLocation(canvas, annotatedLocationImage, paint);
         }
         

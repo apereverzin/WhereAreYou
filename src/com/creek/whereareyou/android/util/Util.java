@@ -3,9 +3,12 @@ package com.creek.whereareyou.android.util;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.text.format.DateFormat;
+import android.content.Context;
+
+import com.creek.whereareyou.R;
 import com.google.android.maps.GeoPoint;
 
 /**
@@ -13,8 +16,8 @@ import com.google.android.maps.GeoPoint;
  * @author Andrey Pereverzin
  */
 public final class Util {
-    private static final String DATE_FORMAT = "dd-MM-yyyy";
-    private static final String DATE_TIME_FORMAT = "dd-MM-yyyy hh:mm:ss";
+    private static final String LOCATION_DATE_TIME_FORMAT_DEF = "HH:mm dd/MM/yyyy";
+    private static final java.text.DateFormat LOCATION_DATE_TIME_FORMAT = new SimpleDateFormat(LOCATION_DATE_TIME_FORMAT_DEF);
     private static final MathContext DOUBLES_CONTEXT = new MathContext(2, RoundingMode.HALF_UP);
 
     private Util() {
@@ -36,14 +39,6 @@ public final class Util {
         return EARTH_RADIUS * c;
     }
 
-    public static String formatDate(long date) {
-        return (String) DateFormat.format(DATE_FORMAT, new Date(date));
-    }
-
-    public static String formatDateTime(long date) {
-        return (String) DateFormat.format(DATE_TIME_FORMAT, new Date(date));
-    }
-    
     public static String formatDouble(double val) {
         try {
             return new BigDecimal(val).setScale(2, RoundingMode.HALF_UP).toPlainString();
@@ -66,5 +61,17 @@ public final class Util {
     
     public static boolean isStringNotEmpty(String str) {
         return str != null && !"".equals(str);
+    }
+    
+    public static final String buildGooglemailAddress(Context ctx, String username) {
+        if (username != null && username.length() > 0) {
+            return username + ctx.getString(R.string.googlemail_com);
+        }
+
+        return "";
+    }
+    
+    public static String formatLocationTime(long locationTime) {
+        return LOCATION_DATE_TIME_FORMAT.format(new Date(locationTime));
     }
 }
