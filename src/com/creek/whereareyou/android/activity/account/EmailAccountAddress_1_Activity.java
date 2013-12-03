@@ -10,7 +10,6 @@ import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 
-import com.creek.accessemail.connector.mail.MailUtil;
 import com.creek.whereareyou.R;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_PASSWORD_PROPERTY;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
@@ -59,6 +58,11 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
             public void onClick(View view) {
                 Log.d(TAG, "testButton clicked");
                 String emailAddress = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
+                String password = passwordText.getText().toString();
+                
+                if (!areEmailAddressAndPasswordValid(emailAddress, password)) {
+                    return;
+                }
                 
                 HashMap<String, String> props;
                 Properties predefinedProps = getPredefinedProperties(emailAddress);
@@ -84,12 +88,12 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
                 
                 try {
                     String emailAddress = buildEmailAddress(emailAddressText.getText().toString().toLowerCase(Locale.getDefault()));
+                    String password = passwordText.getText().toString();
                     
-                    if (!isValid(emailAddress)) {
-                        makeText(EmailAccountAddress_1_Activity.this, R.string.invalid_email_address, LENGTH_LONG).show();
+                    if (!areEmailAddressAndPasswordValid(emailAddress, password)) {
                         return;
                     }
-                    
+                        
                     startActivity(getNextIntent(emailAddress));
                     finish();
                 } catch (Exception ex) {
@@ -149,10 +153,22 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
         return intent;
     }
     
-    protected boolean isValid(String emailAddress) {
-        return isEmailAddressValid(emailAddress);
+    protected Properties getMailProperties() throws CryptoException, IOException {
+        return MailAccountPropertiesProvider.getInstance().getMailProperties();
     }
-
+    
+    protected int getActivityResourceId() {
+        return R.layout.contact_detail;
+    }
+    
+    protected String getEmailAddressText(String emailAddress) {
+        return emailAddress;
+    }
+    
+    protected String buildEmailAddress(String emailAddressText) {
+        return emailAddressText;
+    }
+    
     @SuppressWarnings("unchecked")
     private void buildBundledProperties(Bundle extras) {
         try {
@@ -168,20 +184,18 @@ public class EmailAccountAddress_1_Activity extends AbstractEmailAccountActivity
             showException(this, ex);
         }
     }
-    
-    protected Properties getMailProperties() throws CryptoException, IOException {
-        return MailAccountPropertiesProvider.getInstance().getMailProperties();
-    }
-    
-    protected int getActivityResourceId() {
-        return R.layout.contact_detail;
-    }
-    
-    protected String getEmailAddressText(String emailAddress) {
-        return emailAddress;
-    }
-    
-    protected String buildEmailAddress(String emailAddressText) {
-        return emailAddressText;
+
+    private boolean areEmailAddressAndPasswordValid(String emailAddress, String password) {
+        if (!isEmailAddressValid(emailAddress)) {
+            makeText(EmailAccountAddress_1_Activity.this, R.string.invalid_email_address, LENGTH_LONG).show();
+            return false;
+        }
+        
+        if (password.length() == 0) {
+            makeText(EmailAccountAddress_1_Activity.this, R.string.empty_password, LENGTH_LONG).show();
+            return false;
+        }
+        
+        return true;
     }
 }

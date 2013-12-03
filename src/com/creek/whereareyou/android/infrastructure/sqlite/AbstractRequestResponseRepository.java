@@ -3,6 +3,8 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.CREATION_TIME_KNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.SENT_TIME_UNKNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.SENT_TIME_KNOWN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
+import static com.creek.whereareyou.android.util.Util.concatArrays;
 
 import java.util.List;
 
@@ -74,23 +76,32 @@ public abstract class AbstractRequestResponseRepository <T extends GenericReques
     
     @Override
     protected String[] getFieldNames() {
-        return  Util.concatArrays(super.getFieldNames(), fieldNames);
+        return  concatArrays(super.getFieldNames(), fieldNames);
     }
     
     @Override
     protected String[] getFieldTypes() {
-        return Util.concatArrays(super.getFieldTypes(), fieldTypes);
+        return concatArrays(super.getFieldTypes(), fieldTypes);
     }
     
     protected final List<T> getUnsent() {
         String criteria = createWhereAndCriteria(new ComparisonClause[]{CREATION_TIME_KNOWN, SENT_TIME_UNKNOWN});
-        Cursor cursor = createCursor(criteria, null, null);
-        return createEntityListFromCursor(cursor);
+        return createEntityList(criteria);
     }
     
     protected final List<T> getSent() {
         String criteria = createWhereAndCriteria(new ComparisonClause[]{CREATION_TIME_KNOWN, SENT_TIME_KNOWN});
-        Cursor cursor = createCursor(criteria, null, null);
-        return createEntityListFromCursor(cursor);
+        return createEntityList(criteria);
+    }
+
+    private List<T> createEntityList(String criteria) {
+        Cursor cursor = null;
+        
+        try {
+            cursor = createCursor(criteria, null, null);
+            return createEntityListFromCursor(cursor);
+        } finally {
+            closeCursor(cursor);
+        }
     }
 }

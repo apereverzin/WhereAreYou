@@ -2,6 +2,7 @@ package com.creek.whereareyou.android.infrastructure.sqlite;
 
 import static com.creek.whereareyou.android.infrastructure.sqlite.Comparison.EQUALS;
 import static com.creek.whereareyou.android.infrastructure.sqlite.Comparison.GREATER_THAN;
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
 
 import java.util.List;
 
@@ -85,9 +86,16 @@ public final class SQLiteContactLocationRepository extends AbstractSQLiteReposit
         long expirationTime = System.currentTimeMillis() - timeout;
         ComparisonClause actualLocation = new ComparisonClause(LOCATION_TIME_FIELD_NAME, GREATER_THAN, expirationTime);
         String criteria = createWhereAndCriteria(new ComparisonClause[]{myLocation, actualLocation});
-        Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------getMyActualLocationData: " + cursor.getCount());
-        return createEntityFromCursor(cursor);
+        
+        Cursor cursor = null;
+        
+        try {
+            cursor = createCursor(criteria, null, null);
+            Log.d(TAG, "--------------getMyActualLocationData: " + cursor.getCount());
+            return createEntityFromCursor(cursor);
+        } finally {
+            closeCursor(cursor);
+        }
     }
     
     @Override

@@ -8,13 +8,14 @@ import android.util.Log;
 
 import com.creek.whereareyou.WhereAreYouApplication;
 import com.creek.whereareyou.android.activity.contacts.ContactsActivity;
-import com.creek.whereareyou.android.activity.contacts.OutgoingState;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 
-import static com.creek.whereareyou.android.activity.contacts.OutgoingState.SENT;
+import static com.creek.whereareyou.android.activity.contacts.OutgoingState.REQUEST_SENT;
+import static com.creek.whereareyou.android.activity.contacts.IncomingState.RESPONSE_SENT;
 import static com.creek.whereareyou.android.infrastructure.sqlite.AbstractSQLiteRepository.UNDEFINED_LONG;
 import com.creek.whereareyou.android.infrastructure.sqlite.SQLiteRepositoryManager;
 import com.creek.whereareyou.android.util.CryptoException;
+import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.LocationData;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
 import com.creek.whereareyoumodel.domain.sendable.ContactResponse;
@@ -70,18 +71,7 @@ public class EmailSender {
 
                     contactRequestRepository.update(data);
                     
-                    final ContactsActivity contactsActivity = WhereAreYouApplication.getContactsActivity();
-                    
-                    Log.d(TAG, "--------------about to set outgoing request state");
-                    if (contactsActivity != null) {
-                        Log.d(TAG, "--------------outgoing request state will be set");
-                        contactsActivity.runOnUiThread(new Runnable() {
-                            public void run() {
-                                contactsActivity.setOutgoingRequestState(data.getContactCompoundId().getContactId(), SENT);
-                                Log.d(TAG, "--------------outgoing request state is set");
-                            }
-                        });
-                    }
+                    notifyContactsActivityAboutSentLocationRequest(data.getContactCompoundId());
                     
                     Log.d(TAG, "--------------request sent: " + data);
                 } finally {
@@ -134,6 +124,9 @@ public class EmailSender {
                     contactResponseRepository = SQLiteRepositoryManager.getInstance().getContactResponseRepository();
                     
                     contactResponseRepository.update(data);
+                    
+                    notifyContactsActivityAboutSentLocationResponse(data.getContactCompoundId());
+                    
                     Log.d(TAG, "--------------response sent: " + data);
                 } finally {
                     SQLiteRepositoryManager.getInstance().closeDatabase();
@@ -144,5 +137,35 @@ public class EmailSender {
         }
         unsentResponses.removeAll(unsentDataList);
         return unsentDataList;
+    }
+
+    private void notifyContactsActivityAboutSentLocationRequest(final ContactCompoundId contactCompoundId) {
+        final ContactsActivity contactsActivity = WhereAreYouApplication.getContactsActivity();
+        
+        Log.d(TAG, "--------------about to set outgoing request state");
+        if (contactsActivity != null) {
+            Log.d(TAG, "--------------outgoing request state will be set");
+            contactsActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    contactsActivity.setOutgoingRequestState(contactCompoundId.getContactId(), REQUEST_SENT);
+                    Log.d(TAG, "--------------outgoing request state is set");
+                }
+            });
+        }
+    }
+
+    private void notifyContactsActivityAboutSentLocationResponse(final ContactCompoundId contactCompoundId) {
+        final ContactsActivity contactsActivity = WhereAreYouApplication.getContactsActivity();
+        
+        Log.d(TAG, "--------------about to set outgoing request state");
+        if (contactsActivity != null) {
+            Log.d(TAG, "--------------outgoing request state will be set");
+            contactsActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    contactsActivity.setIncomingRequestState(contactCompoundId.getContactId(), RESPONSE_SENT);
+                    Log.d(TAG, "--------------outgoing request state is set");
+                }
+            });
+        }
     }
 }

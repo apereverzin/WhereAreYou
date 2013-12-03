@@ -73,23 +73,29 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         emailAddressText.setText(getEmailAddressText(androidContact));
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                String emailAddress = emailAddressText.getText().toString().toLowerCase(Locale.getDefault());
-                
-                if (!isValid(emailAddress)) {
-                    makeText(ContactDetailActivity.this, R.string.invalid_email_address, LENGTH_LONG).show();
-                    return;
+                String emailAddress = emailAddressText.getText().toString().trim().toLowerCase(Locale.getDefault());
+                                
+                if (emailAddress != null && emailAddress.trim().length() > 0) {
+                    String email = buildEmailAddress(emailAddress);
+
+                    if (!isEmailAddressValid(email)) {
+                        makeText(ContactDetailActivity.this, R.string.invalid_email_address, LENGTH_LONG).show();
+                        return;
+                    }
+
+                    contactDataDto.setContactEmail(email);
+                } else {
+                    contactDataDto.setContactEmail("");
                 }
-                
-                String email = buildEmailAddress(emailAddress);
-                contactDataDto.setContactEmail(email);
+
                 ContactData contactData = contactDataDto.toContactData();
-                
+
                 if (contactData.getId() == -1L) {
                     contactData = (ContactData) SQLiteRepositoryManager.getInstance().getContactDataRepository().create(contactData);
                 } else {
                     SQLiteRepositoryManager.getInstance().getContactDataRepository().update(contactData);
                 }
-                
+
                 List<ContactData> contactDataList = SQLiteRepositoryManager.getInstance().getContactDataRepository().getAllContactData();
                 DBFileManager dbFileManager = new DBFileManager();
                 dbFileManager.reserveContactData(contactDataList);
@@ -129,10 +135,6 @@ public class ContactDetailActivity extends Activity implements OnItemSelectedLis
         return emailAddressText;
     }
     
-    protected boolean isValid(String emailAddressText) {
-        return isEmailAddressValid(emailAddressText);
-    }
-
     private void finishActivity() {
         Log.d(TAG, "finishActivity()");
         Intent intent = new Intent();

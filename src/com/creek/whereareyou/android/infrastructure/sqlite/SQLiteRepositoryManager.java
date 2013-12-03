@@ -7,12 +7,15 @@ import com.creek.whereareyou.WhereAreYouApplication;
 import com.creek.whereareyou.android.db.ContactResponseEntity;
 import com.creek.whereareyoumodel.domain.ContactCompoundId;
 import com.creek.whereareyoumodel.domain.ContactData;
+
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
 import static com.creek.whereareyoumodel.domain.RequestAllowance.ALWAYS;
 import com.creek.whereareyoumodel.repository.ContactDataRepository;
 import com.creek.whereareyoumodel.repository.LocationRepository;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.repository.ContactResponseRepository;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
@@ -172,7 +175,12 @@ public class SQLiteRepositoryManager {
     }
     
     private void testTable(String tableName) {
-        whereAreYouDb.query(tableName, new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
+        Cursor cursor = null;
+        try {
+            cursor = whereAreYouDb.query(tableName, new String[] { AbstractSQLiteRepository.ID_FIELD_NAME }, null, null, null, null, null);
+        } finally {
+            closeCursor(cursor);
+        }
     }
         
     // TODO remove this method

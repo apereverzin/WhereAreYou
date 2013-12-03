@@ -1,6 +1,6 @@
 package com.creek.whereareyou.android.activity.account;
 
-import static com.creek.accessemail.connector.mail.MailUtil.isEmailAddressValid;
+import static com.creek.accessemail.connector.mail.MailUtil.extractUsernameFromEmailAddress;
 import static com.creek.accessemail.connector.mail.PredefinedMailProperties.getPredefinedProperties;
 import static com.creek.whereareyou.android.util.Util.buildGooglemailAddress;
 
@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import android.content.Intent;
 
-import com.creek.accessemail.connector.mail.MailUtil;
 import com.creek.whereareyou.R;
 
 /**
@@ -37,16 +36,11 @@ public class EmailGoogleAccountAddress_1_Activity extends EmailAccountAddress_1_
 
     @Override
     protected String getEmailAddressText(String emailAddress) {
-        return MailUtil.extractUsernameFromEmailAddress(emailAddress);
+        return extractUsernameFromEmailAddress(emailAddress);
     }
     
     @Override
     protected String buildEmailAddress(String emailAddressText) {
         return buildGooglemailAddress(this, emailAddressText);
-    }
-    
-    @Override
-    protected boolean isValid(String emailUsername) {
-        return isEmailAddressValid(buildEmailAddress(emailUsername));
     }
 }

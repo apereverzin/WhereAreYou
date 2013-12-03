@@ -12,6 +12,9 @@ import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClau
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.RECEIVED_TIME_KNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.RECEIVED_TIME_UNKNOWN;
 import static com.creek.whereareyou.android.infrastructure.sqlite.ComparisonClause.NOT_PROCESSED;
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
+import static com.creek.whereareyou.android.util.Util.concatArrays;
+
 import com.creek.whereareyou.android.util.Util;
 import com.creek.whereareyoumodel.repository.ContactRequestRepository;
 import com.creek.whereareyoumodel.domain.sendable.ContactRequest;
@@ -66,12 +69,12 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
 
     @Override
     protected String[] getFieldNames() {
-        return Util.concatArrays(super.getFieldNames(), fieldNames);
+        return concatArrays(super.getFieldNames(), fieldNames);
     }
 
     @Override
     protected String[] getFieldTypes() {
-        return Util.concatArrays(super.getFieldTypes(), fieldTypes);
+        return concatArrays(super.getFieldTypes(), fieldTypes);
     }
 
     @Override
@@ -83,7 +86,7 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
             contactRequestCursor = createCursor(null, null, null);
             return createEntityListFromCursor(contactRequestCursor);
         } finally {
-            SQLiteUtils.closeCursor(contactRequestCursor);
+            closeCursor(contactRequestCursor);
         }
     }
 
@@ -116,9 +119,14 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         Log.d(TAG, "getUnrespondedLocationRequests()");
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{CREATION_TIME_UNKNOWN, RECEIVED_TIME_KNOWN, LOCATION_REQUEST, NOT_PROCESSED});
-        Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------+++++++++++getIncomingUnrespondedLocationRequests: " + cursor.getCount());
-        return createEntityListFromCursor(cursor);
+        Cursor contactRequestCursor = null;
+        try {
+            contactRequestCursor = createCursor(criteria, null, null);
+            Log.d(TAG, "--------------+++++++++++getIncomingUnrespondedLocationRequests: " + contactRequestCursor.getCount());
+            return createEntityListFromCursor(contactRequestCursor);
+        } finally {
+            closeCursor(contactRequestCursor);
+        }
     }
     
     @Override
@@ -126,9 +134,15 @@ public final class SQLiteContactRequestRepository extends AbstractRequestRespons
         Log.d(TAG, "getUnrespondedLocationRequests()");
         String criteria = createWhereAndCriteria(
                 new ComparisonClause[]{CREATION_TIME_KNOWN, RECEIVED_TIME_UNKNOWN, LOCATION_REQUEST, NOT_PROCESSED});
-        Cursor cursor = createCursor(criteria, null, null);
-        Log.d(TAG, "--------------+++++++++++getOutgoingUnrespondedLocationRequests: " + cursor.getCount());
-        return createEntityListFromCursor(cursor);
+        Cursor contactRequestCursor = null;
+        
+        try {
+            contactRequestCursor = createCursor(criteria, null, null);
+            Log.d(TAG, "--------------+++++++++++getOutgoingUnrespondedLocationRequests: " + contactRequestCursor.getCount());
+            return createEntityListFromCursor(contactRequestCursor);
+        } finally {
+            closeCursor(contactRequestCursor);
+        }
     }
 
     @Override

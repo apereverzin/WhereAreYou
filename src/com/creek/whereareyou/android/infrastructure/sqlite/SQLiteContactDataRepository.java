@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +44,7 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
             contactDataCursor = createCursor(null, null, null);
             return createEntityListFromCursor(contactDataCursor);
         } finally {
-            SQLiteUtils.closeCursor(contactDataCursor);
+            closeCursor(contactDataCursor);
         }
     }
 
@@ -55,7 +57,7 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
             contactDataCursor = createCursor(null, null, null);
             return createContactDataMapFromCursor(contactDataCursor);
         } finally {
-            SQLiteUtils.closeCursor(contactDataCursor);
+            closeCursor(contactDataCursor);
         }
     }
 
@@ -127,7 +129,7 @@ public final class SQLiteContactDataRepository extends AbstractSQLiteRepository<
             contactDataCursor = createCursor(fieldName, fieldValue, null, null);
             return getSingleContactDataFromCursor(contactDataCursor);
         } finally {
-            SQLiteUtils.closeCursor(contactDataCursor);
+            closeCursor(contactDataCursor);
         }
     }
 

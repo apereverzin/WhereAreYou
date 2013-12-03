@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,7 +97,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
             cursor = createCursor(fieldName, fieldValue, null, null);
             return createEntityListFromCursor(cursor);
         } finally {
-            SQLiteUtils.closeCursor(cursor);
+            closeCursor(cursor);
         }
     }
 
@@ -106,7 +108,7 @@ public abstract class AbstractSQLiteRepository<T extends Identifiable> implement
             cursor = whereAreYouDb.query(getTableName(), getFieldNames(), createWhereCriteria(ID_FIELD_NAME, id), null, null, null, null);
             return createEntityFromCursor(cursor);
         } finally {
-            SQLiteUtils.closeCursor(cursor);
+            closeCursor(cursor);
         }
     }
 

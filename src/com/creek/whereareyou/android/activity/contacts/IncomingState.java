@@ -8,9 +8,9 @@ import static com.creek.whereareyou.R.drawable.*;
  */
 public enum IncomingState {
     NONE(-1, false),
-    RECEIVED(incoming_request_received, true),
-    BEING_SENT(incoming_location_being_sent, true),
-    SENT(incoming_location_sent, true);
+    REQUEST_RECEIVED(incoming_request_received, true),
+    RESPONSE_BEING_SENT(incoming_location_being_sent, true),
+    RESPONSE_SENT(incoming_location_sent, true);
     
     private final int imageId;
     private final boolean hasImage;

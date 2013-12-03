@@ -44,10 +44,12 @@ public class EmailReceiver {
                 messagePersistenceManager.persistReceivedMessages(messagesToPersist, contactCompoundIdsToPersist, receivedMessages);
             }
         }
+        
         return receivedMessages;
     }
 
-    private void retrieveContactDataForMessages(Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, List<ContactCompoundId> contactCompoundIdsToPersist) {
+    private void retrieveContactDataForMessages(Set<GenericMessage> receivedMessages, List<GenericMessage> messagesToPersist, 
+            List<ContactCompoundId> contactCompoundIdsToPersist) {
         Log.d(TAG, "retrieveContactDataForMessages()");
         Log.d(TAG, "--------------retrieveContactDataForMessages()");
         try {

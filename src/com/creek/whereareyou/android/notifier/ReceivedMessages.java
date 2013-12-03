@@ -48,9 +48,11 @@ public class ReceivedMessages {
         return locationResponses.size();
     }
 
-    public void addLocationResponse(OwnerLocationDataMessage locationResponse) {
-        hasMessages = true;
-        locationResponses.add(locationResponse);
+    public void addLocationResponse(OwnerLocationDataMessage locationResponse) {        
+        if (!isDuplicatedLocationResponse(locationResponse)) {
+            hasMessages = true;
+            locationResponses.add(locationResponse);
+        }
     }
 
     public List<OwnerLocationDataMessage> getLocationResponses() {
@@ -59,5 +61,18 @@ public class ReceivedMessages {
 
     public boolean hasMessages() {
         return hasMessages;
+    }
+    
+    private boolean isDuplicatedLocationResponse(OwnerLocationDataMessage locationResponse) {
+        for (int i = 0; i < locationResponses.size(); i++) {
+            OwnerLocationDataMessage lr = locationResponses.get(i);
+            if (lr.getSenderEmail().equalsIgnoreCase(locationResponse.getSenderEmail()) &&
+                    lr.getOwnerLocationData().getLocationData().getLocationTime() == 
+                            locationResponse.getOwnerLocationData().getLocationData().getLocationTime()) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

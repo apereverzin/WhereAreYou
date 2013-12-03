@@ -1,5 +1,7 @@
 package com.creek.whereareyou.android.infrastructure.sqlite;
 
+import static com.creek.whereareyou.android.infrastructure.sqlite.SQLiteUtils.closeCursor;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +69,7 @@ public final class SQLiteContactResponseRepository extends AbstractRequestRespon
             List<ContactResponseEntity> entities = createEntityListFromCursor(contactDataCursor);
             return convertContactResponses(entities);
         } finally {
-            SQLiteUtils.closeCursor(contactDataCursor);
+            closeCursor(contactDataCursor);
         }
     }
 

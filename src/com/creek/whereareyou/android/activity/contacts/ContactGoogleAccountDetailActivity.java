@@ -7,6 +7,7 @@ import static com.creek.whereareyou.android.util.Util.buildGooglemailAddress;
 import com.creek.whereareyou.R;
 import com.creek.whereareyou.android.contacts.AndroidContact;
 
+import android.util.Log;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 /**
@@ -14,6 +15,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
  * @author Andrey Pereverzin
  */
 public class ContactGoogleAccountDetailActivity extends ContactDetailActivity implements OnItemSelectedListener {
+    private static final String TAG = ContactGoogleAccountDetailActivity.class.getSimpleName();
     
     @Override
     protected int getLayoutId() {
@@ -28,10 +30,5 @@ public class ContactGoogleAccountDetailActivity extends ContactDetailActivity im
     @Override
     protected String buildEmailAddress(String emailAddressText) {
         return buildGooglemailAddress(this, emailAddressText);
-    }
-    
-    @Override
-    protected boolean isValid(String emailAddressText) {
-        return isEmailAddressValid(buildEmailAddress(emailAddressText));
     }
 }

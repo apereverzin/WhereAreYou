@@ -72,11 +72,11 @@ public class CombinedContactDataBuilder {
     private void setIncomingRequestStatus(CombinedContactData combinedContact) {
         String emailAddress = combinedContact.getAndroidContact().getContactData().getContactEmail();
         if (incomingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
-            combinedContact.setIncomingState(IncomingState.RECEIVED);
+            combinedContact.setIncomingState(IncomingState.REQUEST_RECEIVED);
         } else if (incomingUnsentLocationResponsesEmailAddresses.contains(emailAddress)) {
-            combinedContact.setIncomingState(IncomingState.BEING_SENT);
+            combinedContact.setIncomingState(IncomingState.RESPONSE_BEING_SENT);
         } else if (incomingEmailsEverSentLocationResponses.contains(emailAddress)) {
-            combinedContact.setIncomingState(IncomingState.SENT);
+            combinedContact.setIncomingState(IncomingState.RESPONSE_SENT);
         } else {
             combinedContact.setIncomingState(IncomingState.NONE);
         }
@@ -85,11 +85,11 @@ public class CombinedContactDataBuilder {
     private void setOutgoingRequestStatus(CombinedContactData combinedContact) {
         String emailAddress = combinedContact.getAndroidContact().getContactData().getContactEmail();
         if (outgoingUnsentLocationRequestsEmailAddresses.contains(emailAddress)) {
-            combinedContact.setOutgoingState(OutgoingState.BEING_SENT);
+            combinedContact.setOutgoingState(OutgoingState.REQUEST_BEING_SENT);
         } else if (outgoingUnrespondedLocationRequestsEmailAddresses.contains(emailAddress)) {
-            combinedContact.setOutgoingState(OutgoingState.SENT);
+            combinedContact.setOutgoingState(OutgoingState.REQUEST_SENT);
         } else if (outgoingEmailsEverReceivedLocationResponses.contains(emailAddress)) {
-            combinedContact.setOutgoingState(OutgoingState.RECEIVED);
+            combinedContact.setOutgoingState(OutgoingState.RESPONSE_RECEIVED);
         } else {
             combinedContact.setOutgoingState(OutgoingState.NONE);
         }

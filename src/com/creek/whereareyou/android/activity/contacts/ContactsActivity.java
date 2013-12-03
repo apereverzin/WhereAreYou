@@ -10,7 +10,7 @@ import com.creek.whereareyou.WhereAreYouApplication;
 
 import static android.view.Menu.FIRST;
 import static com.creek.accessemail.connector.mail.MailPropertiesStorage.MAIL_USERNAME_PROPERTY;
-import static com.creek.whereareyou.android.activity.contacts.OutgoingState.BEING_SENT;
+import static com.creek.whereareyou.android.activity.contacts.OutgoingState.REQUEST_BEING_SENT;
 import static com.creek.whereareyou.android.activity.map.MainMapActivity.RECEIVED_LOCATIONS;
 import static com.creek.whereareyou.android.util.ActivityUtil.setActivityTitle;
 import static com.creek.whereareyou.android.util.ActivityUtil.showException;
@@ -121,15 +121,22 @@ public final class ContactsActivity extends ListActivity {
             Intent intent = new Intent(this, MainMapActivity.class);
             List<OwnerLocationDataMessage> locations = new ArrayList<OwnerLocationDataMessage>();
             LocationData locationData = new LocationData();
-            locationData.setAccuracy(935.0F);
-            locationData.setSpeed(0.0F);
-            locationData.setLatitude(51.4456628);
-            locationData.setLongitude(-0.1839771);
+            
+            //locationData.setLatitude(51.4456628);
+            //locationData.setLongitude(-0.1839771);
+            //locationData.setAccuracy(935.0F);
+            //locationData.setLocationTime(System.currentTimeMillis());
+            
+            locationData.setLatitude(51.623126);
+            locationData.setLongitude(-0.1329443);
+            locationData.setAccuracy(1169.0F);
+            locationData.setLocationTime(1386018035106L);
+            
             locationData.setHasAccuracy(true);
             locationData.setHasSpeed(false);
+            locationData.setSpeed(0.0F);
             ContactCompoundId contactCompoundId = new ContactCompoundId("100", "andrey.pereverzin@gmail.com");
             locationData.setContactCompoundId(contactCompoundId);
-            locationData.setLocationTime(System.currentTimeMillis());
             SendableLocationData sendableLocationData = new SendableLocationData(locationData);
             OwnerLocationDataMessage location = new OwnerLocationDataMessage(sendableLocationData, "andrey.pereverzin@gmail.com");
             locations.add(location);
@@ -189,7 +196,7 @@ public final class ContactsActivity extends ListActivity {
 
                 contactRequestRepository.create(contactRequest);
                 
-                contactsListAdapter.updateOutgoingState((int) info.id, BEING_SENT);
+                contactsListAdapter.updateOutgoingState((int) info.id, REQUEST_BEING_SENT);
                 contactsListAdapter.notifyDataSetChanged();
                 return true;
             } finally {

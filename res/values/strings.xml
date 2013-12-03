@@ -89,5 +89,6 @@
     
     <string name="google_account_not_found">Google account is not found. Please, define your Google account first</string>
     <string name="invalid_email_address">Invalid email address</string>
+    <string name="empty_password">Password cannot be empty</string>
     <string name="not_google_account">Google Account must be either username@googlemail.com or username@gmail.com</string>
 </resources>
